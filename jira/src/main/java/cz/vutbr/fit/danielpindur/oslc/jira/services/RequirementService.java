@@ -90,14 +90,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 // Start of user code pre_class_code
 // End of user code
 @Path("requirement")
-public class Requirement
+public class RequirementService
 {
     @Context private HttpServletRequest httpServletRequest;
     @Context private HttpServletResponse httpServletResponse;
     @Context private UriInfo uriInfo;
     @Inject  private RestDelegate delegate;
 
-    private static final Logger log = LoggerFactory.getLogger(Requirement.class);
+    private static final Logger log = LoggerFactory.getLogger(RequirementService.class);
 
     // Start of user code class_attributes
     // End of user code
@@ -105,7 +105,7 @@ public class Requirement
     // Start of user code class_methods
     // End of user code
 
-    public Requirement()
+    public RequirementService()
     {
         super();
     }

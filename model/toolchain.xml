@@ -23,10 +23,10 @@
         </services>
       </serviceProviders>
     </serviceProviderCatalog>
-    <webServices name="Requirement" serviceUrlPattern="requirement" resourceUrlPattern="[ResourceType]/{id}" resourceTypes="_mJ99AKouEe2JELvxKSEu4w" delete="true" update="true"/>
-    <webServices name="RequirementCollection" serviceUrlPattern="requirementCollection" resourceUrlPattern="[ResourceType]/{id}" resourceTypes="_mJ99AaouEe2JELvxKSEu4w" delete="true" update="true"/>
-    <webServices name="Person" serviceUrlPattern="person" resourceUrlPattern="[ResourceType]/{email}" resourceTypes="_bfFK0KoyEe2JELvxKSEu4w"/>
-    <webServices name="Project" serviceUrlPattern="project" resourceUrlPattern="[ResourceType]/{id}" resourceTypes="_TL1v8a1sEe2IH_zh0OGsFw"/>
+    <webServices name="RequirementService" serviceUrlPattern="requirement" resourceUrlPattern="[ResourceType]/{id}" resourceTypes="_mJ99AKouEe2JELvxKSEu4w" delete="true" update="true"/>
+    <webServices name="RequirementCollectionService" serviceUrlPattern="requirementCollection" resourceUrlPattern="[ResourceType]/{id}" resourceTypes="_mJ99AaouEe2JELvxKSEu4w" delete="true" update="true"/>
+    <webServices name="PersonService" serviceUrlPattern="person" resourceUrlPattern="[ResourceType]/{email}" resourceTypes="_bfFK0KoyEe2JELvxKSEu4w"/>
+    <webServices name="ProjectService" serviceUrlPattern="project" resourceUrlPattern="[ResourceType]/{id}" resourceTypes="_TL1v8a1sEe2IH_zh0OGsFw"/>
     <specification/>
     <requiredAdaptors xsi:type="oslc4j_ai:GenericRequiredAdaptor" serviceProviderCatalogURI="http://localhost:8082/r4j/services/catalog/singleton" name="R4J Adaptor" servicedResources="_TL3lIa1sEe2IH_zh0OGsFw"/>
     <configuration xsi:type="oslc4j_ai:MavenServerConfiguration" rootServerBaseUrl="http://localhost:8081/" applicationContextPath="/jira" servletUrlPattern="/services/*" jettyPort="8081">
@@ -45,7 +45,7 @@
         </services>
       </serviceProviders>
     </serviceProviderCatalog>
-    <webServices name="Folder" serviceUrlPattern="folder" resourceUrlPattern="[ResourceType]/{id}" resourceTypes="_TL3lIa1sEe2IH_zh0OGsFw" delete="true" update="true"/>
+    <webServices name="FolderService" serviceUrlPattern="folder" resourceUrlPattern="[ResourceType]/{id}" resourceTypes="_TL3lIa1sEe2IH_zh0OGsFw" delete="true" update="true"/>
     <specification/>
     <configuration xsi:type="oslc4j_ai:MavenServerConfiguration" rootServerBaseUrl="http://localhost:8082/" applicationContextPath="/r4j" servletUrlPattern="/services/*" jettyPort="8082">
       <generalConfiguration filesBasePath="./r4j" javaBasePackageName="cz.vutbr.fit.danielpindur.oslc.r4j"/>

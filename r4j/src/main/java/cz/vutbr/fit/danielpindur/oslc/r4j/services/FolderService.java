@@ -15,7 +15,7 @@
  */
 // End of user code
 
-package cz.vutbr.fit.danielpindur.oslc.jira.services;
+package cz.vutbr.fit.danielpindur.oslc.r4j.services;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -75,11 +75,11 @@ import org.eclipse.lyo.oslc4j.core.model.ServiceProvider;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 import org.eclipse.lyo.oslc4j.core.model.AbstractResource;
 
-import cz.vutbr.fit.danielpindur.oslc.jira.RestDelegate;
-import cz.vutbr.fit.danielpindur.oslc.jira.ServerConstants;
-import cz.vutbr.fit.danielpindur.oslc.jira.resources.JiraDomainConstants;
-import cz.vutbr.fit.danielpindur.oslc.jira.servlet.ServiceProviderCatalogSingleton;
-import cz.vutbr.fit.danielpindur.oslc.jira.resources.Project;
+import cz.vutbr.fit.danielpindur.oslc.r4j.RestDelegate;
+import cz.vutbr.fit.danielpindur.oslc.r4j.ServerConstants;
+import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Jira_r4jDomainConstants;
+import cz.vutbr.fit.danielpindur.oslc.r4j.servlet.ServiceProviderCatalogSingleton;
+import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Folder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -89,15 +89,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 // Start of user code pre_class_code
 // End of user code
-@Path("project")
-public class Project
+@Path("folder")
+public class FolderService
 {
     @Context private HttpServletRequest httpServletRequest;
     @Context private HttpServletResponse httpServletResponse;
     @Context private UriInfo uriInfo;
     @Inject  private RestDelegate delegate;
 
-    private static final Logger log = LoggerFactory.getLogger(Project.class);
+    private static final Logger log = LoggerFactory.getLogger(FolderService.class);
 
     // Start of user code class_attributes
     // End of user code
@@ -105,7 +105,7 @@ public class Project
     // Start of user code class_methods
     // End of user code
 
-    public Project()
+    public FolderService()
     {
         super();
     }
@@ -120,12 +120,12 @@ public class Project
     }
 
     @GET
-    @Path("Project/{id}")
+    @Path("Folder/{id}")
     @Produces({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_JSON_LD, OslcMediaType.TEXT_TURTLE, OslcMediaType.APPLICATION_XML, OslcMediaType.APPLICATION_JSON})
     @Operation(
-        summary = "GET for resources of type {'" + JiraDomainConstants.PROJECT_LOCALNAME + "'}",
-        description = "GET for resources of type {'" + "<a href=\"" + JiraDomainConstants.PROJECT_TYPE + "\">" + JiraDomainConstants.PROJECT_LOCALNAME + "</a>" + "'}" +
-            ", with respective resource shapes {'" + "<a href=\"" + "../services/" + OslcConstants.PATH_RESOURCE_SHAPES + "/" + JiraDomainConstants.PROJECT_PATH + "\">" + JiraDomainConstants.PROJECT_LOCALNAME + "</a>" + "'}",
+        summary = "GET for resources of type {'" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "'}",
+        description = "GET for resources of type {'" + "<a href=\"" + Jira_r4jDomainConstants.FOLDER_TYPE + "\">" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "</a>" + "'}" +
+            ", with respective resource shapes {'" + "<a href=\"" + "../services/" + OslcConstants.PATH_RESOURCE_SHAPES + "/" + Jira_r4jDomainConstants.FOLDER_PATH + "\">" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "</a>" + "'}",
         responses = {@ApiResponse(description = "default response",
             content = {@Content(mediaType = OslcMediaType.APPLICATION_RDF_XML), @Content(
                 mediaType = OslcMediaType.APPLICATION_XML), @Content(
@@ -135,33 +135,33 @@ public class Project
                 mediaType = OslcMediaType.APPLICATION_X_OSLC_COMPACT_XML)})
         }
     )
-    public Project getProject(
+    public Folder getFolder(
                 @PathParam("id") final String id
         ) throws IOException, ServletException, URISyntaxException
     {
         // Start of user code getResource_init
         // End of user code
 
-        final Project aProject = delegate.getProject(httpServletRequest, id);
+        final Folder aFolder = delegate.getFolder(httpServletRequest, id);
 
-        if (aProject != null) {
-            // Start of user code getProject
+        if (aFolder != null) {
+            // Start of user code getFolder
             // End of user code
-            httpServletResponse.setHeader("ETag", delegate.getETagFromProject(aProject));
+            httpServletResponse.setHeader("ETag", delegate.getETagFromFolder(aFolder));
             httpServletResponse.addHeader(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2);
-            return aProject;
+            return aFolder;
         }
 
         throw new WebApplicationException(Status.NOT_FOUND);
     }
 
     @GET
-    @Path("Project/{id}")
+    @Path("Folder/{id}")
     @Produces({ MediaType.TEXT_HTML })
     @Operation(
-        summary = "GET for resources of type {'" + JiraDomainConstants.PROJECT_LOCALNAME + "'}",
-        description = "GET for resources of type {'" + "<a href=\"" + JiraDomainConstants.PROJECT_TYPE + "\">" + JiraDomainConstants.PROJECT_LOCALNAME + "</a>" + "'}" +
-            ", with respective resource shapes {'" + "<a href=\"" + "../services/" + OslcConstants.PATH_RESOURCE_SHAPES + "/" + JiraDomainConstants.PROJECT_PATH + "\">" + JiraDomainConstants.PROJECT_LOCALNAME + "</a>" + "'}",
+        summary = "GET for resources of type {'" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "'}",
+        description = "GET for resources of type {'" + "<a href=\"" + Jira_r4jDomainConstants.FOLDER_TYPE + "\">" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "</a>" + "'}" +
+            ", with respective resource shapes {'" + "<a href=\"" + "../services/" + OslcConstants.PATH_RESOURCE_SHAPES + "/" + Jira_r4jDomainConstants.FOLDER_PATH + "\">" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "</a>" + "'}",
         responses = {@ApiResponse(description = "default response",
             content = {@Content(mediaType = OslcMediaType.APPLICATION_RDF_XML), @Content(
                 mediaType = OslcMediaType.APPLICATION_XML), @Content(
@@ -171,21 +171,21 @@ public class Project
                 mediaType = OslcMediaType.APPLICATION_X_OSLC_COMPACT_XML)})
         }
     )
-    public void getProjectAsHtml(
+    public void getFolderAsHtml(
         @PathParam("id") final String id
         ) throws ServletException, IOException, URISyntaxException
     {
-        // Start of user code getProjectAsHtml_init
+        // Start of user code getFolderAsHtml_init
         // End of user code
 
-        final Project aProject = delegate.getProject(httpServletRequest, id);
+        final Folder aFolder = delegate.getFolder(httpServletRequest, id);
 
-        if (aProject != null) {
-            httpServletRequest.setAttribute("aProject", aProject);
-            // Start of user code getProjectAsHtml_setAttributes
+        if (aFolder != null) {
+            httpServletRequest.setAttribute("aFolder", aFolder);
+            // Start of user code getFolderAsHtml_setAttributes
             // End of user code
 
-            RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/cz/vutbr/fit/danielpindur/oslc/jira/project.jsp");
+            RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/cz/vutbr/fit/danielpindur/oslc/r4j/folder.jsp");
             rd.forward(httpServletRequest,httpServletResponse);
             return;
         }
@@ -194,12 +194,12 @@ public class Project
     }
 
     @GET
-    @Path("Project/{id}")
+    @Path("Folder/{id}")
     @Produces({OslcMediaType.APPLICATION_X_OSLC_COMPACT_XML})
     @Operation(
-        summary = "GET for resources of type {'" + JiraDomainConstants.PROJECT_LOCALNAME + "'}",
-        description = "GET for resources of type {'" + "<a href=\"" + JiraDomainConstants.PROJECT_TYPE + "\">" + JiraDomainConstants.PROJECT_LOCALNAME + "</a>" + "'}" +
-            ", with respective resource shapes {'" + "<a href=\"" + "../services/" + OslcConstants.PATH_RESOURCE_SHAPES + "/" + JiraDomainConstants.PROJECT_PATH + "\">" + JiraDomainConstants.PROJECT_LOCALNAME + "</a>" + "'}",
+        summary = "GET for resources of type {'" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "'}",
+        description = "GET for resources of type {'" + "<a href=\"" + Jira_r4jDomainConstants.FOLDER_TYPE + "\">" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "</a>" + "'}" +
+            ", with respective resource shapes {'" + "<a href=\"" + "../services/" + OslcConstants.PATH_RESOURCE_SHAPES + "/" + Jira_r4jDomainConstants.FOLDER_PATH + "\">" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "</a>" + "'}",
         responses = {@ApiResponse(description = "default response",
             content = {@Content(mediaType = OslcMediaType.APPLICATION_RDF_XML), @Content(
                 mediaType = OslcMediaType.APPLICATION_XML), @Content(
@@ -209,7 +209,7 @@ public class Project
                 mediaType = OslcMediaType.APPLICATION_X_OSLC_COMPACT_XML)})
         }
     )
-    public Compact getProjectCompact(
+    public Compact getFolderCompact(
         @PathParam("id") final String id
         ) throws ServletException, IOException, URISyntaxException
     {
@@ -219,17 +219,17 @@ public class Project
         String largePreviewHintHeight = "400px";
         String largePreviewHintWidth = "600px";
 
-        // Start of user code getProjectCompact_init
+        // Start of user code getFolderCompact_init
         //TODO: adjust the preview height & width values from the default values provided above.
         // End of user code
 
-        final Project aProject = delegate.getProject(httpServletRequest, id);
+        final Folder aFolder = delegate.getFolder(httpServletRequest, id);
 
-        if (aProject != null) {
+        if (aFolder != null) {
             final Compact compact = new Compact();
 
-            compact.setAbout(aProject.getAbout());
-            compact.setTitle(aProject.toString());
+            compact.setAbout(aFolder.getAbout());
+            compact.setTitle(aFolder.toString());
 
             compact.setIcon(new URI(iconUri));
 
@@ -237,13 +237,13 @@ public class Project
             final Preview smallPreview = new Preview();
             smallPreview.setHintHeight(smallPreviewHintHeight);
             smallPreview.setHintWidth(smallPreviewHintWidth);
-            smallPreview.setDocument(UriBuilder.fromUri(aProject.getAbout()).path("smallPreview").build());
+            smallPreview.setDocument(UriBuilder.fromUri(aFolder.getAbout()).path("smallPreview").build());
             compact.setSmallPreview(smallPreview);
 
             final Preview largePreview = new Preview();
             largePreview.setHintHeight(largePreviewHintHeight);
             largePreview.setHintWidth(largePreviewHintWidth);
-            largePreview.setDocument(UriBuilder.fromUri(aProject.getAbout()).path("largePreview").build());
+            largePreview.setDocument(UriBuilder.fromUri(aFolder.getAbout()).path("largePreview").build());
             compact.setLargePreview(largePreview);
 
             httpServletResponse.addHeader(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2);
@@ -254,23 +254,23 @@ public class Project
     }
 
     @GET
-    @Path("Project/{id}/smallPreview")
+    @Path("Folder/{id}/smallPreview")
     @Produces({ MediaType.TEXT_HTML })
-    public void getProjectAsHtmlSmallPreview(
+    public void getFolderAsHtmlSmallPreview(
         @PathParam("id") final String id
         ) throws ServletException, IOException, URISyntaxException
     {
-        // Start of user code getProjectAsHtmlSmallPreview_init
+        // Start of user code getFolderAsHtmlSmallPreview_init
         // End of user code
 
-        final Project aProject = delegate.getProject(httpServletRequest, id);
+        final Folder aFolder = delegate.getFolder(httpServletRequest, id);
 
-        if (aProject != null) {
-            httpServletRequest.setAttribute("aProject", aProject);
-            // Start of user code getProjectAsHtmlSmallPreview_setAttributes
+        if (aFolder != null) {
+            httpServletRequest.setAttribute("aFolder", aFolder);
+            // Start of user code getFolderAsHtmlSmallPreview_setAttributes
             // End of user code
 
-            RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/cz/vutbr/fit/danielpindur/oslc/jira/projectsmallpreview.jsp");
+            RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/cz/vutbr/fit/danielpindur/oslc/r4j/foldersmallpreview.jsp");
             httpServletResponse.addHeader(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2);
             addCORSHeaders(httpServletResponse);
             rd.forward(httpServletRequest, httpServletResponse);
@@ -281,23 +281,23 @@ public class Project
     }
 
     @GET
-    @Path("Project/{id}/largePreview")
+    @Path("Folder/{id}/largePreview")
     @Produces({ MediaType.TEXT_HTML })
-    public void getProjectAsHtmlLargePreview(
+    public void getFolderAsHtmlLargePreview(
         @PathParam("id") final String id
         ) throws ServletException, IOException, URISyntaxException
     {
-        // Start of user code getProjectAsHtmlLargePreview_init
+        // Start of user code getFolderAsHtmlLargePreview_init
         // End of user code
 
-        final Project aProject = delegate.getProject(httpServletRequest, id);
+        final Folder aFolder = delegate.getFolder(httpServletRequest, id);
 
-        if (aProject != null) {
-            httpServletRequest.setAttribute("aProject", aProject);
-            // Start of user code getProjectAsHtmlLargePreview_setAttributes
+        if (aFolder != null) {
+            httpServletRequest.setAttribute("aFolder", aFolder);
+            // Start of user code getFolderAsHtmlLargePreview_setAttributes
             // End of user code
 
-            RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/cz/vutbr/fit/danielpindur/oslc/jira/projectlargepreview.jsp");
+            RequestDispatcher rd = httpServletRequest.getRequestDispatcher("/cz/vutbr/fit/danielpindur/oslc/r4j/folderlargepreview.jsp");
             httpServletResponse.addHeader(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2);
             addCORSHeaders(httpServletResponse);
             rd.forward(httpServletRequest, httpServletResponse);
@@ -306,4 +306,84 @@ public class Project
 
         throw new WebApplicationException(Status.NOT_FOUND);
     }
+    @DELETE
+    @Path("Folder/{id}")
+    @Operation(
+        summary = "DELETE for resources of type {'" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "'}",
+        description = "DELETE for resources of type {'" + "<a href=\"" + Jira_r4jDomainConstants.FOLDER_TYPE + "\">" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "</a>" + "'}" +
+            ", with respective resource shapes {'" + "<a href=\"" + "../services/" + OslcConstants.PATH_RESOURCE_SHAPES + "/" + Jira_r4jDomainConstants.FOLDER_PATH + "\">" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "</a>" + "'}",
+        responses = {@ApiResponse(description = "default response",
+            content = {@Content(mediaType = OslcMediaType.APPLICATION_RDF_XML), @Content(
+                mediaType = OslcMediaType.APPLICATION_XML), @Content(
+                mediaType = OslcMediaType.APPLICATION_JSON), @Content(
+                mediaType = OslcMediaType.TEXT_TURTLE), @Content(
+                mediaType = MediaType.TEXT_HTML), @Content(
+                mediaType = OslcMediaType.APPLICATION_X_OSLC_COMPACT_XML)})
+        }
+    )
+    public Response deleteFolder(
+                @PathParam("id") final String id
+        ) throws IOException, ServletException, URISyntaxException
+    {
+        // Start of user code deleteFolder_init
+        // End of user code
+        final Folder aResource = delegate.getFolder(httpServletRequest, id);
+
+        if (aResource != null) {
+            // Start of user code deleteFolder
+            // End of user code
+            boolean deleted = delegate.deleteFolder(httpServletRequest, id);
+            if (deleted)
+                return Response.ok().header(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2).build();
+            else
+                throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+        }
+        throw new WebApplicationException(Status.NOT_FOUND);
+    }
+
+    @PUT
+    @Path("Folder/{id}")
+    @Consumes({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_JSON_LD, OslcMediaType.TEXT_TURTLE, OslcMediaType.APPLICATION_XML, OslcMediaType.APPLICATION_JSON })
+    @Operation(
+        summary = "PUT for resources of type {'" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "'}",
+        description = "PUT for resources of type {'" + "<a href=\"" + Jira_r4jDomainConstants.FOLDER_TYPE + "\">" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "</a>" + "'}" +
+            ", with respective resource shapes {'" + "<a href=\"" + "../services/" + OslcConstants.PATH_RESOURCE_SHAPES + "/" + Jira_r4jDomainConstants.FOLDER_PATH + "\">" + Jira_r4jDomainConstants.FOLDER_LOCALNAME + "</a>" + "'}",
+        responses = {@ApiResponse(description = "default response",
+            content = {@Content(mediaType = OslcMediaType.APPLICATION_RDF_XML), @Content(
+                mediaType = OslcMediaType.APPLICATION_XML), @Content(
+                mediaType = OslcMediaType.APPLICATION_JSON), @Content(
+                mediaType = OslcMediaType.TEXT_TURTLE), @Content(
+                mediaType = MediaType.TEXT_HTML), @Content(
+                mediaType = OslcMediaType.APPLICATION_X_OSLC_COMPACT_XML)})
+        }
+    )
+    public Response updateFolder(
+            @HeaderParam("If-Match") final String eTagHeader,
+            @PathParam("id") final String id ,
+            final Folder aResource
+        ) throws IOException, ServletException
+    {
+        // Start of user code updateFolder_init
+        // End of user code
+        final Folder originalResource = delegate.getFolder(httpServletRequest, id);
+
+        if (originalResource != null) {
+            final String originalETag = delegate.getETagFromFolder(originalResource);
+
+            if ((eTagHeader == null) || (originalETag.equals(eTagHeader))) {
+                // Start of user code updateFolder
+                // End of user code
+                final Folder updatedResource = delegate.updateFolder(httpServletRequest, aResource, id);
+                httpServletResponse.setHeader("ETag", delegate.getETagFromFolder(updatedResource));
+                return Response.ok().header(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2).build();
+            }
+            else {
+                throw new WebApplicationException(Status.PRECONDITION_FAILED);
+            }
+        }
+        else {
+            throw new WebApplicationException(Status.NOT_FOUND);
+        }
+    }
+
 }

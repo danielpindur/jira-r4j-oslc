@@ -90,14 +90,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 // Start of user code pre_class_code
 // End of user code
 @Path("person")
-public class Person
+public class PersonService
 {
     @Context private HttpServletRequest httpServletRequest;
     @Context private HttpServletResponse httpServletResponse;
     @Context private UriInfo uriInfo;
     @Inject  private RestDelegate delegate;
 
-    private static final Logger log = LoggerFactory.getLogger(Person.class);
+    private static final Logger log = LoggerFactory.getLogger(PersonService.class);
 
     // Start of user code class_attributes
     // End of user code
@@ -105,7 +105,7 @@ public class Person
     // Start of user code class_methods
     // End of user code
 
-    public Person()
+    public PersonService()
     {
         super();
     }

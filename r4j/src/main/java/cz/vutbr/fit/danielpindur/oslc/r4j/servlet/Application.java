@@ -71,7 +71,7 @@ import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Jira_r4jDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.r4j.resources.OslcDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Oslc_rmDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.r4j.services.ServiceProviderService1;
-import cz.vutbr.fit.danielpindur.oslc.r4j.services.Folder;
+import cz.vutbr.fit.danielpindur.oslc.r4j.services.FolderService;
 
 // Start of user code imports
 // End of user code
@@ -104,7 +104,7 @@ public class Application extends javax.ws.rs.core.Application {
         RESOURCE_CLASSES.addAll(JenaProvidersRegistry.getProviders());
         RESOURCE_CLASSES.addAll(Json4JProvidersRegistry.getProviders());
         RESOURCE_CLASSES.add(ServiceProviderService1.class);
-        RESOURCE_CLASSES.add(Folder.class);
+        RESOURCE_CLASSES.add(FolderService.class);
 
         // Catalog resources
         RESOURCE_CLASSES.add(ServiceProviderCatalogService.class);

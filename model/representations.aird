@@ -20,11 +20,11 @@
         <description xmi:type="description_2:TreeDescription" href="platform:/plugin/org.eclipse.lyo.tools.toolchain.design/description/ToolChainModel.odesign#//@ownedViewpoints[name='ToolchainViewpoint']/@ownedRepresentations[name='SpecificationTree']"/>
         <target xmi:type="oslc4j_ai:Specification" href="toolchain.xml#//@specification"/>
       </ownedRepresentationDescriptors>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_W1Q10K39Ee2tbPU5kf8csQ" name="JiraInterfaceDiagram" repPath="#_W1NygK39Ee2tbPU5kf8csQ" changeId="1131baa6-1bbb-4acb-bab2-ffc513b968c9">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_W1Q10K39Ee2tbPU5kf8csQ" name="JiraInterfaceDiagram" repPath="#_W1NygK39Ee2tbPU5kf8csQ" changeId="087c99fb-a8bd-4e76-b477-5601798db47c">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.lyo.tools.toolchain.design/description/ToolChainModel.odesign#//@ownedViewpoints[name='ToolchainViewpoint']/@ownedRepresentations[name='AdaptorInterfaceDiagram']"/>
         <target xmi:type="oslc4j_ai:AdaptorInterface" href="toolchain.xml#//@adaptorInterfaces.0"/>
       </ownedRepresentationDescriptors>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_qFg3IK4AEe2tbPU5kf8csQ" name="R4JInterfaceDiagram" repPath="#_qFfpAK4AEe2tbPU5kf8csQ" changeId="6995ddf4-96a8-4174-99a7-7202521bae84">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_qFg3IK4AEe2tbPU5kf8csQ" name="R4JInterfaceDiagram" repPath="#_qFfpAK4AEe2tbPU5kf8csQ" changeId="82084d35-02d4-41db-bea6-211e1015b0aa">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.lyo.tools.toolchain.design/description/ToolChainModel.odesign#//@ownedViewpoints[name='ToolchainViewpoint']/@ownedRepresentations[name='AdaptorInterfaceDiagram']"/>
         <target xmi:type="oslc4j_ai:AdaptorInterface" href="toolchain.xml#//@adaptorInterfaces.1"/>
       </ownedRepresentationDescriptors>
@@ -2719,7 +2719,7 @@
         </ownedElements>
       </ownedDiagramElements>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DNodeList" uid="_HqYi4K4EEe2tbPU5kf8csQ" name="Requirement" outgoingEdges="_HqvIOK4EEe2tbPU5kf8csQ">
+    <ownedDiagramElements xmi:type="diagram:DNodeList" uid="_HqYi4K4EEe2tbPU5kf8csQ" name="RequirementService" outgoingEdges="_HqvIOK4EEe2tbPU5kf8csQ">
       <target xmi:type="oslc4j_ai:WebService" href="toolchain.xml#//@adaptorInterfaces.0/@webServices.0"/>
       <semanticElements xmi:type="oslc4j_ai:WebService" href="toolchain.xml#//@adaptorInterfaces.0/@webServices.0"/>
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -2762,7 +2762,7 @@
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.lyo.tools.toolchain.design/description/ToolChainModel.odesign#//@ownedViewpoints[name='ToolchainViewpoint']/@ownedRepresentations[name='AdaptorInterfaceDiagram']/@defaultLayer/@edgeMappings[name='WebServiceToManagedResource']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DNodeList" uid="_NJ6tsK4EEe2tbPU5kf8csQ" name="RequirementCollection" outgoingEdges="_NKO2zK4EEe2tbPU5kf8csQ">
+    <ownedDiagramElements xmi:type="diagram:DNodeList" uid="_NJ6tsK4EEe2tbPU5kf8csQ" name="RequirementCollectionService" outgoingEdges="_NKO2zK4EEe2tbPU5kf8csQ">
       <target xmi:type="oslc4j_ai:WebService" href="toolchain.xml#//@adaptorInterfaces.0/@webServices.1"/>
       <semanticElements xmi:type="oslc4j_ai:WebService" href="toolchain.xml#//@adaptorInterfaces.0/@webServices.1"/>
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -2876,7 +2876,7 @@
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.lyo.tools.toolchain.design/description/ToolChainModel.odesign#//@ownedViewpoints[name='ToolchainViewpoint']/@ownedRepresentations[name='AdaptorInterfaceDiagram']/@defaultLayer/@edgeMappings[name='OSLCServiceToManagedResource']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DNodeList" uid="_eCJZoK4FEe2tbPU5kf8csQ" name="Person" outgoingEdges="_eCeJ1K4FEe2tbPU5kf8csQ">
+    <ownedDiagramElements xmi:type="diagram:DNodeList" uid="_eCJZoK4FEe2tbPU5kf8csQ" name="PersonService" outgoingEdges="_eCeJ1K4FEe2tbPU5kf8csQ">
       <target xmi:type="oslc4j_ai:WebService" href="toolchain.xml#//@adaptorInterfaces.0/@webServices.2"/>
       <semanticElements xmi:type="oslc4j_ai:WebService" href="toolchain.xml#//@adaptorInterfaces.0/@webServices.2"/>
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -2990,7 +2990,7 @@
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.lyo.tools.toolchain.design/description/ToolChainModel.odesign#//@ownedViewpoints[name='ToolchainViewpoint']/@ownedRepresentations[name='AdaptorInterfaceDiagram']/@defaultLayer/@edgeMappings[name='OSLCServiceToManagedResource']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DNodeList" uid="_9axCUK4FEe2tbPU5kf8csQ" name="Project" outgoingEdges="_9bGZlq4FEe2tbPU5kf8csQ">
+    <ownedDiagramElements xmi:type="diagram:DNodeList" uid="_9axCUK4FEe2tbPU5kf8csQ" name="ProjectService" outgoingEdges="_9bGZlq4FEe2tbPU5kf8csQ">
       <target xmi:type="oslc4j_ai:WebService" href="toolchain.xml#//@adaptorInterfaces.0/@webServices.3"/>
       <semanticElements xmi:type="oslc4j_ai:WebService" href="toolchain.xml#//@adaptorInterfaces.0/@webServices.3"/>
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -3406,7 +3406,7 @@
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.eclipse.lyo.tools.toolchain.design/description/ToolChainModel.odesign#//@ownedViewpoints[name='ToolchainViewpoint']/@ownedRepresentations[name='AdaptorInterfaceDiagram']/@defaultLayer/@edgeMappings[name='OSLCServiceToManagedResource']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DNodeList" uid="_eiRWEK4DEe2tbPU5kf8csQ" name="Folder" outgoingEdges="_ejmy1K4DEe2tbPU5kf8csQ">
+    <ownedDiagramElements xmi:type="diagram:DNodeList" uid="_eiRWEK4DEe2tbPU5kf8csQ" name="FolderService" outgoingEdges="_ejmy1K4DEe2tbPU5kf8csQ">
       <target xmi:type="oslc4j_ai:WebService" href="toolchain.xml#//@adaptorInterfaces.1/@webServices.0"/>
       <semanticElements xmi:type="oslc4j_ai:WebService" href="toolchain.xml#//@adaptorInterfaces.1/@webServices.0"/>
       <ownedStyle xmi:type="diagram:FlatContainerStyle" uid="_eiRWEa4DEe2tbPU5kf8csQ" labelSize="12" showIcon="false" borderSize="1" borderSizeComputationExpression="1" foregroundColor="255,255,255">

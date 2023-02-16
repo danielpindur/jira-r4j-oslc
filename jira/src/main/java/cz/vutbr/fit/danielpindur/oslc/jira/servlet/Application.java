@@ -73,10 +73,10 @@ import cz.vutbr.fit.danielpindur.oslc.jira.resources.Oslc_rmDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.services.ServiceProviderService1;
 import cz.vutbr.fit.danielpindur.oslc.jira.services.ServiceProviderService2;
 import cz.vutbr.fit.danielpindur.oslc.jira.services.ServiceProviderService3;
-import cz.vutbr.fit.danielpindur.oslc.jira.services.Requirement;
-import cz.vutbr.fit.danielpindur.oslc.jira.services.RequirementCollection;
-import cz.vutbr.fit.danielpindur.oslc.jira.services.Person;
-import cz.vutbr.fit.danielpindur.oslc.jira.services.Project;
+import cz.vutbr.fit.danielpindur.oslc.jira.services.RequirementService;
+import cz.vutbr.fit.danielpindur.oslc.jira.services.RequirementCollectionService;
+import cz.vutbr.fit.danielpindur.oslc.jira.services.PersonService;
+import cz.vutbr.fit.danielpindur.oslc.jira.services.ProjectService;
 
 // Start of user code imports
 // End of user code
@@ -111,10 +111,10 @@ public class Application extends javax.ws.rs.core.Application {
         RESOURCE_CLASSES.add(ServiceProviderService1.class);
         RESOURCE_CLASSES.add(ServiceProviderService2.class);
         RESOURCE_CLASSES.add(ServiceProviderService3.class);
-        RESOURCE_CLASSES.add(Requirement.class);
-        RESOURCE_CLASSES.add(RequirementCollection.class);
-        RESOURCE_CLASSES.add(Person.class);
-        RESOURCE_CLASSES.add(Project.class);
+        RESOURCE_CLASSES.add(RequirementService.class);
+        RESOURCE_CLASSES.add(RequirementCollectionService.class);
+        RESOURCE_CLASSES.add(PersonService.class);
+        RESOURCE_CLASSES.add(ProjectService.class);
 
         // Catalog resources
         RESOURCE_CLASSES.add(ServiceProviderCatalogService.class);
