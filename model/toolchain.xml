@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<oslc4j_tc:Toolchain xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oslc4j_ai="http://org.eclipse.lyo/oslc4j/adaptorInterface" xmlns:oslc4j_tc="http://org.eclipse.lyo/oslc4j/toolChain">
-  <adaptorInterfaces name="R4J">
+<oslc4j_tc:Toolchain xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oslc4j_ai="http://org.eclipse.lyo/oslc4j/adaptorInterface" xmlns:oslc4j_tc="http://org.eclipse.lyo/oslc4j/toolChain" name="ToolChain">
+  <adaptorInterfaces name="OSLC RM">
     <serviceProviderCatalog title="Service Provider Catalog" description="Service Provider Catalog">
       <serviceProviders title="Service Provider" description="Service Provider">
         <services domainSpecification="//@specification/@domainSpecifications[name='OSLC%20Requirements%20Management']">
@@ -12,25 +12,57 @@
       </serviceProviders>
     </serviceProviderCatalog>
     <specification/>
-    <configuration xsi:type="oslc4j_ai:MavenServerConfiguration" rootServerBaseUrl="http://localhost:8080/" applicationContextPath="/oslc-server1" servletUrlPattern="/oslc/*" jettyPort="8080">
+    <requiredAdaptors xsi:type="oslc4j_ai:GenericRequiredAdaptor" serviceProviderCatalogURI="http://your.host.com/adaptor/oslc/catalog/singleton" name="R4J Adaptor" servicedResources="_TL3lIa1sEe2IH_zh0OGsFw"/>
+    <requiredAdaptors xsi:type="oslc4j_ai:GenericRequiredAdaptor" serviceProviderCatalogURI="http://your.host.com/adaptor/oslc/catalog/singleton" name="Jira Adaptor" servicedResources="_TL1v8a1sEe2IH_zh0OGsFw _bfFK0KoyEe2JELvxKSEu4w"/>
+    <configuration xsi:type="oslc4j_ai:MavenServerConfiguration" rootServerBaseUrl="http://localhost:8081/" applicationContextPath="/oslc-server1" servletUrlPattern="/oslc/*" jettyPort="8081">
       <generalConfiguration filesBasePath="." javaBasePackageName="your.basepackage.name"/>
       <projectConfiguration xsi:type="oslc4j_ai:MavenProjectConfiguration" lyoVersion="5.0.0.Final" groupId="your.basepackage.name" artifactId="oslc-server1" version="0.0.1-SNAPSHOT"/>
     </configuration>
   </adaptorInterfaces>
+  <adaptorInterfaces name="R4J">
+    <serviceProviderCatalog title="Service Provider Catalog" description="Service Provider Catalog">
+      <serviceProviders title="Service Provider" description="Service Provider">
+        <services domainSpecification="//@specification/@domainSpecifications[name='JIRA%20R4J']">
+          <creationFactories title="Folder Creation Factory" label="CreationFactory1" creationURI="create" resourceTypes="_TL3lIa1sEe2IH_zh0OGsFw"/>
+          <queryCapabilities title="Folder Query" label="QueryCapability1" queryBaseURI="query" resourceTypes="_TL3lIa1sEe2IH_zh0OGsFw"/>
+        </services>
+      </serviceProviders>
+    </serviceProviderCatalog>
+    <specification/>
+    <configuration xsi:type="oslc4j_ai:MavenServerConfiguration" rootServerBaseUrl="http://localhost:8081/" applicationContextPath="/oslc-server2" servletUrlPattern="/oslc/*" jettyPort="8081">
+      <generalConfiguration filesBasePath="." javaBasePackageName="your.basepackage.name"/>
+      <projectConfiguration xsi:type="oslc4j_ai:MavenProjectConfiguration" lyoVersion="5.0.0.Final" groupId="your.basepackage.name" artifactId="oslc-server2" version="0.0.1-SNAPSHOT"/>
+    </configuration>
+  </adaptorInterfaces>
+  <adaptorInterfaces name="Jira">
+    <serviceProviderCatalog title="Service Provider Catalog" description="Service Provider Catalog">
+      <serviceProviders title="Service Provider" description="Service Provider">
+        <services domainSpecification="//@specification/@domainSpecifications[name='JIRA']">
+          <creationFactories title="Project Creation Factory" label="CreationFactory1" creationURI="create" resourceTypes="_TL1v8a1sEe2IH_zh0OGsFw"/>
+          <queryCapabilities title="Project Query" label="QueryCapability1" queryBaseURI="query" resourceTypes="_TL1v8a1sEe2IH_zh0OGsFw"/>
+        </services>
+        <services domainSpecification="//@specification/@domainSpecifications[name='FOAF']">
+          <queryCapabilities title="Person Query" label="QueryCapability1" queryBaseURI="query" resourceTypes="_bfFK0KoyEe2JELvxKSEu4w"/>
+        </services>
+      </serviceProviders>
+    </serviceProviderCatalog>
+    <specification/>
+    <configuration xsi:type="oslc4j_ai:MavenServerConfiguration" rootServerBaseUrl="http://localhost:8081/" applicationContextPath="/oslc-server3" servletUrlPattern="/oslc/*" jettyPort="8081">
+      <generalConfiguration filesBasePath="." javaBasePackageName="your.basepackage.name"/>
+      <projectConfiguration xsi:type="oslc4j_ai:MavenProjectConfiguration" lyoVersion="5.0.0.Final" groupId="your.basepackage.name" artifactId="oslc-server3" version="0.0.1-SNAPSHOT"/>
+    </configuration>
+  </adaptorInterfaces>
   <specification>
     <domainSpecifications name="OSLC Requirements Management" namespaceURI="http://open-services.net/ns/rm#" namespacePrefix="//@specification/@domainPrefixes[name='oslc_rm']">
-      <resources id="_mJ99AKouEe2JELvxKSEu4w" name="Requirement" resourceProperties="_JkXuMKoxEe2JELvxKSEu4w _SLU88KoxEe2JELvxKSEu4w _B2L6gKoxEe2JELvxKSEu4w _p_bEQKoxEe2JELvxKSEu4w _uic4oKozEe2JELvxKSEu4w _MgdPYKoyEe2JELvxKSEu4w _CnjQkKoyEe2JELvxKSEu4w _3MYi4KozEe2JELvxKSEu4w _6RdIUKoxEe2JELvxKSEu4w _0xsj8KpFEe2JELvxKSEu4w _61IGAKpFEe2JELvxKSEu4w"/>
-      <resources id="_mJ99AaouEe2JELvxKSEu4w" name="RequirementCollection" resourceProperties="_B2L6gKoxEe2JELvxKSEu4w _JkXuMKoxEe2JELvxKSEu4w _SLU88KoxEe2JELvxKSEu4w _oHF5kKpFEe2JELvxKSEu4w _dI2qYKpFEe2JELvxKSEu4w"/>
-      <resourceProperties id="_dI2qYKpFEe2JELvxKSEu4w" name="decomposes" occurs="zeroOrOne" valueType="Resource" range="_mJ99AaouEe2JELvxKSEu4w"/>
-      <resourceProperties id="_oHF5kKpFEe2JELvxKSEu4w" name="decomposedBy" occurs="zeroOrMany" valueType="Resource" range="_mJ99AKouEe2JELvxKSEu4w _mJ99AaouEe2JELvxKSEu4w"/>
-      <resourceProperties id="_0xsj8KpFEe2JELvxKSEu4w" name="elaborates" occurs="zeroOrOne" valueType="Resource" range="_mJ99AKouEe2JELvxKSEu4w"/>
-      <resourceProperties id="_61IGAKpFEe2JELvxKSEu4w" name="elaboratedBy" occurs="zeroOrMany" valueType="Resource" range="_mJ99AKouEe2JELvxKSEu4w"/>
+      <resources id="_mJ99AKouEe2JELvxKSEu4w" name="Requirement" resourceProperties="_JkXuMKoxEe2JELvxKSEu4w _SLU88KoxEe2JELvxKSEu4w _B2L6gKoxEe2JELvxKSEu4w _p_bEQKoxEe2JELvxKSEu4w _uic4oKozEe2JELvxKSEu4w _MgdPYKoyEe2JELvxKSEu4w _CnjQkKoyEe2JELvxKSEu4w _3MYi4KozEe2JELvxKSEu4w _oHF5kKpFEe2JELvxKSEu4w _dI2qYKpFEe2JELvxKSEu4w _TL1v8K1sEe2IH_zh0OGsFw _TL2-EK1sEe2IH_zh0OGsFw"/>
+      <resources id="_mJ99AaouEe2JELvxKSEu4w" name="RequirementCollection" resourceProperties="_B2L6gKoxEe2JELvxKSEu4w _JkXuMKoxEe2JELvxKSEu4w _SLU88KoxEe2JELvxKSEu4w _oHF5kKpFEe2JELvxKSEu4w _dI2qYKpFEe2JELvxKSEu4w _TL1v8K1sEe2IH_zh0OGsFw _TL2-EK1sEe2IH_zh0OGsFw _p_bEQKoxEe2JELvxKSEu4w _MgdPYKoyEe2JELvxKSEu4w _CnjQkKoyEe2JELvxKSEu4w"/>
+      <resourceProperties id="_dI2qYKpFEe2JELvxKSEu4w" name="decomposes" occurs="zeroOrMany" valueType="Resource" range="_mJ99AaouEe2JELvxKSEu4w _mJ99AKouEe2JELvxKSEu4w"/>
+      <resourceProperties id="_oHF5kKpFEe2JELvxKSEu4w" name="decomposedBy" occurs="zeroOrMany" valueType="Resource" range="_mJ99AaouEe2JELvxKSEu4w _mJ99AKouEe2JELvxKSEu4w"/>
     </domainSpecifications>
     <domainSpecifications name="Dublin Core" namespaceURI="http://purl.org/dc/terms/" namespacePrefix="//@specification/@domainPrefixes[name='dcterms']">
       <resourceProperties id="_B2L6gKoxEe2JELvxKSEu4w" name="title" valueType="XMLLiteral"/>
       <resourceProperties id="_JkXuMKoxEe2JELvxKSEu4w" name="description" occurs="zeroOrOne" valueType="XMLLiteral"/>
       <resourceProperties id="_SLU88KoxEe2JELvxKSEu4w" name="identifier" occurs="zeroOrOne" readOnly="true" valueType="String"/>
-      <resourceProperties id="_6RdIUKoxEe2JELvxKSEu4w" name="subject" occurs="zeroOrMany" valueType="String"/>
       <resourceProperties id="_CnjQkKoyEe2JELvxKSEu4w" name="created" occurs="zeroOrOne" valueType="DateTime"/>
       <resourceProperties id="_MgdPYKoyEe2JELvxKSEu4w" name="modified" occurs="zeroOrOne" valueType="DateTime"/>
       <resourceProperties id="_uic4oKozEe2JELvxKSEu4w" name="creator" occurs="zeroOrMany" valueType="Resource" range="_bfFK0KoyEe2JELvxKSEu4w"/>
@@ -42,12 +74,25 @@
       <resourceProperties id="_ulZTYKo9Ee2JELvxKSEu4w" name="mbox" valueType="String"/>
     </domainSpecifications>
     <domainSpecifications name="OSLC Core" namespaceURI="http://open-services.net/ns/core#" namespacePrefix="//@specification/@domainPrefixes[name='oslc']">
-      <resourceProperties id="_p_bEQKoxEe2JELvxKSEu4w" name="shortTitle" occurs="zeroOrOne" valueType="XMLLiteral"/>
+      <resourceProperties id="_p_bEQKoxEe2JELvxKSEu4w" name="shortTitle" occurs="zeroOrOne" readOnly="true" valueType="XMLLiteral"/>
+    </domainSpecifications>
+    <domainSpecifications name="JIRA" namespaceURI="" namespacePrefix="//@specification/@domainPrefixes[name='jira']">
+      <resources id="_TL1v8a1sEe2IH_zh0OGsFw" name="Project" resourceProperties="_B2L6gKoxEe2JELvxKSEu4w _JkXuMKoxEe2JELvxKSEu4w _SLU88KoxEe2JELvxKSEu4w _p_bEQKoxEe2JELvxKSEu4w"/>
+      <resourceProperties id="_TL1v8K1sEe2IH_zh0OGsFw" name="project" valueType="Resource" range="_TL1v8a1sEe2IH_zh0OGsFw"/>
+    </domainSpecifications>
+    <domainSpecifications name="JIRA R4J" namespaceURI="" namespacePrefix="//@specification/@domainPrefixes[name='jira_r4j']">
+      <resources id="_TL3lIa1sEe2IH_zh0OGsFw" name="Folder" resourceProperties="_B2L6gKoxEe2JELvxKSEu4w _JkXuMKoxEe2JELvxKSEu4w _SLU88KoxEe2JELvxKSEu4w _TL2-Ea1sEe2IH_zh0OGsFw _TL3lIK1sEe2IH_zh0OGsFw _YNKw0K3lEe2IH_zh0OGsFw"/>
+      <resourceProperties id="_TL2-EK1sEe2IH_zh0OGsFw" name="folder" occurs="zeroOrOne" valueType="Resource" range="_TL3lIa1sEe2IH_zh0OGsFw"/>
+      <resourceProperties id="_TL2-Ea1sEe2IH_zh0OGsFw" name="subfolder" occurs="zeroOrMany" valueType="Resource" range="_TL3lIa1sEe2IH_zh0OGsFw"/>
+      <resourceProperties id="_TL3lIK1sEe2IH_zh0OGsFw" name="parent" occurs="zeroOrOne" valueType="Resource" range="_TL3lIa1sEe2IH_zh0OGsFw"/>
+      <resourceProperties id="_YNKw0K3lEe2IH_zh0OGsFw" name="path" valueType="String"/>
     </domainSpecifications>
     <domainPrefixes name="oslc_rm"/>
     <domainPrefixes name="dcterms"/>
     <domainPrefixes name="foaf"/>
     <domainPrefixes name="oslc"/>
+    <domainPrefixes name="jira"/>
+    <domainPrefixes name="jira_r4j"/>
   </specification>
   <vocabularies/>
 </oslc4j_tc:Toolchain>
