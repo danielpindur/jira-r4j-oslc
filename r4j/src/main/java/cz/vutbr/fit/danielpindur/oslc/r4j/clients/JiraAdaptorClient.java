@@ -15,13 +15,14 @@
  */
 // End of user code
 
-package cz.vutbr.fit.danielpindur.oslc.jira.clients;
+package cz.vutbr.fit.danielpindur.oslc.r4j.clients;
 
 import javax.ws.rs.core.Response;
 import org.eclipse.lyo.client.OSLCConstants;
 import org.eclipse.lyo.client.OslcClient;
 import org.eclipse.lyo.oslc4j.core.model.ServiceProviderCatalog;
-import cz.vutbr.fit.danielpindur.oslc.jira.resources.Folder;
+import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Requirement;
+import cz.vutbr.fit.danielpindur.oslc.r4j.resources.RequirementCollection;
 
 // Start of user code imports
 // End of user code
@@ -30,7 +31,7 @@ import cz.vutbr.fit.danielpindur.oslc.jira.resources.Folder;
 // Start of user code pre_class_code
 // End of user code
 
-public class R4JAdaptorClient
+public class JiraAdaptorClient
 {
 
     // Start of user code class_attributes
@@ -39,7 +40,7 @@ public class R4JAdaptorClient
     // Start of user code class_methods
     // End of user code
 
-    static String serviceProviderCatalogURI = "http://localhost:8082/r4j/services/catalog/singleton";
+    static String serviceProviderCatalogURI = "http://localhost:8081/jira/services/catalog/singleton";
 
     public static ServiceProviderCatalog getServiceProviderCatalog() throws Exception {
         OslcClient client = new OslcClient();
@@ -58,19 +59,36 @@ public class R4JAdaptorClient
         return catalog;
     }
 
-    public static Folder getFolder(String resourceURI) throws Exception {
+    public static Requirement getRequirement(String resourceURI) throws Exception {
         OslcClient client = new OslcClient();
         Response response = null;
-        Folder resource = null;
+        Requirement resource = null;
 
-        // Start of user code getFolder_init
+        // Start of user code getRequirement_init
         // End of user code
 
         response = client.getResource(resourceURI, OSLCConstants.CT_RDF);
         if (response != null) {
-            resource = response.readEntity(Folder.class);
+            resource = response.readEntity(Requirement.class);
         }
-        // Start of user code getFolder_final
+        // Start of user code getRequirement_final
+        // End of user code
+        return resource;
+    }
+
+    public static RequirementCollection getRequirementCollection(String resourceURI) throws Exception {
+        OslcClient client = new OslcClient();
+        Response response = null;
+        RequirementCollection resource = null;
+
+        // Start of user code getRequirementCollection_init
+        // End of user code
+
+        response = client.getResource(resourceURI, OSLCConstants.CT_RDF);
+        if (response != null) {
+            resource = response.readEntity(RequirementCollection.class);
+        }
+        // Start of user code getRequirementCollection_final
         // End of user code
         return resource;
     }

@@ -141,11 +141,6 @@
             <artifactId>oslc4j-json4j-provider</artifactId>
             <version>${version.lyo}</version>
         </dependency>
-        <dependency>
-            <groupId>org.eclipse.lyo.clients</groupId>
-            <artifactId>oslc-client</artifactId>
-            <version>${version.lyo}</version>
-        </dependency>
         
         <!-- Swagger dependencies -->
         <dependency>

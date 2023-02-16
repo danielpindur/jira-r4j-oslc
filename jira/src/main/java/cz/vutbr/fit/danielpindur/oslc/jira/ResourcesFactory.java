@@ -24,7 +24,6 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.eclipse.lyo.oslc4j.core.model.Link;
 import org.eclipse.lyo.oslc4j.core.OSLC4JUtils;
-import cz.vutbr.fit.danielpindur.oslc.jira.resources.Folder;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Person;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Project;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Requirement;

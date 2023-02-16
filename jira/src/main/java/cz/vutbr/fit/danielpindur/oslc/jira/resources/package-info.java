@@ -24,7 +24,6 @@
     @OslcNamespaceDefinition(prefix = JiraDomainConstants.JIRA_NAMSPACE_PREFIX, namespaceURI = JiraDomainConstants.JIRA_NAMSPACE),
     @OslcNamespaceDefinition(prefix = FoafDomainConstants.FOAF_NAMSPACE_PREFIX, namespaceURI = FoafDomainConstants.FOAF_NAMSPACE),
     @OslcNamespaceDefinition(prefix = Oslc_rmDomainConstants.OSLC_REQUIREMENTS_MANAGEMENT_NAMSPACE_PREFIX, namespaceURI = Oslc_rmDomainConstants.OSLC_REQUIREMENTS_MANAGEMENT_NAMSPACE),
-    @OslcNamespaceDefinition(prefix = Jira_r4jDomainConstants.JIRA_R4J_NAMSPACE_PREFIX, namespaceURI = Jira_r4jDomainConstants.JIRA_R4J_NAMSPACE),
 })
 package cz.vutbr.fit.danielpindur.oslc.jira.resources;
 
@@ -34,4 +33,3 @@ import org.eclipse.lyo.oslc4j.core.model.OslcConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.JiraDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.FoafDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Oslc_rmDomainConstants;
-import cz.vutbr.fit.danielpindur.oslc.jira.resources.Jira_r4jDomainConstants;

@@ -38,7 +38,6 @@ import cz.vutbr.fit.danielpindur.oslc.jira.ServiceProviderInfo;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.DctermsDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.FoafDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.JiraDomainConstants;
-import cz.vutbr.fit.danielpindur.oslc.jira.resources.Jira_r4jDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.OslcDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Oslc_rmDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.services.ServiceProviderService1;

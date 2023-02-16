@@ -29,7 +29,6 @@ import org.eclipse.lyo.oslc4j.core.OSLC4JUtils;
 import org.eclipse.lyo.oslc4j.core.model.AbstractResource;
 import cz.vutbr.fit.danielpindur.oslc.jira.servlet.ServiceProviderCatalogSingleton;
 import cz.vutbr.fit.danielpindur.oslc.jira.ServiceProviderInfo;
-import cz.vutbr.fit.danielpindur.oslc.jira.resources.Folder;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Person;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Project;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Requirement;

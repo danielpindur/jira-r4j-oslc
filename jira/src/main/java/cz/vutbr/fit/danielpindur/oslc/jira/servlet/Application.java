@@ -59,7 +59,6 @@ import cz.vutbr.fit.danielpindur.oslc.jira.services.ServiceProviderCatalogServic
 import cz.vutbr.fit.danielpindur.oslc.jira.services.ServiceProviderService;
 import cz.vutbr.fit.danielpindur.oslc.jira.services.ResourceShapeService;
 
-import cz.vutbr.fit.danielpindur.oslc.jira.resources.Folder;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Person;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Project;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Requirement;
@@ -67,7 +66,6 @@ import cz.vutbr.fit.danielpindur.oslc.jira.resources.RequirementCollection;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.DctermsDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.FoafDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.JiraDomainConstants;
-import cz.vutbr.fit.danielpindur.oslc.jira.resources.Jira_r4jDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.OslcDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Oslc_rmDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.services.ServiceProviderService1;
@@ -146,7 +144,6 @@ public class Application extends javax.ws.rs.core.Application {
         RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(OslcConstants.PATH_SERVICE_PROVIDER,         ServiceProvider.class);
         RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(OslcConstants.PATH_SERVICE_PROVIDER_CATALOG, ServiceProviderCatalog.class);
 
-        RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(Jira_r4jDomainConstants.FOLDER_PATH, Folder.class);
         RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(FoafDomainConstants.PERSON_PATH, Person.class);
         RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(JiraDomainConstants.PROJECT_PATH, Project.class);
         RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(Oslc_rmDomainConstants.REQUIREMENT_PATH, Requirement.class);
