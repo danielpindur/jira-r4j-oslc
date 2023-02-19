@@ -92,6 +92,21 @@
         
         </dd>
     </dl>
+    <dl class="dl-horizontal">
+        <% method = Person.class.getMethod("getIdentifier"); %>
+        <dt><a href="<%=method.getAnnotation(OslcPropertyDefinition.class).value() %>"><%=method.getAnnotation(OslcName.class).value()%></a></dt>
+        <dd>
+        <%
+        if (aPerson.getIdentifier() == null) {
+            out.write("<em>null</em>");
+        }
+        else {
+            out.write(aPerson.getIdentifier().toString());
+        }
+        %>
+        
+        </dd>
+    </dl>
 </div>
 <%
 Map<QName, Object> extendedProperties = aPerson.getExtendedProperties();

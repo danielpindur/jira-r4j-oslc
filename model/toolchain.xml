@@ -25,12 +25,13 @@
     </serviceProviderCatalog>
     <webServices name="RequirementService" serviceUrlPattern="requirement" resourceUrlPattern="[ResourceType]/{id}" resourceTypes="_mJ99AKouEe2JELvxKSEu4w" delete="true" update="true"/>
     <webServices name="RequirementCollectionService" serviceUrlPattern="requirementCollection" resourceUrlPattern="[ResourceType]/{id}" resourceTypes="_mJ99AaouEe2JELvxKSEu4w" delete="true" update="true"/>
-    <webServices name="PersonService" serviceUrlPattern="person" resourceUrlPattern="[ResourceType]/{email}" resourceTypes="_bfFK0KoyEe2JELvxKSEu4w"/>
+    <webServices name="PersonService" serviceUrlPattern="person" resourceUrlPattern="[ResourceType]/{id}" resourceTypes="_bfFK0KoyEe2JELvxKSEu4w"/>
     <webServices name="ProjectService" serviceUrlPattern="project" resourceUrlPattern="[ResourceType]/{id}" resourceTypes="_TL1v8a1sEe2IH_zh0OGsFw"/>
     <specification/>
     <configuration xsi:type="oslc4j_ai:MavenServerConfiguration" rootServerBaseUrl="http://localhost:8081/" applicationContextPath="/jira" servletUrlPattern="/services/*" jettyPort="8081">
       <generalConfiguration filesBasePath="./jira" javaBasePackageName="cz.vutbr.fit.danielpindur.oslc.jira"/>
       <projectConfiguration xsi:type="oslc4j_ai:MavenProjectConfiguration" lyoVersion="5.0.0.Final" groupId="cz.vutbr.fit.danielpindur.oslc.jira" artifactId="jira" version="0.0.1-SNAPSHOT"/>
+      <authenticationConfiguration applicationName="Jira Adaptor" oauthRealm="Jira Adaptor"/>
     </configuration>
   </adaptorInterfaces>
   <adaptorInterfaces name="R4J">
@@ -69,7 +70,7 @@
       <resourceProperties id="_3MYi4KozEe2JELvxKSEu4w" name="contributor" occurs="zeroOrMany" valueType="Resource" range="_bfFK0KoyEe2JELvxKSEu4w"/>
     </domainSpecifications>
     <domainSpecifications name="FOAF" namespaceURI="http://xmlns.com/foaf/0.1/" namespacePrefix="//@specification/@domainPrefixes[name='foaf']">
-      <resources id="_bfFK0KoyEe2JELvxKSEu4w" name="Person" resourceProperties="_O-GyAKo8Ee2JELvxKSEu4w _ulZTYKo9Ee2JELvxKSEu4w"/>
+      <resources id="_bfFK0KoyEe2JELvxKSEu4w" name="Person" resourceProperties="_O-GyAKo8Ee2JELvxKSEu4w _ulZTYKo9Ee2JELvxKSEu4w _SLU88KoxEe2JELvxKSEu4w"/>
       <resourceProperties id="_O-GyAKo8Ee2JELvxKSEu4w" name="name" valueType="String"/>
       <resourceProperties id="_ulZTYKo9Ee2JELvxKSEu4w" name="mbox" valueType="String"/>
     </domainSpecifications>

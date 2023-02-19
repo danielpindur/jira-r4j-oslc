@@ -51,25 +51,25 @@ public class ResourcesFactory {
 
     //methods for Person resource
     
-    public Person createPerson(final String email) {
-        return new Person(constructURIForPerson(email));
+    public Person createPerson(final String id) {
+        return new Person(constructURIForPerson(id));
     }
     
-    public URI constructURIForPerson(final String email) {
+    public URI constructURIForPerson(final String id) {
         Map<String, Object> pathParameters = new HashMap<String, Object>();
-        pathParameters.put("email", email);
-        String instanceURI = "person/Person/{email}";
+        pathParameters.put("id", id);
+        String instanceURI = "person/Person/{id}";
     
         final UriBuilder builder = UriBuilder.fromUri(this.basePath);
         return builder.path(instanceURI).buildFromMap(pathParameters);
     }
     
-    public Link constructLinkForPerson(final String email , final String label) {
-        return new Link(constructURIForPerson(email), label);
+    public Link constructLinkForPerson(final String id , final String label) {
+        return new Link(constructURIForPerson(id), label);
     }
     
-    public Link constructLinkForPerson(final String email) {
-        return new Link(constructURIForPerson(email));
+    public Link constructLinkForPerson(final String id) {
+        return new Link(constructURIForPerson(id));
     }
     
 

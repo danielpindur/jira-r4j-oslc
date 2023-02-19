@@ -55,6 +55,7 @@ import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
+import cz.vutbr.fit.danielpindur.oslc.jira.services.RootServicesService;
 import cz.vutbr.fit.danielpindur.oslc.jira.services.ServiceProviderCatalogService;
 import cz.vutbr.fit.danielpindur.oslc.jira.services.ServiceProviderService;
 import cz.vutbr.fit.danielpindur.oslc.jira.services.ResourceShapeService;
@@ -123,6 +124,15 @@ public class Application extends javax.ws.rs.core.Application {
         RESOURCE_CLASSES.add(OpenApiResource.class);
         RESOURCE_CLASSES.add(AcceptHeaderOpenApiResource.class);
 
+        // OAuth resources
+        RESOURCE_CLASSES.add(RootServicesService.class);
+        try {
+            RESOURCE_CLASSES.add(Class.forName("org.eclipse.lyo.server.oauth.webapp.services.ConsumersService"));
+            RESOURCE_CLASSES.add(Class.forName("org.eclipse.lyo.server.oauth.webapp.services.OAuthService"));
+        } catch (ClassNotFoundException e) {
+            // Start of user code OAuthServiceClasses_notFound
+            // End of user code
+        }
         
         // Start of user code Custom Resource Classes
         // End of user code

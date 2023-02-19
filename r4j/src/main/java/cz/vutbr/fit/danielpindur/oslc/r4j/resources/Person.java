@@ -58,6 +58,7 @@ import org.eclipse.lyo.oslc4j.core.model.ResourceShapeFactory;
 
 import cz.vutbr.fit.danielpindur.oslc.r4j.resources.FoafDomainConstants;
 
+import cz.vutbr.fit.danielpindur.oslc.r4j.resources.DctermsDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.r4j.resources.FoafDomainConstants;
 // Start of user code imports
 // End of user code
@@ -80,6 +81,9 @@ public class Person
     // Start of user code attributeAnnotation:mbox
     // End of user code
     private String mbox;
+    // Start of user code attributeAnnotation:identifier
+    // End of user code
+    private String identifier;
     
     // Start of user code classAttributes
     // End of user code
@@ -164,6 +168,20 @@ public class Person
         return mbox;
     }
 
+    // Start of user code getterAnnotation:identifier
+    // End of user code
+    @OslcName("identifier")
+    @OslcPropertyDefinition(DctermsDomainConstants.DUBLIN_CORE_NAMSPACE + "identifier")
+    @OslcOccurs(Occurs.ZeroOrOne)
+    @OslcValueType(ValueType.String)
+    @OslcReadOnly(true)
+    public String getIdentifier()
+    {
+        // Start of user code getterInit:identifier
+        // End of user code
+        return identifier;
+    }
+
     // Start of user code setterAnnotation:name
     // End of user code
     public void setName(final String name )
@@ -183,6 +201,17 @@ public class Person
         // End of user code
         this.mbox = mbox;
         // Start of user code setterFinalize:mbox
+        // End of user code
+    }
+
+    // Start of user code setterAnnotation:identifier
+    // End of user code
+    public void setIdentifier(final String identifier )
+    {
+        // Start of user code setterInit:identifier
+        // End of user code
+        this.identifier = identifier;
+        // Start of user code setterFinalize:identifier
         // End of user code
     }
 

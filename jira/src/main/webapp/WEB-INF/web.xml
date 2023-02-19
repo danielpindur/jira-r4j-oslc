@@ -46,6 +46,15 @@
         <servlet-name>JAX-RS Servlet</servlet-name>
         <url-pattern>/services/*</url-pattern>
     </servlet-mapping>
+    <filter>
+        <display-name>CredentialsFilter</display-name>
+        <filter-name>CredentialsFilter</filter-name>
+        <filter-class>cz.vutbr.fit.danielpindur.oslc.jira.servlet.CredentialsFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CredentialsFilter</filter-name>
+        <url-pattern>/services/*</url-pattern>
+    </filter-mapping>
     <!-- Start of user code webxml4
     -->
     <!-- TODO: Add additional configurations here to avoid them be overridden upon future re-generation -->

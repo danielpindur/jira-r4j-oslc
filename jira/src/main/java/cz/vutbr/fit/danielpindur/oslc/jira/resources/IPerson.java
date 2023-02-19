@@ -53,6 +53,7 @@ import org.eclipse.lyo.oslc4j.core.model.Representation;
 import org.eclipse.lyo.oslc4j.core.model.ValueType;
 
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.FoafDomainConstants;
+import cz.vutbr.fit.danielpindur.oslc.jira.resources.DctermsDomainConstants;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.FoafDomainConstants;
 // Start of user code imports
 // End of user code
@@ -78,8 +79,16 @@ public interface IPerson
     @OslcReadOnly(false)
     public String getMbox();
 
+    @OslcName("identifier")
+    @OslcPropertyDefinition(DctermsDomainConstants.DUBLIN_CORE_NAMSPACE + "identifier")
+    @OslcOccurs(Occurs.ZeroOrOne)
+    @OslcValueType(ValueType.String)
+    @OslcReadOnly(true)
+    public String getIdentifier();
+
 
     public void setName(final String name );
     public void setMbox(final String mbox );
+    public void setIdentifier(final String identifier );
 }
 

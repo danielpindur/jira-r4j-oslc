@@ -37,6 +37,10 @@ import cz.vutbr.fit.danielpindur.oslc.jira.resources.RequirementCollection;
 
 
 // Start of user code imports
+import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.UserRestClient;
+import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import java.net.URI;
 // End of user code
 
 // Start of user code pre_class_code
@@ -69,7 +73,14 @@ public class RestDelegate {
         ServiceProviderInfo[] serviceProviderInfos = {};
         
         // Start of user code "ServiceProviderInfo[] getServiceProviderInfos(...)"
-        // TODO Implement code to return the set of ServiceProviders
+
+        ServiceProviderInfo r1 = new ServiceProviderInfo();
+        r1.name = "JIRA Provider";
+        r1.serviceProviderId = "1"; // TODO: Is this id okay?
+
+        serviceProviderInfos = new ServiceProviderInfo[1];
+        serviceProviderInfos[0] = r1;
+
         // End of user code
         return serviceProviderInfos;
     }
@@ -290,12 +301,26 @@ public class RestDelegate {
         // End of user code
         return updatedResource;
     }
-    public Person getPerson(HttpServletRequest httpServletRequest, final String email)
+    public Person getPerson(HttpServletRequest httpServletRequest, final String id)
     {
         Person aResource = null;
         
         
         // Start of user code getPerson
+        var restClient = new AsynchronousJiraRestClientFactory()
+            .createWithBasicHttpAuthentication(URI.create("http://localhost:8080"));
+
+        var userClient = restClient.getUserClient();
+
+        var user = userClient.getUser(id).claim();
+
+        if (user != null) {
+            aResource = new Person();
+            aResource.setName(user.getName());
+            aResource.setMbox(user.getEmailAddress());
+        }
+
+
         // TODO Implement code to return a resource
         // return 'null' if the resource was not found.
         // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
@@ -310,6 +335,8 @@ public class RestDelegate {
         
         
         // Start of user code getProject
+
+        
         // TODO Implement code to return a resource
         // return 'null' if the resource was not found.
         // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)

@@ -120,7 +120,7 @@ public class PersonService
     }
 
     @GET
-    @Path("Person/{email}")
+    @Path("Person/{id}")
     @Produces({OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_JSON_LD, OslcMediaType.TEXT_TURTLE, OslcMediaType.APPLICATION_XML, OslcMediaType.APPLICATION_JSON})
     @Operation(
         summary = "GET for resources of type {'" + FoafDomainConstants.PERSON_LOCALNAME + "'}",
@@ -136,13 +136,13 @@ public class PersonService
         }
     )
     public Person getPerson(
-                @PathParam("email") final String email
+                @PathParam("id") final String id
         ) throws IOException, ServletException, URISyntaxException
     {
         // Start of user code getResource_init
         // End of user code
 
-        final Person aPerson = delegate.getPerson(httpServletRequest, email);
+        final Person aPerson = delegate.getPerson(httpServletRequest, id);
 
         if (aPerson != null) {
             // Start of user code getPerson
@@ -156,7 +156,7 @@ public class PersonService
     }
 
     @GET
-    @Path("Person/{email}")
+    @Path("Person/{id}")
     @Produces({ MediaType.TEXT_HTML })
     @Operation(
         summary = "GET for resources of type {'" + FoafDomainConstants.PERSON_LOCALNAME + "'}",
@@ -172,13 +172,13 @@ public class PersonService
         }
     )
     public void getPersonAsHtml(
-        @PathParam("email") final String email
+        @PathParam("id") final String id
         ) throws ServletException, IOException, URISyntaxException
     {
         // Start of user code getPersonAsHtml_init
         // End of user code
 
-        final Person aPerson = delegate.getPerson(httpServletRequest, email);
+        final Person aPerson = delegate.getPerson(httpServletRequest, id);
 
         if (aPerson != null) {
             httpServletRequest.setAttribute("aPerson", aPerson);
@@ -194,7 +194,7 @@ public class PersonService
     }
 
     @GET
-    @Path("Person/{email}")
+    @Path("Person/{id}")
     @Produces({OslcMediaType.APPLICATION_X_OSLC_COMPACT_XML})
     @Operation(
         summary = "GET for resources of type {'" + FoafDomainConstants.PERSON_LOCALNAME + "'}",
@@ -210,7 +210,7 @@ public class PersonService
         }
     )
     public Compact getPersonCompact(
-        @PathParam("email") final String email
+        @PathParam("id") final String id
         ) throws ServletException, IOException, URISyntaxException
     {
         String iconUri = OSLC4JUtils.getPublicURI() + "/images/ui_preview_icon.gif";
@@ -223,7 +223,7 @@ public class PersonService
         //TODO: adjust the preview height & width values from the default values provided above.
         // End of user code
 
-        final Person aPerson = delegate.getPerson(httpServletRequest, email);
+        final Person aPerson = delegate.getPerson(httpServletRequest, id);
 
         if (aPerson != null) {
             final Compact compact = new Compact();
@@ -254,16 +254,16 @@ public class PersonService
     }
 
     @GET
-    @Path("Person/{email}/smallPreview")
+    @Path("Person/{id}/smallPreview")
     @Produces({ MediaType.TEXT_HTML })
     public void getPersonAsHtmlSmallPreview(
-        @PathParam("email") final String email
+        @PathParam("id") final String id
         ) throws ServletException, IOException, URISyntaxException
     {
         // Start of user code getPersonAsHtmlSmallPreview_init
         // End of user code
 
-        final Person aPerson = delegate.getPerson(httpServletRequest, email);
+        final Person aPerson = delegate.getPerson(httpServletRequest, id);
 
         if (aPerson != null) {
             httpServletRequest.setAttribute("aPerson", aPerson);
@@ -281,16 +281,16 @@ public class PersonService
     }
 
     @GET
-    @Path("Person/{email}/largePreview")
+    @Path("Person/{id}/largePreview")
     @Produces({ MediaType.TEXT_HTML })
     public void getPersonAsHtmlLargePreview(
-        @PathParam("email") final String email
+        @PathParam("id") final String id
         ) throws ServletException, IOException, URISyntaxException
     {
         // Start of user code getPersonAsHtmlLargePreview_init
         // End of user code
 
-        final Person aPerson = delegate.getPerson(httpServletRequest, email);
+        final Person aPerson = delegate.getPerson(httpServletRequest, id);
 
         if (aPerson != null) {
             httpServletRequest.setAttribute("aPerson", aPerson);
