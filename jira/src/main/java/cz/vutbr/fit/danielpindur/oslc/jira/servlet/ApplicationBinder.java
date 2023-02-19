@@ -18,6 +18,7 @@
 package cz.vutbr.fit.danielpindur.oslc.jira.servlet;
 
 import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.glassfish.hk2.api.Factory;
@@ -30,6 +31,10 @@ import cz.vutbr.fit.danielpindur.oslc.jira.ResourcesFactory;
 
 import org.eclipse.lyo.oslc4j.core.OSLC4JUtils;
 // Start of user code imports
+import cz.vutbr.fit.danielpindur.oslc.jira.facades.PersonFacade;
+import cz.vutbr.fit.danielpindur.oslc.jira.facades.ProjectFacade;
+import cz.vutbr.fit.danielpindur.oslc.jira.facades.RequirementFacade;
+import cz.vutbr.fit.danielpindur.oslc.jira.facades.RequirementCollectionFacade;
 // End of user code
 
 // Start of user code pre_class_code
@@ -53,10 +58,17 @@ public class ApplicationBinder extends AbstractBinder {
     @Override
     protected void configure() {
         log.info("HK2 contract binding start");
-    
+
+        // Start of user code ConfigureInitialise
+        bindAsContract(PersonFacade.class).in(Singleton.class);
+        bindAsContract(ProjectFacade.class).in(Singleton.class);
+        bindAsContract(RequirementFacade.class).in(Singleton.class);
+        bindAsContract(RequirementCollectionFacade.class).in(Singleton.class);
+        // End of user code
         bindAsContract(RestDelegate.class).in(Singleton.class);
         bindFactory(ResourcesFactoryFactory.class).to(ResourcesFactory.class).in(Singleton.class);
-    
+        // Start of user code ConfigureFinalize
+        // End of user code
     }
     static class ResourcesFactoryFactory implements Factory<ResourcesFactory> {
         @Override

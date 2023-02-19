@@ -18,17 +18,11 @@ package cz.vutbr.fit.danielpindur.oslc.jira;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.ServletContextEvent;
 import java.util.List;
-import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eclipse.lyo.oslc4j.core.model.ServiceProvider;
-import org.eclipse.lyo.oslc4j.core.OSLC4JUtils;
-import org.eclipse.lyo.oslc4j.core.model.AbstractResource;
-import cz.vutbr.fit.danielpindur.oslc.jira.servlet.ServiceProviderCatalogSingleton;
-import cz.vutbr.fit.danielpindur.oslc.jira.ServiceProviderInfo;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Person;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Project;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Requirement;
@@ -37,10 +31,10 @@ import cz.vutbr.fit.danielpindur.oslc.jira.resources.RequirementCollection;
 
 
 // Start of user code imports
-import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.UserRestClient;
-import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
-import java.net.URI;
+import cz.vutbr.fit.danielpindur.oslc.jira.facades.PersonFacade;
+import cz.vutbr.fit.danielpindur.oslc.jira.facades.ProjectFacade;
+import cz.vutbr.fit.danielpindur.oslc.jira.facades.RequirementFacade;
+import cz.vutbr.fit.danielpindur.oslc.jira.facades.RequirementCollectionFacade;
 // End of user code
 
 // Start of user code pre_class_code
@@ -54,6 +48,10 @@ public class RestDelegate {
     
     @Inject ResourcesFactory resourcesFactory;
     // Start of user code class_attributes
+    @Inject PersonFacade personFacade;
+    @Inject ProjectFacade projectFacade;
+    @Inject RequirementFacade requirementFacade;
+    @Inject RequirementCollectionFacade requirementCollectionFacade;
     // End of user code
     
     public RestDelegate() {
@@ -198,9 +196,7 @@ public class RestDelegate {
         
         
         // Start of user code PersonSelector
-        // TODO Implement code to return a set of resources, based on search criteria 
-        // An empty List should imply that no resources where found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        resources = personFacade.search(terms);
         // End of user code
         return resources;
     }
@@ -225,9 +221,7 @@ public class RestDelegate {
         
         
         // Start of user code ProjectSelector
-        // TODO Implement code to return a set of resources, based on search criteria 
-        // An empty List should imply that no resources where found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        resources = projectFacade.search(terms);
         // End of user code
         return resources;
     }
@@ -241,9 +235,7 @@ public class RestDelegate {
         
         
         // Start of user code getRequirement
-        // TODO Implement code to return a resource
-        // return 'null' if the resource was not found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        aResource = requirementFacade.get(id);
         // End of user code
         return aResource;
     }
@@ -274,9 +266,7 @@ public class RestDelegate {
         
         
         // Start of user code getRequirementCollection
-        // TODO Implement code to return a resource
-        // return 'null' if the resource was not found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        aResource = requirementCollectionFacade.get(id);
         // End of user code
         return aResource;
     }
@@ -307,23 +297,7 @@ public class RestDelegate {
         
         
         // Start of user code getPerson
-        var restClient = new AsynchronousJiraRestClientFactory()
-            .createWithBasicHttpAuthentication(URI.create("http://localhost:8080"));
-
-        var userClient = restClient.getUserClient();
-
-        var user = userClient.getUser(id).claim();
-
-        if (user != null) {
-            aResource = new Person();
-            aResource.setName(user.getName());
-            aResource.setMbox(user.getEmailAddress());
-        }
-
-
-        // TODO Implement code to return a resource
-        // return 'null' if the resource was not found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        aResource = personFacade.get(id);
         // End of user code
         return aResource;
     }
@@ -335,11 +309,7 @@ public class RestDelegate {
         
         
         // Start of user code getProject
-
-        
-        // TODO Implement code to return a resource
-        // return 'null' if the resource was not found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        aResource = projectFacade.get(id);
         // End of user code
         return aResource;
     }
