@@ -75,6 +75,7 @@ public interface IRequirement
     public void addContributor(final Link contributor );
     public void addDecomposedBy(final Link decomposedBy );
     public void addDecomposes(final Link decomposes );
+    public void addSubject(final String subject );
 
     @OslcName("description")
     @OslcPropertyDefinition(DctermsDomainConstants.DUBLIN_CORE_NAMSPACE + "description")
@@ -158,6 +159,20 @@ public interface IRequirement
     @OslcReadOnly(false)
     public Link getProject();
 
+    @OslcName("subject")
+    @OslcPropertyDefinition(DctermsDomainConstants.DUBLIN_CORE_NAMSPACE + "subject")
+    @OslcOccurs(Occurs.ZeroOrMany)
+    @OslcValueType(ValueType.String)
+    @OslcReadOnly(false)
+    public Set<String> getSubject();
+
+    @OslcName("jiraId")
+    @OslcPropertyDefinition(JiraDomainConstants.JIRA_NAMSPACE + "jiraId")
+    @OslcOccurs(Occurs.ExactlyOne)
+    @OslcValueType(ValueType.Integer)
+    @OslcReadOnly(true)
+    public Integer getJiraId();
+
 
     public void setDescription(final String description );
     public void setIdentifier(final String identifier );
@@ -170,5 +185,7 @@ public interface IRequirement
     public void setDecomposedBy(final Set<Link> decomposedBy );
     public void setDecomposes(final Set<Link> decomposes );
     public void setProject(final Link project );
+    public void setSubject(final Set<String> subject );
+    public void setJiraId(final Integer jiraId );
 }
 

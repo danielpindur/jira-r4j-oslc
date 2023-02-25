@@ -708,6 +708,21 @@ public class ServiceProviderService1
                 }
 
         }
+        paramValues = formParams.get("subject");
+        if (paramValues != null) {
+                for(int i=0; i<paramValues.size(); i++) {
+                    aResource.addSubject(paramValues.get(i));
+                }
+        }
+        paramValues = formParams.get("jiraId");
+        if (paramValues != null) {
+                if (paramValues.size() == 1) {
+                    if (paramValues.get(0).length() != 0)
+                        aResource.setJiraId(Integer.valueOf(paramValues.get(0)));
+                    // else, there is an empty value for that parameter, and hence ignore since the parameter is not actually set.
+                }
+
+        }
 
         newResource = delegate.createRequirementFromDialog(httpServletRequest, aResource);
 
@@ -873,6 +888,21 @@ public class ServiceProviderService1
                 for(int i=0; i<paramValues.size(); i++) {
                     aResource.addCreator(new Link(new URI(paramValues.get(i))));
                 }
+        }
+        paramValues = formParams.get("subject");
+        if (paramValues != null) {
+                for(int i=0; i<paramValues.size(); i++) {
+                    aResource.addSubject(paramValues.get(i));
+                }
+        }
+        paramValues = formParams.get("jiraId");
+        if (paramValues != null) {
+                if (paramValues.size() == 1) {
+                    if (paramValues.get(0).length() != 0)
+                        aResource.setJiraId(Integer.valueOf(paramValues.get(0)));
+                    // else, there is an empty value for that parameter, and hence ignore since the parameter is not actually set.
+                }
+
         }
 
         newResource = delegate.createRequirementCollectionFromDialog(httpServletRequest, aResource);

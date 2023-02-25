@@ -115,6 +115,12 @@ public class Requirement
     // Start of user code attributeAnnotation:project
     // End of user code
     private Link project;
+    // Start of user code attributeAnnotation:subject
+    // End of user code
+    private Set<String> subject = new HashSet<String>();
+    // Start of user code attributeAnnotation:jiraId
+    // End of user code
+    private Integer jiraId;
     
     // Start of user code classAttributes
     // End of user code
@@ -188,6 +194,11 @@ public class Requirement
     public void addDecomposes(final Link decomposes)
     {
         this.decomposes.add(decomposes);
+    }
+    
+    public void addSubject(final String subject)
+    {
+        this.subject.add(subject);
     }
     
     
@@ -350,6 +361,34 @@ public class Requirement
         return project;
     }
 
+    // Start of user code getterAnnotation:subject
+    // End of user code
+    @OslcName("subject")
+    @OslcPropertyDefinition(DctermsDomainConstants.DUBLIN_CORE_NAMSPACE + "subject")
+    @OslcOccurs(Occurs.ZeroOrMany)
+    @OslcValueType(ValueType.String)
+    @OslcReadOnly(false)
+    public Set<String> getSubject()
+    {
+        // Start of user code getterInit:subject
+        // End of user code
+        return subject;
+    }
+
+    // Start of user code getterAnnotation:jiraId
+    // End of user code
+    @OslcName("jiraId")
+    @OslcPropertyDefinition(JiraDomainConstants.JIRA_NAMSPACE + "jiraId")
+    @OslcOccurs(Occurs.ExactlyOne)
+    @OslcValueType(ValueType.Integer)
+    @OslcReadOnly(true)
+    public Integer getJiraId()
+    {
+        // Start of user code getterInit:jiraId
+        // End of user code
+        return jiraId;
+    }
+
     // Start of user code setterAnnotation:description
     // End of user code
     public void setDescription(final String description )
@@ -484,6 +523,32 @@ public class Requirement
         // End of user code
         this.project = project;
         // Start of user code setterFinalize:project
+        // End of user code
+    }
+
+    // Start of user code setterAnnotation:subject
+    // End of user code
+    public void setSubject(final Set<String> subject )
+    {
+        // Start of user code setterInit:subject
+        // End of user code
+        this.subject.clear();
+        if (subject != null)
+        {
+            this.subject.addAll(subject);
+        }
+        // Start of user code setterFinalize:subject
+        // End of user code
+    }
+
+    // Start of user code setterAnnotation:jiraId
+    // End of user code
+    public void setJiraId(final Integer jiraId )
+    {
+        // Start of user code setterInit:jiraId
+        // End of user code
+        this.jiraId = jiraId;
+        // Start of user code setterFinalize:jiraId
         // End of user code
     }
 

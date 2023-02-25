@@ -75,6 +75,7 @@ public interface IRequirementCollection
     public void addDecomposes(final Link decomposes );
     public void addContributor(final Link contributor );
     public void addCreator(final Link creator );
+    public void addSubject(final String subject );
 
     @OslcName("title")
     @OslcPropertyDefinition(DctermsDomainConstants.DUBLIN_CORE_NAMSPACE + "title")
@@ -158,6 +159,20 @@ public interface IRequirementCollection
     @OslcReadOnly(false)
     public Set<Link> getCreator();
 
+    @OslcName("subject")
+    @OslcPropertyDefinition(DctermsDomainConstants.DUBLIN_CORE_NAMSPACE + "subject")
+    @OslcOccurs(Occurs.ZeroOrMany)
+    @OslcValueType(ValueType.String)
+    @OslcReadOnly(false)
+    public Set<String> getSubject();
+
+    @OslcName("jiraId")
+    @OslcPropertyDefinition(JiraDomainConstants.JIRA_NAMSPACE + "jiraId")
+    @OslcOccurs(Occurs.ExactlyOne)
+    @OslcValueType(ValueType.Integer)
+    @OslcReadOnly(true)
+    public Integer getJiraId();
+
 
     public void setTitle(final String title );
     public void setDescription(final String description );
@@ -170,5 +185,7 @@ public interface IRequirementCollection
     public void setCreated(final Date created );
     public void setContributor(final Set<Link> contributor );
     public void setCreator(final Set<Link> creator );
+    public void setSubject(final Set<String> subject );
+    public void setJiraId(final Integer jiraId );
 }
 

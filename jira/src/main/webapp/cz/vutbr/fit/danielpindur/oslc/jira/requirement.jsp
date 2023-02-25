@@ -296,6 +296,36 @@
             
             </dd>
           </dl>
+          <dl class="row">
+            <% method = Requirement.class.getMethod("getSubject"); %>
+            <dt  class="col-sm-2 text-right"><a href="<%=method.getAnnotation(OslcPropertyDefinition.class).value() %>"><%=method.getAnnotation(OslcName.class).value()%></a></dt>
+            <dd class="col-sm-9">
+            <ul>
+            <%
+            Iterator<String> subjectItr = aRequirement.getSubject().iterator();
+            while(subjectItr.hasNext()) {
+                out.write("<li>" + subjectItr.next().toString() + "</li>");
+            }
+            %>
+            </ul>
+            
+            </dd>
+          </dl>
+          <dl class="row">
+            <% method = Requirement.class.getMethod("getJiraId"); %>
+            <dt  class="col-sm-2 text-right"><a href="<%=method.getAnnotation(OslcPropertyDefinition.class).value() %>"><%=method.getAnnotation(OslcName.class).value()%></a></dt>
+            <dd class="col-sm-9">
+            <%
+            if (aRequirement.getJiraId() == null) {
+                out.write("<em>null</em>");
+            }
+            else {
+                out.write(aRequirement.getJiraId().toString());
+            }
+            %>
+            
+            </dd>
+          </dl>
         </div>
         <%
         Map<QName, Object> extendedProperties = aRequirement.getExtendedProperties();

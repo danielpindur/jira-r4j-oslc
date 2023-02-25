@@ -124,6 +124,22 @@
             </td>
           </tr>
           <tr>
+            <td>
+            <label for="subject">subject: </LABEL>
+            <%
+            out.write("<input name=\"subject\" type=\"text\" style=\"width: 400px\" id=\"subject\" >");
+            %>
+            </td>
+          </tr>
+          <tr>
+            <td>
+            <label for="jiraId">jiraId: </LABEL>
+            <%
+            out.write("<input name=\"jiraId\" type=\"text\" style=\"width: 400px\" id=\"jiraId\" >");
+            %>
+            </td>
+          </tr>
+          <tr>
             <td></td>
             <td>
               <input type="button"
