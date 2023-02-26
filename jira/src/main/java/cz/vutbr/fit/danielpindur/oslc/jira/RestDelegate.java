@@ -304,8 +304,12 @@ public class RestDelegate {
         RequirementCollection updatedResource = null;
         
         // Start of user code updateRequirementCollection
-        // TODO Implement code to update and return a resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        if (aResource == null) {
+            log.error("Requirement Collection UPDATE: received an empty request");
+            throw new WebApplicationException("Requirement UPDATE: received an empty request", Response.Status.BAD_REQUEST);
+        }
+        // TODO: verify if project is specified as read-only
+        updatedResource = requirementCollectionFacade.update(aResource, id);
         // End of user code
         return updatedResource;
     }
