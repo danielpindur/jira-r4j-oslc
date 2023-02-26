@@ -32,9 +32,9 @@ public interface Jira_r4jDomainConstants
      * @deprecated use {@link Jira_r4jDomainConstants#JIRA_R4J_NAMSPACE} or {@link Jira_r4jDomainConstants#JIRA_R4J_DOMAIN_NAME} instead
      */
     @Deprecated(since = "5.0.1")
-    public static String JIRA_R4J_DOMAIN = "";
+    public static String JIRA_R4J_DOMAIN = "http://stud.fit.vutbr.cz/~xpindu01/oslc/ns/jira_r4j#";
     public static String JIRA_R4J_DOMAIN_NAME = "JIRA R4J";
-    public static String JIRA_R4J_NAMSPACE = ""; //Vocabulary namespace for the resources and resource properties, when no explicit vocabulary (describes, or propertyDefinition) is defined 
+    public static String JIRA_R4J_NAMSPACE = "http://stud.fit.vutbr.cz/~xpindu01/oslc/ns/jira_r4j#"; //Vocabulary namespace for the resources and resource properties, when no explicit vocabulary (describes, or propertyDefinition) is defined 
     public static String JIRA_R4J_NAMSPACE_PREFIX = "jira_r4j"; //Vocabulary prefix for the resources and resource properties, when no explicit vocabulary (describes, or propertyDefinition) is defined
 
     public static String FOLDER_PATH = "folder";  //the relative path of the resource shape URL.

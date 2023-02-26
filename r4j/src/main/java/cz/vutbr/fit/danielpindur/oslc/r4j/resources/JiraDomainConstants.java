@@ -32,9 +32,9 @@ public interface JiraDomainConstants
      * @deprecated use {@link JiraDomainConstants#JIRA_NAMSPACE} or {@link JiraDomainConstants#JIRA_DOMAIN_NAME} instead
      */
     @Deprecated(since = "5.0.1")
-    public static String JIRA_DOMAIN = "";
+    public static String JIRA_DOMAIN = "http://stud.fit.vutbr.cz/~xpindu01/oslc/ns/jira#";
     public static String JIRA_DOMAIN_NAME = "JIRA";
-    public static String JIRA_NAMSPACE = ""; //Vocabulary namespace for the resources and resource properties, when no explicit vocabulary (describes, or propertyDefinition) is defined 
+    public static String JIRA_NAMSPACE = "http://stud.fit.vutbr.cz/~xpindu01/oslc/ns/jira#"; //Vocabulary namespace for the resources and resource properties, when no explicit vocabulary (describes, or propertyDefinition) is defined 
     public static String JIRA_NAMSPACE_PREFIX = "jira"; //Vocabulary prefix for the resources and resource properties, when no explicit vocabulary (describes, or propertyDefinition) is defined
 
     public static String PROJECT_PATH = "project";  //the relative path of the resource shape URL.
