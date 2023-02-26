@@ -48,6 +48,7 @@ public class RequirementFacade extends IssueFacade {
 
         var projectUri = requirement.getProject().getValue();
 
+        // TODO: move to config
         createIssue(requirement.getDescription(),
                 "Requirement",
                 GetIdFromUri(projectUri),

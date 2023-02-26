@@ -155,8 +155,8 @@ public class RestDelegate {
         
         
         // Start of user code createRequirementCollection
-        // TODO Implement code to create a resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        // TODO: validate all needed properties are present as well as aResource exists
+        newResource = requirementCollectionFacade.create(aResource);
         // End of user code
         return newResource;
     }
@@ -167,8 +167,8 @@ public class RestDelegate {
         
         
         // Start of user code createRequirementFromDialog
-        // TODO Implement code to create a resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        // TODO: validate all needed properties are present as well as aResource exists
+        newResource = requirementFacade.create(aResource);
         // End of user code
         return newResource;
     }
@@ -178,8 +178,8 @@ public class RestDelegate {
         
         
         // Start of user code createRequirementCollectionFromDialog
-        // TODO Implement code to create a resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        // TODO: validate all needed properties are present as well as aResource exists
+        newResource = requirementCollectionFacade.create(aResource);
         // End of user code
         return newResource;
     }
