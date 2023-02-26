@@ -2,7 +2,6 @@ package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
 import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.api.domain.input.FieldInput;
-import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.api.domain.input.LinkIssuesInput;
 import org.eclipse.lyo.oslc4j.core.model.Link;
@@ -122,7 +121,7 @@ public class IssueFacade extends BaseFacade {
         return decomposes;
     }
 
-    protected void CreateLink(final String identifierFrom, final String identifierTo, final String linkTypeName) {
+    private void CreateLink(final String identifierFrom, final String identifierTo, final String linkTypeName) {
         var issueFrom = getIssueByIdentifier(identifierFrom);
         if (issueFrom == null) {
             throw new WebApplicationException("Issue with identifier (" + identifierFrom + ") not found!", Response.Status.BAD_REQUEST);
@@ -180,6 +179,7 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Field Identifier not found, failed to create issue!", Response.Status.CONFLICT);
         }
 
+        // TODO: title cannot be null, add check for that
         var issue = new IssueInputBuilder(project.getKey(), issueType.getId(), title)
                 .setFieldInput(new FieldInput(labelsFieldId, subject))
                 .setFieldInput(new FieldInput(identifierFieldId, identifier))
@@ -268,5 +268,50 @@ public class IssueFacade extends BaseFacade {
         var deletedIssue = getIssueByIdentifier(identifier);
 
         return deletedIssue == null;
+    }
+
+    protected void updateIssue(final String identifier, final String description, final String title, final Set<String> subject) {
+        var issue = getIssueByIdentifier(identifier);
+        if (issue == null) {
+            throw new WebApplicationException("Issue with identifier (" + identifier +") not found!", Response.Status.NOT_FOUND);
+        }
+
+        // TODO: move names to config file
+        var labelsFieldId = GetFieldId("Labels");
+
+        if (labelsFieldId == null) {
+            throw new WebApplicationException("Field Labels not found, failed to create issue!", Response.Status.CONFLICT);
+        }
+
+        // TODO: title cannot be null, add check for that
+        var updatedIssue = new IssueInputBuilder(issue.getProject().getKey(), issue.getIssueType().getId(), title)
+                .setFieldInput(new FieldInput(labelsFieldId, subject))
+                .setDescription(description)
+                .build();
+
+        getIssueClient().updateIssue(issue.getKey(), updatedIssue).claim();
+    }
+
+    protected void RemoveAllIssueLinks(final String identifier) {
+        var issue = getIssueByIdentifier(identifier);
+        var issueLinkIds = getIssueLinkRestClient().getIssueLinkIdsForIssue(issue.getKey()).claim();
+
+        for (var issueLinkId : issueLinkIds) {
+            getIssueLinkRestClient().deleteLink(issueLinkId).claim();
+        }
+    }
+
+    protected void CreateDecomposedByLinks(final Set<Link> links, final String identifier) {
+        for (Link link : links) {
+            // TODO: move to config
+            CreateLink(GetIdFromUri(link.getValue()), identifier, "Decompose");
+        }
+    }
+
+    protected void CreateDecomposesLinks(final Set<Link> links, final String identifier) {
+        for (Link link : links) {
+            // TODO: move to config
+            CreateLink(identifier, GetIdFromUri(link.getValue()), "Decompose");
+        }
     }
 }

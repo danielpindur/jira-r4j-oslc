@@ -1,7 +1,6 @@
 package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
 import com.atlassian.jira.rest.client.api.domain.Issue;
-import cz.vutbr.fit.danielpindur.oslc.jira.resources.Requirement;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.RequirementCollection;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 
@@ -65,15 +64,8 @@ public class RequirementCollectionFacade extends IssueFacade {
                 identifier,
                 requirementCollection.getSubject());
 
-        for (Link link : requirementCollection.getDecomposedBy()) {
-            // TODO: move to config
-            CreateLink(GetIdFromUri(link.getValue()), identifier, "Decompose");
-        }
-
-        for (Link link : requirementCollection.getDecomposes()) {
-            // TODO: move to config
-            CreateLink(identifier, GetIdFromUri(link.getValue()), "Decompose");
-        }
+        CreateDecomposedByLinks(requirementCollection.getDecomposedBy(), identifier);
+        CreateDecomposesLinks(requirementCollection.getDecomposes(), identifier);
 
         return get(identifier);
     }

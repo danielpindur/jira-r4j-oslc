@@ -1,8 +1,12 @@
 package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
 import com.atlassian.jira.rest.client.api.*;
+import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
+import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
 import cz.vutbr.fit.danielpindur.oslc.jira.ResourcesFactory;
+import cz.vutbr.fit.danielpindur.oslc.jira.clients.IssueLinkRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,4 +54,13 @@ public class BaseFacade {
     protected MetadataRestClient getMetadataClient() { return restClient.getMetadataClient(); }
 
     protected SearchRestClient getSearchClient() { return restClient.getSearchClient(); }
+
+    protected IssueLinkRestClient getIssueLinkRestClient() {
+        // TODO: This needs to come from some config reader
+        var authenticationHandler = new BasicHttpAuthenticationHandler("xpindu01", "testpassword");
+        final DisposableHttpClient httpClient = new AsynchronousHttpClientFactory()
+                .createClient(URI.create("http://localhost:8080"), authenticationHandler);
+
+        return new IssueLinkRestClient(URI.create("http://localhost:8080/rest/api/latest"), httpClient);
+    }
 }

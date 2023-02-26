@@ -1,12 +1,10 @@
 package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
 import com.atlassian.jira.rest.client.api.domain.Issue;
-import cz.vutbr.fit.danielpindur.oslc.jira.resources.Project;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Requirement;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 
 import java.util.HashSet;
-import java.util.Objects;
 
 public class RequirementFacade extends IssueFacade {
     private Requirement MapResourceToResult(final Issue resource) {
@@ -56,15 +54,8 @@ public class RequirementFacade extends IssueFacade {
                 identifier,
                 requirement.getSubject());
 
-        for (Link link : requirement.getDecomposedBy()) {
-            // TODO: move to config
-            CreateLink(GetIdFromUri(link.getValue()), identifier, "Decompose");
-        }
-
-        for (Link link : requirement.getDecomposes()) {
-            // TODO: move to config
-            CreateLink(identifier, GetIdFromUri(link.getValue()), "Decompose");
-        }
+        CreateDecomposedByLinks(requirement.getDecomposedBy(), identifier);
+        CreateDecomposesLinks(requirement.getDecomposes(), identifier);
 
         return get(identifier);
     }
@@ -80,5 +71,15 @@ public class RequirementFacade extends IssueFacade {
 
     public boolean delete(final String id) {
         return deleteIssue(id);
+    }
+
+    public Requirement update(final Requirement requirement, final String identifier) {
+        updateIssue(identifier, requirement.getDescription(), requirement.getTitle(), requirement.getSubject());
+
+        RemoveAllIssueLinks(identifier);
+        CreateDecomposedByLinks(requirement.getDecomposedBy(), identifier);
+        CreateDecomposesLinks(requirement.getDecomposes(), identifier);
+
+        return get(identifier);
     }
 }

@@ -266,8 +266,13 @@ public class RestDelegate {
         Requirement updatedResource = null;
         
         // Start of user code updateRequirement
-        // TODO Implement code to update and return a resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        // TODO: unify all exceptions thrown to this format
+        if (aResource == null) {
+            log.error("Requirement UPDATE: received an empty request");
+            throw new WebApplicationException("Requirement UPDATE: received an empty request", Response.Status.BAD_REQUEST);
+        }
+        // TODO: verify if project is specified as read-only
+        updatedResource = requirementFacade.update(aResource, id);
         // End of user code
         return updatedResource;
     }
@@ -290,7 +295,7 @@ public class RestDelegate {
         if (id == null) {
             throw new WebApplicationException("Missing id parameter!", Response.Status.BAD_REQUEST);
         }
-        deleted = requirementFacade.delete(id);
+        deleted = requirementCollectionFacade.delete(id);
         // End of user code
         return deleted;
     }
