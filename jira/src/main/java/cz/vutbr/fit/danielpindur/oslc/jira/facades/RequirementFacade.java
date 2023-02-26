@@ -77,4 +77,8 @@ public class RequirementFacade extends IssueFacade {
 
         return MapResourceToResult(issue);
     }
+
+    public boolean delete(final String id) {
+        return deleteIssue(id);
+    }
 }

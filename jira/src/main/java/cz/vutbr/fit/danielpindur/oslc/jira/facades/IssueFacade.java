@@ -257,4 +257,16 @@ public class IssueFacade extends BaseFacade {
         var exploded = uri.toString().split("/");
         return exploded[exploded.length - 1];
     }
+
+    protected boolean deleteIssue(final String identifier) {
+        var issue = getIssueByIdentifier(identifier);
+        if (issue == null) {
+            throw new WebApplicationException("Issue with identifier (" + identifier +") not found!", Response.Status.NOT_FOUND);
+        }
+        getIssueClient().deleteIssue(issue.getKey(), false).claim();
+
+        var deletedIssue = getIssueByIdentifier(identifier);
+
+        return deletedIssue == null;
+    }
 }

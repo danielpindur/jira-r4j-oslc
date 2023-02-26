@@ -77,4 +77,8 @@ public class RequirementCollectionFacade extends IssueFacade {
 
         return get(identifier);
     }
+
+    public boolean delete(final String id) {
+        return deleteIssue(id);
+    }
 }

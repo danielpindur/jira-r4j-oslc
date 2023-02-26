@@ -19,6 +19,8 @@ package cz.vutbr.fit.danielpindur.oslc.jira;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.ServletContextEvent;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.ArrayList;
 import org.slf4j.Logger;
@@ -252,8 +254,10 @@ public class RestDelegate {
         Boolean deleted = false;
         
         // Start of user code deleteRequirement
-        // TODO Implement code to delete a resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        if (id == null) {
+            throw new WebApplicationException("Missing id parameter!", Response.Status.BAD_REQUEST);
+        }
+        deleted = requirementFacade.delete(id);
         // End of user code
         return deleted;
     }
@@ -283,8 +287,10 @@ public class RestDelegate {
         Boolean deleted = false;
         
         // Start of user code deleteRequirementCollection
-        // TODO Implement code to delete a resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        if (id == null) {
+            throw new WebApplicationException("Missing id parameter!", Response.Status.BAD_REQUEST);
+        }
+        deleted = requirementFacade.delete(id);
         // End of user code
         return deleted;
     }
