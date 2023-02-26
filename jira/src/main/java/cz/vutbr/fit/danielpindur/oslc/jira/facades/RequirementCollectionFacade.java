@@ -36,7 +36,7 @@ public class RequirementCollectionFacade extends IssueFacade {
     }
 
     public RequirementCollection get(final String id) {
-        var issue = getIssue(id);
+        var issue = getIssueByIdentifier(id);
 
         if (issue == null) {
             return null;

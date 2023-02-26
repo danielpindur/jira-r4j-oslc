@@ -2,16 +2,44 @@ package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
 import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.api.domain.input.FieldInput;
+import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
+import com.atlassian.jira.rest.client.api.domain.input.LinkIssuesInput;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.util.UUID.randomUUID;
+
 public class IssueFacade extends BaseFacade {
+
+    protected Issue getIssueByIdentifier(final String identifier) {
+        // TODO: move to config
+        var searchString = "Identifier ~ " + identifier;
+        var search = getSearchClient().searchJql(searchString).claim();
+        if (search.getTotal() == 0) {
+            return null;
+        }
+
+        if (search.getTotal() > 1) {
+            throw new WebApplicationException("Multiple issues with same identifier (" + identifier + ") exist!", Response.Status.CONFLICT);
+        }
+
+        var issues = search.getIssues();
+        Issue result = null;
+
+        for (Issue issue : issues) {
+            // Only one issue should make it here, resulting in single iteration
+            result = issue;
+        }
+
+        return result;
+    }
 
     protected Issue getIssue(final String id) {
         return getIssueClient().getIssue(id).claim();
@@ -48,10 +76,10 @@ public class IssueFacade extends BaseFacade {
         var issue = getIssue(id);
 
         if (IsRequirement(issue)) {
-            return resourcesFactory.constructLinkForRequirement(SafeConvert(issue.getId()));
+            return resourcesFactory.constructLinkForRequirement(GetIssueGUID(issue, true));
         }
         else if (IsRequirementCollection(issue)) {
-            return resourcesFactory.constructLinkForRequirementCollection(SafeConvert(issue.getId()));
+            return resourcesFactory.constructLinkForRequirementCollection(GetIssueGUID(issue, true));
         }
 
         // Issue is not Requirement or Requirement Collection, omit from link
@@ -94,6 +122,21 @@ public class IssueFacade extends BaseFacade {
         return decomposes;
     }
 
+    protected void CreateLink(final String identifierFrom, final String identifierTo, final String linkTypeName) {
+        var issueFrom = getIssueByIdentifier(identifierFrom);
+        if (issueFrom == null) {
+            throw new WebApplicationException("Issue with identifier (" + identifierFrom + ") not found!", Response.Status.BAD_REQUEST);
+        }
+
+        var issueTo = getIssueByIdentifier(identifierTo);
+        if (issueTo == null) {
+            throw new WebApplicationException("Issue with identifier (" + identifierTo + ") not found!", Response.Status.BAD_REQUEST);
+        }
+
+        var issueLink = new LinkIssuesInput(issueFrom.getKey(), issueTo.getKey(), linkTypeName);
+        getIssueClient().linkIssue(issueLink);
+    }
+
     protected BasicIssue createIssue(final String description, final String issueTypeName, final String projectId, final String title, final String identifier, final Set<String> subject) {
         var project = getProjectClient().getProject(projectId).claim();
 
@@ -117,7 +160,7 @@ public class IssueFacade extends BaseFacade {
         }
 
         // TODO: move names to config file
-        var searchQuery = "Identifier = " + identifier;
+        var searchQuery = "Identifier ~ " + identifier;
         var identifierSearch = getSearchClient().searchJql(searchQuery).claim();
         if (identifierSearch.getTotal() > 0) {
             throw new WebApplicationException("Issue with same identifier (" + identifier +") already exists!", Response.Status.CONFLICT);
@@ -125,24 +168,9 @@ public class IssueFacade extends BaseFacade {
 
         var fields = getMetadataClient().getFields().claim();
 
-        String labelsFieldId = null;
-        String identifierFieldId = null;
-
         // TODO: move names to config file
-        for (var field : fields ) {
-            if (field.getName().equalsIgnoreCase("Labels")) {
-                labelsFieldId = field.getId();
-            }
-
-            if (field.getName().equalsIgnoreCase("Identifier")) {
-                identifierFieldId = field.getId();
-            }
-
-            if (labelsFieldId != null && identifierFieldId != null) {
-                // Both Ids found
-                break;
-            }
-        }
+        var labelsFieldId = GetFieldId("Labels", fields);
+        var identifierFieldId = GetFieldId("Identifier", fields);
 
         if (labelsFieldId == null) {
             throw new WebApplicationException("Field Labels not found, failed to create issue!", Response.Status.CONFLICT);
@@ -152,7 +180,7 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Field Identifier not found, failed to create issue!", Response.Status.CONFLICT);
         }
 
-        var issue = new IssueInputBuilder(projectId, issueType.getId(), title)
+        var issue = new IssueInputBuilder(project.getKey(), issueType.getId(), title)
                 .setFieldInput(new FieldInput(labelsFieldId, subject))
                 .setFieldInput(new FieldInput(identifierFieldId, identifier))
                 .setDescription(description)
@@ -163,5 +191,70 @@ public class IssueFacade extends BaseFacade {
         } catch (Exception e) {
             throw new WebApplicationException("Failed to create " + issueTypeName + "!", Response.Status.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    protected String GetFieldId(final String fieldName, Iterable<Field> fields) {
+        for (var field : fields ) {
+            if (field.getName().equalsIgnoreCase(fieldName)) {
+                 return field.getId();
+            }
+        }
+
+        return null;
+    }
+
+    protected String GetFieldId(final String fieldName) {
+        var fields = getMetadataClient().getFields().claim();
+        return GetFieldId(fieldName, fields);
+    }
+
+    protected String GetFieldStringValue(final String fieldName, final Issue issue) {
+        var fieldId = GetFieldId(fieldName);
+        if (fieldId == null) {
+            throw new WebApplicationException("Failed to find fieldId for " + fieldName + "!", Response.Status.CONFLICT);
+        }
+
+        var field = issue.getField(fieldId);
+        if (field == null) {
+            throw new WebApplicationException("Failed to find field for fieldId " + fieldId + "!", Response.Status.CONFLICT);
+        }
+
+
+        return field.getValue() != null ? field.getValue().toString() : null;
+    }
+
+    protected String GetIssueGUID(final Issue issue, final boolean first) {
+        // TODO: Move to config file
+        var identifierFieldName = "Identifier";
+        var identifier = GetFieldStringValue(identifierFieldName, issue);
+
+        if (identifier != null) {
+            return identifier;
+        }
+
+        if (!first) {
+            throw new WebApplicationException("Failed to generate GUID for issue " + issue.getKey() + "!", Response.Status.INTERNAL_SERVER_ERROR);
+        }
+
+        identifier = CreateIssueGUID();
+        getIssueClient().updateIssue(
+                issue.getKey(),
+                new IssueInputBuilder(issue.getProject().getKey(), issue.getIssueType().getId())
+                        .setFieldInput(new FieldInput(GetFieldId(identifierFieldName), identifier))
+                        .build())
+                .claim();
+
+        var updated = getIssue(issue.getId());
+
+        return GetIssueGUID(updated, false);
+    }
+
+    protected String CreateIssueGUID() {
+        return randomUUID().toString();
+    }
+
+    protected String GetIdFromUri(final URI uri) {
+        var exploded = uri.toString().split("/");
+        return exploded[exploded.length - 1];
     }
 }

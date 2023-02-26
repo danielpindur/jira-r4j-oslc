@@ -44,6 +44,7 @@ import cz.vutbr.fit.danielpindur.oslc.jira.facades.RequirementCollectionFacade;
 // End of user code
 
 // Start of user code pre_class_code
+// TODO: Add correct jira + jira_r4j namespace links or add the namespace declaration to personal fit address
 // End of user code
 
 public class RestDelegate {
@@ -143,8 +144,8 @@ public class RestDelegate {
         
         
         // Start of user code createRequirement
-        // TODO Implement code to create a resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        // TODO: validate all needed properties are present as well as aResource exists
+        newResource = requirementFacade.create(aResource);
         // End of user code
         return newResource;
     }

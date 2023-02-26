@@ -45,9 +45,7 @@ public class BaseFacade {
         return restClient.getProjectClient();
     }
 
-    protected IssueRestClient getIssueClient() {
-        return restClient.getIssueClient();
-    }
+    protected IssueRestClient getIssueClient() { return restClient.getIssueClient(); }
 
     protected MetadataRestClient getMetadataClient() { return restClient.getMetadataClient(); }
 
