@@ -1,6 +1,7 @@
 package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
 import com.atlassian.jira.rest.client.api.domain.*;
+import com.atlassian.jira.rest.client.api.domain.input.FieldInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 
@@ -21,19 +22,23 @@ public class IssueFacade extends BaseFacade {
         return getIssue(stringId);
     }
 
+    // TODO: move names to config file
     protected boolean IsRequirement(final Issue issue) {
         return issue != null && issue.getIssueType().getName().equalsIgnoreCase("Requirement");
     }
 
+    // TODO: move names to config file
     protected boolean IsRequirementCollection(final Issue issue) {
         return issue != null && issue.getIssueType().getName().equalsIgnoreCase("Requirement Collection");
     }
 
+    // TODO: move names to config file
     private boolean IsDecomposedByLink(final IssueLink link) {
         return link.getIssueLinkType().getName().equalsIgnoreCase("Decompose")
                 && link.getIssueLinkType().getDirection().equals(IssueLinkType.Direction.INBOUND);
     }
 
+    // TODO: move names to config file
     private boolean IsDecomposesLink(final IssueLink link) {
         return link.getIssueLinkType().getName().equalsIgnoreCase("Decompose")
                 && link.getIssueLinkType().getDirection().equals(IssueLinkType.Direction.OUTBOUND);
@@ -89,7 +94,7 @@ public class IssueFacade extends BaseFacade {
         return decomposes;
     }
 
-    protected BasicIssue createIssue(final String description, final String issueTypeName, final String projectId, final String title) {
+    protected BasicIssue createIssue(final String description, final String issueTypeName, final String projectId, final String title, final String identifier, final Set<String> subject) {
         var project = getProjectClient().getProject(projectId).claim();
 
         if (project == null) {
@@ -111,7 +116,45 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Selected project doesn't contain issueType " + issueTypeName + "!", Response.Status.BAD_REQUEST);
         }
 
+        // TODO: move names to config file
+        var searchQuery = "Identifier = " + identifier;
+        var identifierSearch = getSearchClient().searchJql(searchQuery).claim();
+        if (identifierSearch.getTotal() > 0) {
+            throw new WebApplicationException("Issue with same identifier (" + identifier +") already exists!", Response.Status.CONFLICT);
+        }
+
+        var fields = getMetadataClient().getFields().claim();
+
+        String labelsFieldId = null;
+        String identifierFieldId = null;
+
+        // TODO: move names to config file
+        for (var field : fields ) {
+            if (field.getName().equalsIgnoreCase("Labels")) {
+                labelsFieldId = field.getId();
+            }
+
+            if (field.getName().equalsIgnoreCase("Identifier")) {
+                identifierFieldId = field.getId();
+            }
+
+            if (labelsFieldId != null && identifierFieldId != null) {
+                // Both Ids found
+                break;
+            }
+        }
+
+        if (labelsFieldId == null) {
+            throw new WebApplicationException("Field Labels not found, failed to create issue!", Response.Status.CONFLICT);
+        }
+
+        if (identifierFieldId == null) {
+            throw new WebApplicationException("Field Identifier not found, failed to create issue!", Response.Status.CONFLICT);
+        }
+
         var issue = new IssueInputBuilder(projectId, issueType.getId(), title)
+                .setFieldInput(new FieldInput(labelsFieldId, subject))
+                .setFieldInput(new FieldInput(identifierFieldId, identifier))
                 .setDescription(description)
                 .build();
 

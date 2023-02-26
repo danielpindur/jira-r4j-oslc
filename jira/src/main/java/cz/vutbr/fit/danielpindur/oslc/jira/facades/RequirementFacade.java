@@ -7,6 +7,8 @@ import org.eclipse.lyo.oslc4j.core.model.Link;
 import java.util.HashSet;
 import java.util.Objects;
 
+import static java.util.UUID.randomUUID;
+
 public class RequirementFacade extends IssueFacade {
     private Requirement MapResourceToResult(final Issue resource) {
         var result = new Requirement();
@@ -37,7 +39,17 @@ public class RequirementFacade extends IssueFacade {
     }
 
     public Requirement create(final Requirement requirement) {
-        // Create issue
+        var identifier = requirement.getIdentifier() != null
+                        ? requirement.getIdentifier()
+                        : randomUUID().toString();
+
+        // TODO: move names to config
+        createIssue(requirement.getDescription(),
+                "Requirement",
+                requirement.getProject(),
+                requirement.getTitle(),
+                identifier,
+                requirement.getSubject());
 
         // Add decomposed by
 

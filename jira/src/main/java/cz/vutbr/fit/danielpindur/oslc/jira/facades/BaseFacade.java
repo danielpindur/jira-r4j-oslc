@@ -1,9 +1,6 @@
 package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
-import com.atlassian.jira.rest.client.api.IssueRestClient;
-import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.ProjectRestClient;
-import com.atlassian.jira.rest.client.api.UserRestClient;
+import com.atlassian.jira.rest.client.api.*;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import cz.vutbr.fit.danielpindur.oslc.jira.ResourcesFactory;
 import org.slf4j.Logger;
@@ -51,4 +48,8 @@ public class BaseFacade {
     protected IssueRestClient getIssueClient() {
         return restClient.getIssueClient();
     }
+
+    protected MetadataRestClient getMetadataClient() { return restClient.getMetadataClient(); }
+
+    protected SearchRestClient getSearchClient() { return restClient.getSearchClient(); }
 }
