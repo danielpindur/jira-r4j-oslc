@@ -29,7 +29,7 @@
     <webServices name="ProjectService" serviceUrlPattern="project" resourceUrlPattern="[ResourceType]/{id}" resourceTypes="_TL1v8a1sEe2IH_zh0OGsFw"/>
     <specification/>
     <configuration xsi:type="oslc4j_ai:MavenServerConfiguration" rootServerBaseUrl="http://localhost:8081/" applicationContextPath="/jira" servletUrlPattern="/services/*" jettyPort="8081">
-      <generalConfiguration filesBasePath="./jira" javaBasePackageName="cz.vutbr.fit.danielpindur.oslc.jira"/>
+      <generalConfiguration filesBasePath="./src/jira" javaBasePackageName="cz.vutbr.fit.danielpindur.oslc.jira"/>
       <projectConfiguration xsi:type="oslc4j_ai:MavenProjectConfiguration" lyoVersion="5.0.0.Final" groupId="cz.vutbr.fit.danielpindur.oslc.jira" artifactId="jira" version="0.0.1-SNAPSHOT"/>
       <authenticationConfiguration applicationName="Jira Adaptor" oauthRealm="Jira Adaptor"/>
     </configuration>
@@ -49,7 +49,7 @@
     <specification/>
     <requiredAdaptors xsi:type="oslc4j_ai:GenericRequiredAdaptor" serviceProviderCatalogURI="http://localhost:8081/jira/services/catalog/singleton" name="Jira Adaptor" servicedResources="_mJ99AKouEe2JELvxKSEu4w _mJ99AaouEe2JELvxKSEu4w"/>
     <configuration xsi:type="oslc4j_ai:MavenServerConfiguration" rootServerBaseUrl="http://localhost:8082/" applicationContextPath="/r4j" servletUrlPattern="/services/*" jettyPort="8082">
-      <generalConfiguration filesBasePath="./r4j" javaBasePackageName="cz.vutbr.fit.danielpindur.oslc.r4j"/>
+      <generalConfiguration filesBasePath="./src/r4j" javaBasePackageName="cz.vutbr.fit.danielpindur.oslc.r4j"/>
       <projectConfiguration xsi:type="oslc4j_ai:MavenProjectConfiguration" lyoVersion="5.0.0.Final" groupId="cz.vutbr.fit.danielpindur.oslc.r4j" artifactId="r4j" version="0.0.1-SNAPSHOT"/>
     </configuration>
   </adaptorInterfaces>
