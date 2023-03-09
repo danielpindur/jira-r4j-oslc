@@ -1,0 +1,11 @@
+{
+    "JiraServer" : {
+        "Url" : "http://localhost:8080",
+        "EnableBasicAuth" : true,
+        "EnableOAuth" : false
+    },
+    "RequirementIssueTypeName" : "Requirement",
+    "RequirementCollectionIssueTypeName" : "Requirement Collection",
+    "IssueLinkTypeName" : "Decompose",
+    "IdentifierFieldName" : "Identifier"
+}

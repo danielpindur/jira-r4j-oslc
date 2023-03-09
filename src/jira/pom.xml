@@ -68,6 +68,11 @@
             <artifactId>fugue</artifactId>
             <version>5.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>cz.vutbr.fit.danielpindur.oslc.configuration</groupId>
+            <artifactId>configuration</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- End of user code
         -->
         <!-- General dependencies -->

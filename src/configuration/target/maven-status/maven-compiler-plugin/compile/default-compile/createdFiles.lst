@@ -1,0 +1,5 @@
+cz/vutbr/fit/danielpindur/oslc/configuration/models/Configuration.class
+cz/vutbr/fit/danielpindur/oslc/configuration/ConfigurationReader.class
+cz/vutbr/fit/danielpindur/oslc/configuration/ConfigurationParser.class
+cz/vutbr/fit/danielpindur/oslc/configuration/ConfigurationProvider.class
+cz/vutbr/fit/danielpindur/oslc/configuration/models/JiraServer.class

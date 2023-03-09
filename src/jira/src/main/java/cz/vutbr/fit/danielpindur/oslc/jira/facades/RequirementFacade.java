@@ -38,7 +38,11 @@ public class RequirementFacade extends IssueFacade {
 
         return result;
     }
-
+    // TODO: add check that issueLinkType exists
+    // TODO: can the config of JIRA (issueLinks, customFields, etc) done by extension - good to know for discussion in BP
+    // TODO: what to do if something can't be add to JIRA
+    // TODO: add support for user search by email as well as username
+    // TODO: base configuration file should take into account R4J link type Relates - prep two config files
     public Requirement create(final Requirement requirement) {
         var identifier = requirement.getIdentifier() != null
                         ? requirement.getIdentifier()

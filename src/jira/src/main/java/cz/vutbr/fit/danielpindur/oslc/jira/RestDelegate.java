@@ -19,8 +19,6 @@ package cz.vutbr.fit.danielpindur.oslc.jira;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.ServletContextEvent;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.ArrayList;
 import org.slf4j.Logger;
@@ -39,6 +37,8 @@ import cz.vutbr.fit.danielpindur.oslc.jira.resources.RequirementCollection;
 
 
 // Start of user code imports
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import cz.vutbr.fit.danielpindur.oslc.jira.facades.PersonFacade;
 import cz.vutbr.fit.danielpindur.oslc.jira.facades.ProjectFacade;
 import cz.vutbr.fit.danielpindur.oslc.jira.facades.RequirementFacade;
@@ -46,7 +46,6 @@ import cz.vutbr.fit.danielpindur.oslc.jira.facades.RequirementCollectionFacade;
 // End of user code
 
 // Start of user code pre_class_code
-// TODO: Add correct jira + jira_r4j namespace links or add the namespace declaration to personal fit address
 // End of user code
 
 public class RestDelegate {
