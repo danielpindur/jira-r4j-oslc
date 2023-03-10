@@ -28,7 +28,7 @@
         <application.filename>jira</application.filename>
         <!-- Start of user code properties
         -->
-        <!-- TODO: Add additional properties here to avoid them be overridden upon future re-generation -->
+        <!-- TODO: Get configurable host and port working -->
         <!-- End of user code
         -->
     </properties>
