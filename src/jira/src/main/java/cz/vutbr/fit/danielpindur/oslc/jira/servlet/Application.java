@@ -17,6 +17,7 @@
 
 package cz.vutbr.fit.danielpindur.oslc.jira.servlet;
 
+import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -78,6 +79,7 @@ import cz.vutbr.fit.danielpindur.oslc.jira.services.PersonService;
 import cz.vutbr.fit.danielpindur.oslc.jira.services.ProjectService;
 
 // Start of user code imports
+import cz.vutbr.fit.danielpindur.oslc.configuration.ConfigurationProvider;
 // End of user code
 
 // Start of user code pre_class_code
@@ -135,6 +137,12 @@ public class Application extends javax.ws.rs.core.Application {
         }
         
         // Start of user code Custom Resource Classes
+        try {
+            ConfigurationProvider.Initialize();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
         // End of user code
 
         RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(OslcConstants.PATH_ALLOWED_VALUES,           AllowedValues.class);

@@ -11,7 +11,7 @@ public class ConfigurationParser {
         try {
             return mapper.readValue(json, Configuration.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("ERROR: Failed to parse configuration file");
+            throw new RuntimeException("ERROR: Failed to parse configuration file=" + json + ", inner exception=" + e.getMessage());
         }
     }
 }

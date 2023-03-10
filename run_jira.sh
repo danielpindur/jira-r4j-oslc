@@ -60,7 +60,7 @@ main () {
 
     # Check if Maven is available
     if ! type "mvn" &> /dev/null; then
-        echo -e "\n${RED}ERORR{NC}: Maven is not not avaible.\n"
+        echo -e "\n${RED}ERORR${NC}: Maven is not not avaible.\n"
         exit "$?"
     fi
 
@@ -69,7 +69,7 @@ main () {
         echo -e "\nRunning build.sh...\n"
         "$ROOTDIR/build.sh"
         if [ "$?" -ne 0 ]; then
-            echo -e "\n{RED}Build failed{NC} - Aborting start.\n"
+            echo -e "\n${RED}Build failed${NC} - Aborting start.\n"
             exit "$?"
         fi
     fi

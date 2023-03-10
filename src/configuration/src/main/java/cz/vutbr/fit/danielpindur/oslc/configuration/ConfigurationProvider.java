@@ -9,17 +9,13 @@ public final class ConfigurationProvider {
 
     private final Configuration configuration;
 
-    private ConfigurationProvider() {
+    private ConfigurationProvider() throws FileNotFoundException {
         var configurationReader = new ConfigurationReader();
 
-        try {
-            configuration = configurationReader.Read();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("ERROR: Configuration file not found!");
-        }
+        configuration = configurationReader.Read();
     }
 
-    public static ConfigurationProvider getInstance() {
+    public static ConfigurationProvider getInstance() throws FileNotFoundException {
         if (INSTANCE == null) {
             INSTANCE = new ConfigurationProvider();
         }
@@ -27,7 +23,7 @@ public final class ConfigurationProvider {
         return INSTANCE;
     }
 
-    public static void Initialize() {
+    public static void Initialize() throws FileNotFoundException {
         INSTANCE = new ConfigurationProvider();
     }
 

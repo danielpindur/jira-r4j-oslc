@@ -5,12 +5,14 @@ import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
+import cz.vutbr.fit.danielpindur.oslc.configuration.ConfigurationProvider;
 import cz.vutbr.fit.danielpindur.oslc.jira.ResourcesFactory;
 import cz.vutbr.fit.danielpindur.oslc.jira.clients.IssueLinkRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.io.FileNotFoundException;
 import java.net.URI;
 import java.util.Objects;
 
@@ -22,8 +24,17 @@ public class BaseFacade {
 
     public BaseFacade() {
         // TODO: This needs to come from some config reader
+        var jiraServerUrl = "";
+
+        try {
+            var configuration = ConfigurationProvider.getInstance().GetConfiguration();
+            jiraServerUrl = configuration.JiraServer.Url;
+        } catch (FileNotFoundException ignored) {
+            // Exception will never be thrown here as the configuration is resolved upon adaptor startup
+        }
+
         restClient = new AsynchronousJiraRestClientFactory()
-                .createWithBasicHttpAuthentication(URI.create("http://localhost:8080"), "xpindu01", "testpassword");
+                .createWithBasicHttpAuthentication(URI.create(jiraServerUrl), "xpindu01", "testpassword");
     }
 
     protected boolean containsTerms(final String target, final String terms) {
