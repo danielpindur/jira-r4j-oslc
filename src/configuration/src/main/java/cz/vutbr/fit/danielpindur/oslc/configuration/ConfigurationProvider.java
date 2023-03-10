@@ -27,6 +27,10 @@ public final class ConfigurationProvider {
         return INSTANCE;
     }
 
+    public static void Initialize() {
+        INSTANCE = new ConfigurationProvider();
+    }
+
     public Configuration GetConfiguration() {
         return configuration;
     }
