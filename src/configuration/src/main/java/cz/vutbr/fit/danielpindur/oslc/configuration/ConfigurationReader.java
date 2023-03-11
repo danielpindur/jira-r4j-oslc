@@ -20,8 +20,7 @@ public class ConfigurationReader {
             Path filePath = Path.of(configFilePath);
             String content = Files.readString(filePath);
             var parser = new ConfigurationParser();
-            var configuration = parser.Parse(content);
-            return configuration;
+            return parser.Parse(content);
         } catch (IOException e) {
             throw new FileNotFoundException("Configuration file not found in " + configFilePath + ", current path: " + currentRelativePath.toAbsolutePath() + ", inner exception=" + e.getMessage());
         }

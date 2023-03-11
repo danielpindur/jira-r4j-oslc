@@ -20,7 +20,7 @@ public class RequirementFacade extends IssueFacade {
         result.setJiraId(jiraIssueId);
         result.setIdentifier(identifier);  // TODO: Check if readonly
         result.setAbout(resourcesFactory.constructURIForRequirement(identifier));
-        result.setSubject(resource.getLabels());
+        result.setSubject(GetFieldStringSetValue(configuration.LabelsFieldName, resource));
         result.setCreated(resource.getCreationDate().toDate());
         result.setModified(resource.getUpdateDate().toDate());
         result.setProject(resourcesFactory.constructLinkForProject(projectIdString));
@@ -50,9 +50,8 @@ public class RequirementFacade extends IssueFacade {
 
         var projectUri = requirement.getProject().getValue();
 
-        // TODO: move to config
         createIssue(requirement.getDescription(),
-                "Requirement",
+                configuration.RequirementIssueTypeName,
                 GetIdFromUri(projectUri),
                 requirement.getTitle(),
                 identifier,

@@ -15,11 +15,7 @@ public final class ConfigurationProvider {
         configuration = configurationReader.Read();
     }
 
-    public static ConfigurationProvider getInstance() throws FileNotFoundException {
-        if (INSTANCE == null) {
-            INSTANCE = new ConfigurationProvider();
-        }
-
+    public static ConfigurationProvider getInstance() {
         return INSTANCE;
     }
 

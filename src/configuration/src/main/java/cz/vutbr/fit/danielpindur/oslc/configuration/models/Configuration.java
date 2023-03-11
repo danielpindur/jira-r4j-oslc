@@ -15,6 +15,9 @@ public class Configuration {
     @JsonProperty("IdentifierFieldName")
     public String IdentifierFieldName;
 
+    @JsonProperty("LabelsFieldName")
+    public String LabelsFieldName;
+
     @JsonProperty("JiraServer")
     public JiraServer JiraServer;
 }

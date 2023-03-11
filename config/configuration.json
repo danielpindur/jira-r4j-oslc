@@ -7,5 +7,6 @@
     "RequirementIssueTypeName" : "Requirement",
     "RequirementCollectionIssueTypeName" : "Requirement Collection",
     "IssueLinkTypeName" : "Decompose",
-    "IdentifierFieldName" : "Identifier"
+    "IdentifierFieldName" : "Identifier",
+    "LabelsFieldName" : "Labels"
 }

@@ -18,8 +18,8 @@ import static java.util.UUID.randomUUID;
 public class IssueFacade extends BaseFacade {
 
     protected Issue getIssueByIdentifier(final String identifier) {
-        // TODO: move to config
-        var searchString = "Identifier ~ " + identifier;
+
+        var searchString = configuration.IdentifierFieldName + " ~ " + identifier;
         var search = getSearchClient().searchJql(searchString).claim();
         if (search.getTotal() == 0) {
             return null;
@@ -49,25 +49,21 @@ public class IssueFacade extends BaseFacade {
         return getIssue(stringId);
     }
 
-    // TODO: move names to config file
     protected boolean IsRequirement(final Issue issue) {
-        return issue != null && issue.getIssueType().getName().equalsIgnoreCase("Requirement");
+        return issue != null && issue.getIssueType().getName().equalsIgnoreCase(configuration.RequirementIssueTypeName);
     }
 
-    // TODO: move names to config file
     protected boolean IsRequirementCollection(final Issue issue) {
-        return issue != null && issue.getIssueType().getName().equalsIgnoreCase("Requirement Collection");
+        return issue != null && issue.getIssueType().getName().equalsIgnoreCase(configuration.RequirementCollectionIssueTypeName);
     }
 
-    // TODO: move names to config file
     private boolean IsDecomposedByLink(final IssueLink link) {
-        return link.getIssueLinkType().getName().equalsIgnoreCase("Decompose")
+        return link.getIssueLinkType().getName().equalsIgnoreCase(configuration.IssueLinkTypeName)
                 && link.getIssueLinkType().getDirection().equals(IssueLinkType.Direction.INBOUND);
     }
 
-    // TODO: move names to config file
     private boolean IsDecomposesLink(final IssueLink link) {
-        return link.getIssueLinkType().getName().equalsIgnoreCase("Decompose")
+        return link.getIssueLinkType().getName().equalsIgnoreCase(configuration.IssueLinkTypeName)
                 && link.getIssueLinkType().getDirection().equals(IssueLinkType.Direction.OUTBOUND);
     }
 
@@ -158,8 +154,7 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Selected project doesn't contain issueType " + issueTypeName + "!", Response.Status.BAD_REQUEST);
         }
 
-        // TODO: move names to config file
-        var searchQuery = "Identifier ~ " + identifier;
+        var searchQuery = configuration.IdentifierFieldName + " ~ " + identifier;
         var identifierSearch = getSearchClient().searchJql(searchQuery).claim();
         if (identifierSearch.getTotal() > 0) {
             throw new WebApplicationException("Issue with same identifier (" + identifier +") already exists!", Response.Status.CONFLICT);
@@ -167,9 +162,8 @@ public class IssueFacade extends BaseFacade {
 
         var fields = getMetadataClient().getFields().claim();
 
-        // TODO: move names to config file
-        var labelsFieldId = GetFieldId("Labels", fields);
-        var identifierFieldId = GetFieldId("Identifier", fields);
+        var labelsFieldId = GetFieldId(configuration.LabelsFieldName, fields);
+        var identifierFieldId = GetFieldId(configuration.IdentifierFieldName, fields);
 
         if (labelsFieldId == null) {
             throw new WebApplicationException("Field Labels not found, failed to create issue!", Response.Status.CONFLICT);
@@ -214,18 +208,38 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Failed to find fieldId for " + fieldName + "!", Response.Status.CONFLICT);
         }
 
+        if (fieldId.equalsIgnoreCase("Labels")) {
+            return String.join(",", issue.getLabels());
+        }
+
         var field = issue.getField(fieldId);
         if (field == null) {
             throw new WebApplicationException("Failed to find field for fieldId " + fieldId + "!", Response.Status.CONFLICT);
         }
 
-
         return field.getValue() != null ? field.getValue().toString() : null;
     }
 
+    protected Set<String> GetFieldStringSetValue(final String fieldName, final Issue issue) {
+        var fieldId = GetFieldId(fieldName);
+        if (fieldId == null) {
+            throw new WebApplicationException("Failed to find fieldId for " + fieldName + "!", Response.Status.CONFLICT);
+        }
+
+        if (fieldId.equalsIgnoreCase("Labels")) {
+            return issue.getLabels();
+        }
+
+        var field = issue.getField(fieldId);
+        if (field == null) {
+            throw new WebApplicationException("Failed to find field for fieldId " + fieldId + "!", Response.Status.CONFLICT);
+        }
+
+        return field.getValue() != null ? (HashSet<String>) field.getValue() : new HashSet<String>();
+    }
+
     protected String GetIssueGUID(final Issue issue, final boolean first) {
-        // TODO: Move to config file
-        var identifierFieldName = "Identifier";
+        var identifierFieldName = configuration.IdentifierFieldName;
         var identifier = GetFieldStringValue(identifierFieldName, issue);
 
         if (identifier != null) {
@@ -276,8 +290,7 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Issue with identifier (" + identifier +") not found!", Response.Status.NOT_FOUND);
         }
 
-        // TODO: move names to config file
-        var labelsFieldId = GetFieldId("Labels");
+        var labelsFieldId = GetFieldId(configuration.LabelsFieldName);
 
         if (labelsFieldId == null) {
             throw new WebApplicationException("Field Labels not found, failed to create issue!", Response.Status.CONFLICT);
@@ -292,6 +305,7 @@ public class IssueFacade extends BaseFacade {
         getIssueClient().updateIssue(issue.getKey(), updatedIssue).claim();
     }
 
+    // TODO: change to only remove links added by adaptor -> only config.issuelinktype
     protected void RemoveAllIssueLinks(final String identifier) {
         var issue = getIssueByIdentifier(identifier);
         var issueLinkIds = getIssueLinkRestClient().getIssueLinkIdsForIssue(issue.getKey()).claim();
@@ -303,15 +317,13 @@ public class IssueFacade extends BaseFacade {
 
     protected void CreateDecomposedByLinks(final Set<Link> links, final String identifier) {
         for (Link link : links) {
-            // TODO: move to config
-            CreateLink(GetIdFromUri(link.getValue()), identifier, "Decompose");
+            CreateLink(GetIdFromUri(link.getValue()), identifier, configuration.IssueLinkTypeName);
         }
     }
 
     protected void CreateDecomposesLinks(final Set<Link> links, final String identifier) {
         for (Link link : links) {
-            // TODO: move to config
-            CreateLink(identifier, GetIdFromUri(link.getValue()), "Decompose");
+            CreateLink(identifier, GetIdFromUri(link.getValue()), configuration.IssueLinkTypeName);
         }
     }
 }

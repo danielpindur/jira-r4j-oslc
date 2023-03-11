@@ -6,6 +6,7 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFacto
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
 import cz.vutbr.fit.danielpindur.oslc.configuration.ConfigurationProvider;
+import cz.vutbr.fit.danielpindur.oslc.configuration.models.Configuration;
 import cz.vutbr.fit.danielpindur.oslc.jira.ResourcesFactory;
 import cz.vutbr.fit.danielpindur.oslc.jira.clients.IssueLinkRestClient;
 import org.slf4j.Logger;
@@ -21,20 +22,13 @@ public class BaseFacade {
 
     private final JiraRestClient restClient;
     protected static final Logger log = LoggerFactory.getLogger(BaseFacade.class);
+    protected Configuration configuration = ConfigurationProvider.getInstance().GetConfiguration();
 
     public BaseFacade() {
-        // TODO: This needs to come from some config reader
-        var jiraServerUrl = "";
-
-        try {
-            var configuration = ConfigurationProvider.getInstance().GetConfiguration();
-            jiraServerUrl = configuration.JiraServer.Url;
-        } catch (FileNotFoundException ignored) {
-            // Exception will never be thrown here as the configuration is resolved upon adaptor startup
-        }
-
+        // TODO: Link Basic auth to Adaptor basic auth
+        // TODO: Add OAuth
         restClient = new AsynchronousJiraRestClientFactory()
-                .createWithBasicHttpAuthentication(URI.create(jiraServerUrl), "xpindu01", "testpassword");
+                .createWithBasicHttpAuthentication(URI.create(configuration.JiraServer.Url), "xpindu01", "testpassword");
     }
 
     protected boolean containsTerms(final String target, final String terms) {
@@ -67,11 +61,13 @@ public class BaseFacade {
     protected SearchRestClient getSearchClient() { return restClient.getSearchClient(); }
 
     protected IssueLinkRestClient getIssueLinkRestClient() {
-        // TODO: This needs to come from some config reader
+        // TODO: Link Basic auth to Adaptor basic auth
+        // TODO: Add OAuth
+        // TODO: Probably unify with the base
         var authenticationHandler = new BasicHttpAuthenticationHandler("xpindu01", "testpassword");
         final DisposableHttpClient httpClient = new AsynchronousHttpClientFactory()
-                .createClient(URI.create("http://localhost:8080"), authenticationHandler);
+                .createClient(URI.create(configuration.JiraServer.Url), authenticationHandler);
 
-        return new IssueLinkRestClient(URI.create("http://localhost:8080/rest/api/latest"), httpClient);
+        return new IssueLinkRestClient(URI.create(configuration.JiraServer.Url + "/rest/api/latest"), httpClient);
     }
 }

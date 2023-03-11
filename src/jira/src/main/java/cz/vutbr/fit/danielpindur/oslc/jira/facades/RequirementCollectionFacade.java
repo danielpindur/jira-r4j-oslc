@@ -22,7 +22,7 @@ public class RequirementCollectionFacade extends IssueFacade {
         result.setIdentifier(identifier);  // TODO: Check if readonly
         result.setAbout(resourcesFactory.constructURIForRequirementCollection(identifier));
         result.setCreated(resource.getCreationDate().toDate());
-        result.setSubject(resource.getLabels());
+        result.setSubject(GetFieldStringSetValue(configuration.LabelsFieldName, resource));
         result.setModified(resource.getUpdateDate().toDate());
         result.setProject(resourcesFactory.constructLinkForProject(projectIdString));
         // TODO: Creator should be probably always one instead of array
@@ -57,9 +57,8 @@ public class RequirementCollectionFacade extends IssueFacade {
 
         var projectUri = requirementCollection.getProject().getValue();
 
-        // TODO: move to config
         createIssue(requirementCollection.getDescription(),
-                "Requirement Collection",
+                configuration.RequirementCollectionIssueTypeName,
                 GetIdFromUri(projectUri),
                 requirementCollection.getTitle(),
                 identifier,
