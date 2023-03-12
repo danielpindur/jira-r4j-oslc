@@ -27,22 +27,18 @@ public class RequirementFacade extends IssueFacade {
         // TODO: Creator should be probably always one instead of array
         result.setCreator(
                 new HashSet<Link>(){{
-                    add(resourcesFactory.constructLinkForPerson(resource.getReporter().getName()));
+                    add(GetCreatorLink(resource));
                 }}
         );
 
         result.setDecomposedBy(GetDecomposedBy(resource));
         result.setDecomposes(GetDecomposes(resource));
-
-        // TODO: Contributors
+        result.setContributor(GetContributorsLinks(resource));
 
         return result;
     }
-    // TODO: add check that issueLinkType exists
-    // TODO: can the config of JIRA (issueLinks, customFields, etc) done by extension - good to know for discussion in BP
-    // TODO: what to do if something can't be add to JIRA
-    // TODO: add support for user search by email as well as username
-    // TODO: base configuration file should take into account R4J link type Relates - prep two config files
+
+    // TODO: check and verify creation and resource shapes
     public Requirement create(final Requirement requirement) {
         var identifier = requirement.getIdentifier() != null
                         ? requirement.getIdentifier()
@@ -79,7 +75,7 @@ public class RequirementFacade extends IssueFacade {
     public Requirement update(final Requirement requirement, final String identifier) {
         updateIssue(identifier, requirement.getDescription(), requirement.getTitle(), requirement.getSubject());
 
-        RemoveAllIssueLinks(identifier);
+        RemoveAdaptorIssueLinks(identifier);
         CreateDecomposedByLinks(requirement.getDecomposedBy(), identifier);
         CreateDecomposesLinks(requirement.getDecomposes(), identifier);
 

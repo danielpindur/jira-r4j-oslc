@@ -9,6 +9,13 @@ import java.util.Set;
 
 
 public class IssueLinkIdsForIssueParser implements JsonObjectParser<Set<String>> {
+
+    private final String issueLinkName;
+
+    public IssueLinkIdsForIssueParser(final String issueLinkName) {
+        this.issueLinkName = issueLinkName;
+    }
+
     @Override
     public Set<String> parse(JSONObject json) throws JSONException {
         var result = new HashSet<String>();
@@ -21,9 +28,14 @@ public class IssueLinkIdsForIssueParser implements JsonObjectParser<Set<String>>
 
         for (int i = 0; i < issueLinksJson.length(); i++) {
             var issueLinkJson = issueLinksJson.getJSONObject(i);
-            var issueLinkId = issueLinkJson.getString("id");
-            if (issueLinkId != null) {
-                result.add(issueLinkId);
+            var issueLinkType = issueLinkJson.getJSONObject("type");
+            var issueLinkName = issueLinkType.getString("name");
+
+            if (this.issueLinkName == null || issueLinkName.equalsIgnoreCase(this.issueLinkName)) {
+                var issueLinkId = issueLinkJson.getString("id");
+                if (issueLinkId != null) {
+                    result.add(issueLinkId);
+                }
             }
         }
         

@@ -1,7 +1,10 @@
 package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
+import com.atlassian.jira.rest.client.api.RestClientException;
+import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.User;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Person;
+import org.apache.jena.atlas.lib.NotImplemented;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,16 +20,38 @@ public class PersonFacade extends BaseFacade {
         return result;
     }
 
-    public Person get(final String id) {
-        var userResource = getUserClient().getUser(id).claim();
+    protected User GetUserByEmail(final String email) {
+        var userResources = getUserClient().searchUsersByEmail(email).claim();
+        User result = null;
 
-        if (userResource == null) {
-            return null;
+        for (User user : userResources) {
+            // Only one user should make it here (email is unique property), resulting in single iteration
+            result = user;
         }
 
-        return MapResourceToResult(userResource);
+        return result;
     }
 
+    public Person get(final String id) {
+        User userResource = null;
+
+        try {
+            userResource = getUserClient().getUser(id).claim();
+        } catch (RestClientException e) {
+            if (!e.getStatusCode().isPresent() || e.getStatusCode().get() != 404) {
+                throw e;
+            }
+        }
+
+        if (userResource == null) {
+            // Try search by email
+            userResource = GetUserByEmail(id);
+        }
+
+        return userResource != null ? MapResourceToResult(userResource) : null;
+    }
+
+    // TODO: add email search support
     public List<Person> search(final String terms) {
         var userResources = getUserClient().findUsers(terms).claim();
         var results = new LinkedList<Person>();

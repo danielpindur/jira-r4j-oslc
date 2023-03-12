@@ -1,5 +1,6 @@
 package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
+import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.BasicProject;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Project;
 
@@ -22,13 +23,17 @@ public class ProjectFacade extends BaseFacade {
     }
 
     public Project get(final String id) {
-        var projectResource = getProjectClient().getProject(id).claim();
+        com.atlassian.jira.rest.client.api.domain.Project projectResource = null;
 
-        if (projectResource == null) {
-            return null;
+        try {
+            projectResource = getProjectClient().getProject(id).claim();
+        } catch (RestClientException e) {
+            if (!e.getStatusCode().isPresent() || e.getStatusCode().get() != 404) {
+                throw e;
+            }
         }
 
-        return MapResourceToResult(projectResource);
+        return projectResource != null ? MapResourceToResult(projectResource) : null;
     }
 
     public Project get(final Long id) {

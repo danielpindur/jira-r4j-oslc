@@ -1,5 +1,6 @@
 package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
+import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.api.domain.input.FieldInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
@@ -9,9 +10,7 @@ import org.eclipse.lyo.oslc4j.core.model.Link;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.UUID.randomUUID;
 
@@ -37,11 +36,51 @@ public class IssueFacade extends BaseFacade {
             result = issue;
         }
 
-        return result;
+        return getIssue(result.getId());
+    }
+
+    private Set<String> GetContributors(final Issue issue) {
+        var contributorUsernames = new HashSet<String>();
+        var changelog = issue.getChangelog();
+
+        if (changelog == null) {
+            return contributorUsernames;
+        }
+
+        for (var change : changelog) {
+            var user = change.getAuthor();
+            contributorUsernames.add(user.getName());
+        }
+
+        return contributorUsernames;
+    }
+
+    protected Link GetCreatorLink(final Issue issue) {
+        var creator = issue.getReporter();
+        if (creator == null) {
+            throw new WebApplicationException("Creator for issue with identifier (" + issue.getKey() + ") not found!", Response.Status.CONFLICT);
+        }
+
+        return resourcesFactory.constructLinkForPerson(creator.getName());
+    }
+
+    protected Set<Link> GetContributorsLinks(final Issue issue) {
+        var contributors = GetContributors(issue);
+        var contributorsLinks = new HashSet<Link>();
+
+        for (var contributor : contributors) {
+            contributorsLinks.add(resourcesFactory.constructLinkForPerson(contributor));
+        }
+
+        contributorsLinks.add(GetCreatorLink(issue));
+
+        return contributorsLinks;
     }
 
     protected Issue getIssue(final String id) {
-        return getIssueClient().getIssue(id).claim();
+        var expandos = new LinkedList<IssueRestClient.Expandos>();
+        expandos.add(IssueRestClient.Expandos.CHANGELOG);
+        return getIssueClient().getIssue(id, expandos).claim();
     }
 
     protected Issue getIssue(final Long id) {
@@ -128,6 +167,8 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Issue with identifier (" + identifierTo + ") not found!", Response.Status.BAD_REQUEST);
         }
 
+        ValidateIssueLinkType(linkTypeName);
+
         var issueLink = new LinkIssuesInput(issueFrom.getKey(), issueTo.getKey(), linkTypeName);
         getIssueClient().linkIssue(issueLink);
     }
@@ -173,7 +214,11 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Field Identifier not found, failed to create issue!", Response.Status.CONFLICT);
         }
 
-        // TODO: title cannot be null, add check for that
+        // TODO: check model for title length
+        if (title == null || title.length() == 0) {
+            throw new WebApplicationException("Title has to be specified, failed to create issue!", Response.Status.BAD_REQUEST);
+        }
+
         var issue = new IssueInputBuilder(project.getKey(), issueType.getId(), title)
                 .setFieldInput(new FieldInput(labelsFieldId, subject))
                 .setFieldInput(new FieldInput(identifierFieldId, identifier))
@@ -296,7 +341,11 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Field Labels not found, failed to create issue!", Response.Status.CONFLICT);
         }
 
-        // TODO: title cannot be null, add check for that
+        // TODO: check model for title length
+        if (title == null || title.length() == 0) {
+            throw new WebApplicationException("Title has to be specified, failed to create issue!", Response.Status.BAD_REQUEST);
+        }
+
         var updatedIssue = new IssueInputBuilder(issue.getProject().getKey(), issue.getIssueType().getId(), title)
                 .setFieldInput(new FieldInput(labelsFieldId, subject))
                 .setDescription(description)
@@ -305,10 +354,9 @@ public class IssueFacade extends BaseFacade {
         getIssueClient().updateIssue(issue.getKey(), updatedIssue).claim();
     }
 
-    // TODO: change to only remove links added by adaptor -> only config.issuelinktype
-    protected void RemoveAllIssueLinks(final String identifier) {
+    protected void RemoveAdaptorIssueLinks(final String identifier) {
         var issue = getIssueByIdentifier(identifier);
-        var issueLinkIds = getIssueLinkRestClient().getIssueLinkIdsForIssue(issue.getKey()).claim();
+        var issueLinkIds = getIssueLinkRestClient().getAdaptorIssueLinkIdsForIssue(issue.getKey(), configuration.IssueLinkTypeName).claim();
 
         for (var issueLinkId : issueLinkIds) {
             getIssueLinkRestClient().deleteLink(issueLinkId).claim();
@@ -325,5 +373,17 @@ public class IssueFacade extends BaseFacade {
         for (Link link : links) {
             CreateLink(identifier, GetIdFromUri(link.getValue()), configuration.IssueLinkTypeName);
         }
+    }
+
+    protected void ValidateIssueLinkType(final String issueLinkTypeName) {
+        var issueLinkTypes = getMetadataClient().getIssueLinkTypes().claim();
+
+        for (IssuelinksType issueLinkType : issueLinkTypes) {
+            if (issueLinkType.getName().equalsIgnoreCase(issueLinkTypeName)) {
+                return;
+            }
+        }
+
+        throw new WebApplicationException("IssueLinkType with identifier (" + issueLinkTypeName +") not found!", Response.Status.CONFLICT);
     }
 }

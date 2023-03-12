@@ -9,6 +9,7 @@ import cz.vutbr.fit.danielpindur.oslc.configuration.ConfigurationProvider;
 import cz.vutbr.fit.danielpindur.oslc.configuration.models.Configuration;
 import cz.vutbr.fit.danielpindur.oslc.jira.ResourcesFactory;
 import cz.vutbr.fit.danielpindur.oslc.jira.clients.IssueLinkRestClient;
+import cz.vutbr.fit.danielpindur.oslc.jira.clients.UserRestClientExtended;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +29,7 @@ public class BaseFacade {
         // TODO: Link Basic auth to Adaptor basic auth
         // TODO: Add OAuth
         restClient = new AsynchronousJiraRestClientFactory()
-                .createWithBasicHttpAuthentication(URI.create(configuration.JiraServer.Url), "xpindu01", "testpassword");
+                .createWithBasicHttpAuthentication(URI.create(configuration.JiraServer.Url), "test_user", "testpassword");
     }
 
     protected boolean containsTerms(final String target, final String terms) {
@@ -46,13 +47,7 @@ public class BaseFacade {
         return Objects.requireNonNull(number).toString();
     }
 
-    protected UserRestClient getUserClient() {
-        return restClient.getUserClient();
-    }
-
-    protected ProjectRestClient getProjectClient() {
-        return restClient.getProjectClient();
-    }
+    protected ProjectRestClient getProjectClient() { return restClient.getProjectClient(); }
 
     protected IssueRestClient getIssueClient() { return restClient.getIssueClient(); }
 
@@ -60,14 +55,21 @@ public class BaseFacade {
 
     protected SearchRestClient getSearchClient() { return restClient.getSearchClient(); }
 
-    protected IssueLinkRestClient getIssueLinkRestClient() {
-        // TODO: Link Basic auth to Adaptor basic auth
-        // TODO: Add OAuth
-        // TODO: Probably unify with the base
-        var authenticationHandler = new BasicHttpAuthenticationHandler("xpindu01", "testpassword");
-        final DisposableHttpClient httpClient = new AsynchronousHttpClientFactory()
+    // TODO: Link Basic auth to Adaptor basic auth
+    // TODO: Add OAuth
+    // TODO: Probably unify with the base
+    private DisposableHttpClient getHttpClient() {
+        var authenticationHandler = new BasicHttpAuthenticationHandler("test_user", "testpassword");
+        return new AsynchronousHttpClientFactory()
                 .createClient(URI.create(configuration.JiraServer.Url), authenticationHandler);
-
-        return new IssueLinkRestClient(URI.create(configuration.JiraServer.Url + "/rest/api/latest"), httpClient);
     }
+
+    protected IssueLinkRestClient getIssueLinkRestClient() {
+        return new IssueLinkRestClient(URI.create(configuration.JiraServer.Url + "/rest/api/latest"), getHttpClient());
+    }
+
+    protected UserRestClientExtended getUserClient() {
+        return new UserRestClientExtended(URI.create(configuration.JiraServer.Url + "/rest/api/latest"), getHttpClient());
+    }
+
 }

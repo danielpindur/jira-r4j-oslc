@@ -23,8 +23,12 @@ public class IssueLinkRestClient extends AbstractAsynchronousRestClient {
         return delete(uri);
     }
 
-    public Promise<Set<String>> getIssueLinkIdsForIssue(final String issueId) {
+    public Promise<Set<String>> getAdaptorIssueLinkIdsForIssue(final String issueId, final String issueLinkName) {
         final URI uri = UriBuilder.fromUri(this.baseUri).path("issue").path(issueId).build();
-        return getAndParse(uri, new IssueLinkIdsForIssueParser());
+        return getAndParse(uri, new IssueLinkIdsForIssueParser(issueLinkName));
+    }
+
+    public Promise<Set<String>> getIssueLinkIdsForIssue(final String issueId) {
+        return getAdaptorIssueLinkIdsForIssue(issueId, null);
     }
 }
