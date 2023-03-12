@@ -35,7 +35,10 @@
     <repositories>
         <!-- Start of user code repositories
         -->
-        <!-- TODO: Add additional repositories here to avoid them be overridden upon future re-generation -->
+        <repository>
+            <id>atlassian-public</id>
+            <url>https://packages.atlassian.com/maven/repository/public</url>
+        </repository>
         <!-- End of user code
         -->
         <repository>
@@ -55,7 +58,16 @@
         <!-- Specific dependencies -->
         <!-- Start of user code dependencies
         -->
-        <!-- TODO: Add additional dependencies here to avoid them be overridden upon future re-generation -->
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-rest-java-client-core</artifactId>
+            <version>5.2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>cz.vutbr.fit.danielpindur.oslc.shared</groupId>
+            <artifactId>shared</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- End of user code
         -->
         <!-- General dependencies -->

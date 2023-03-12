@@ -1,4 +1,4 @@
-package cz.vutbr.fit.danielpindur.oslc.jira.parsers;
+package cz.vutbr.fit.danielpindur.oslc.shared.services.parsers;
 
 import com.atlassian.jira.rest.client.internal.json.JsonObjectParser;
 import org.codehaus.jettison.json.JSONException;

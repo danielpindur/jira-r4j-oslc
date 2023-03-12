@@ -38,6 +38,7 @@ import cz.vutbr.fit.danielpindur.oslc.r4j.resources.RequirementCollection;
 
 
 // Start of user code imports
+import cz.vutbr.fit.danielpindur.oslc.r4j.facades.FolderFacade;
 // End of user code
 
 // Start of user code pre_class_code
@@ -51,6 +52,7 @@ public class RestDelegate {
     
     @Inject ResourcesFactory resourcesFactory;
     // Start of user code class_attributes
+    @Inject FolderFacade folderFacade;
     // End of user code
     
     public RestDelegate() {
@@ -70,7 +72,12 @@ public class RestDelegate {
         ServiceProviderInfo[] serviceProviderInfos = {};
         
         // Start of user code "ServiceProviderInfo[] getServiceProviderInfos(...)"
-        // TODO Implement code to return the set of ServiceProviders
+        ServiceProviderInfo r1 = new ServiceProviderInfo();
+        r1.name = "R4J Provider";
+        r1.serviceProviderId = "1"; // TODO: Is this id okay?
+
+        serviceProviderInfos = new ServiceProviderInfo[1];
+        serviceProviderInfos[0] = r1;
         // End of user code
         return serviceProviderInfos;
     }
@@ -131,9 +138,7 @@ public class RestDelegate {
         
         
         // Start of user code getFolder
-        // TODO Implement code to return a resource
-        // return 'null' if the resource was not found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        aResource = folderFacade.get(id);
         // End of user code
         return aResource;
     }

@@ -2,13 +2,18 @@ package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
 import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.BasicProject;
+import cz.vutbr.fit.danielpindur.oslc.jira.ResourcesFactory;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Project;
+import cz.vutbr.fit.danielpindur.oslc.shared.services.facades.BaseFacade;
 
+import javax.inject.Inject;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 public class ProjectFacade extends BaseFacade {
+    @Inject ResourcesFactory resourcesFactory;
+
     private Project MapResourceToResult(final com.atlassian.jira.rest.client.api.domain.Project resource) {
         var result = new Project();
         var projectIdString = Objects.requireNonNull(resource.getId()).toString();

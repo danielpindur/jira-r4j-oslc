@@ -1,4 +1,4 @@
-package cz.vutbr.fit.danielpindur.oslc.configuration.models;
+package cz.vutbr.fit.danielpindur.oslc.shared.configuration.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

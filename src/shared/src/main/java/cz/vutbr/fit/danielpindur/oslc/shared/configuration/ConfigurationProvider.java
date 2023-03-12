@@ -1,6 +1,6 @@
-package cz.vutbr.fit.danielpindur.oslc.configuration;
+package cz.vutbr.fit.danielpindur.oslc.shared.configuration;
 
-import cz.vutbr.fit.danielpindur.oslc.configuration.models.Configuration;
+import cz.vutbr.fit.danielpindur.oslc.shared.configuration.models.Configuration;
 
 import java.io.FileNotFoundException;
 

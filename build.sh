@@ -35,7 +35,7 @@ main () {
     echo "############################################################"
     echo
 
-    mvn -f "$ROOTDIR/src/configuration/pom.xml" clean install || exit "$?"
+    mvn -f "$ROOTDIR/src/shared/pom.xml" clean install || exit "$?"
 
 
     echo

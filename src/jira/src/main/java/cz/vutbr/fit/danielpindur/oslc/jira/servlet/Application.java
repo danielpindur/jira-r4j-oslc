@@ -79,7 +79,7 @@ import cz.vutbr.fit.danielpindur.oslc.jira.services.PersonService;
 import cz.vutbr.fit.danielpindur.oslc.jira.services.ProjectService;
 
 // Start of user code imports
-import cz.vutbr.fit.danielpindur.oslc.configuration.ConfigurationProvider;
+import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
 // End of user code
 
 // Start of user code pre_class_code

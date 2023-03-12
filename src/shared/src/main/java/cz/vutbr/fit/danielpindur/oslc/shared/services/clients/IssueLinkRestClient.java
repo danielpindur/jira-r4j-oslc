@@ -1,8 +1,8 @@
-package cz.vutbr.fit.danielpindur.oslc.jira.clients;
+package cz.vutbr.fit.danielpindur.oslc.shared.services.clients;
 
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.jira.rest.client.internal.async.AbstractAsynchronousRestClient;
-import cz.vutbr.fit.danielpindur.oslc.jira.parsers.IssueLinkIdsForIssueParser;
+import cz.vutbr.fit.danielpindur.oslc.shared.services.parsers.IssueLinkIdsForIssueParser;
 import io.atlassian.util.concurrent.Promise;
 
 import javax.ws.rs.core.UriBuilder;

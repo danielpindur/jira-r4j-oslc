@@ -1,8 +1,8 @@
-package cz.vutbr.fit.danielpindur.oslc.configuration;
+package cz.vutbr.fit.danielpindur.oslc.shared.configuration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cz.vutbr.fit.danielpindur.oslc.configuration.models.Configuration;
+import cz.vutbr.fit.danielpindur.oslc.shared.configuration.models.Configuration;
 
 public class ConfigurationParser {
 

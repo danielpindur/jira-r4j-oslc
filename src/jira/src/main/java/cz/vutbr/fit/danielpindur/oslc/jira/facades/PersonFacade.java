@@ -3,13 +3,18 @@ package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.User;
+import cz.vutbr.fit.danielpindur.oslc.jira.ResourcesFactory;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Person;
+import cz.vutbr.fit.danielpindur.oslc.shared.services.facades.BaseFacade;
 import org.apache.jena.atlas.lib.NotImplemented;
 
+import javax.inject.Inject;
 import java.util.LinkedList;
 import java.util.List;
 
 public class PersonFacade extends BaseFacade {
+    @Inject ResourcesFactory resourcesFactory;
+
     private Person MapResourceToResult(final User resource) {
         var result = new Person();
         result.setIdentifier(resource.getName());

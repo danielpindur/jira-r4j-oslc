@@ -1,15 +1,14 @@
-package cz.vutbr.fit.danielpindur.oslc.jira.facades;
+package cz.vutbr.fit.danielpindur.oslc.shared.services.facades;
 
 import com.atlassian.jira.rest.client.api.*;
 import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
-import cz.vutbr.fit.danielpindur.oslc.configuration.ConfigurationProvider;
-import cz.vutbr.fit.danielpindur.oslc.configuration.models.Configuration;
-import cz.vutbr.fit.danielpindur.oslc.jira.ResourcesFactory;
-import cz.vutbr.fit.danielpindur.oslc.jira.clients.IssueLinkRestClient;
-import cz.vutbr.fit.danielpindur.oslc.jira.clients.UserRestClientExtended;
+import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.IssueLinkRestClient;
+import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.UserRestClientExtended;
+import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
+import cz.vutbr.fit.danielpindur.oslc.shared.configuration.models.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +18,6 @@ import java.net.URI;
 import java.util.Objects;
 
 public class BaseFacade {
-    @Inject ResourcesFactory resourcesFactory;
-
     private final JiraRestClient restClient;
     protected static final Logger log = LoggerFactory.getLogger(BaseFacade.class);
     protected Configuration configuration = ConfigurationProvider.getInstance().GetConfiguration();

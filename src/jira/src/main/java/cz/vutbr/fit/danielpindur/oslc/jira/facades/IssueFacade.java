@@ -5,8 +5,11 @@ import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.api.domain.input.FieldInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.api.domain.input.LinkIssuesInput;
+import cz.vutbr.fit.danielpindur.oslc.jira.ResourcesFactory;
+import cz.vutbr.fit.danielpindur.oslc.shared.services.facades.BaseFacade;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 
+import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.net.URI;
@@ -15,6 +18,7 @@ import java.util.*;
 import static java.util.UUID.randomUUID;
 
 public class IssueFacade extends BaseFacade {
+    @Inject ResourcesFactory resourcesFactory;
 
     protected Issue getIssueByIdentifier(final String identifier) {
 
