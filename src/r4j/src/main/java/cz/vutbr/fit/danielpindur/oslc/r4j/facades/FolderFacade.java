@@ -139,7 +139,31 @@ public class FolderFacade extends BaseFacade {
             throw new WebApplicationException("Project with key=" + GetProjectKey(id) + " not found", Response.Status.NOT_FOUND);
         }
 
-        var result = getFolderClient().get(project.getKey(), GetFolderId(id)).claim();
+        FolderModel result = null;
+        try {
+            result = getFolderClient().get(project.getKey(), GetFolderId(id)).claim();
+        } catch (RestClientException e) {
+            if (!e.getStatusCode().isPresent() || e.getStatusCode().get() != 404) {
+                throw e;
+            }
+        }
+
         return result != null ? MapResourceToResult(id, result, project.getKey()) : null;
     }
+
+    // TODO: probably don't want root node to be removable
+    public boolean delete(final String id) {
+        var folder = get(id);
+        if (folder == null) {
+            throw new WebApplicationException("Folder with identifier (" + id +") not found!", Response.Status.NOT_FOUND);
+        }
+
+        getFolderClient().deleteFolder(GetProjectKey(id), GetFolderId(id)).claim();
+
+        var deletedFolder = get(id);
+
+        return deletedFolder == null;
+    }
+
+    public Folder create
 }

@@ -148,8 +148,7 @@ public class RestDelegate {
         Boolean deleted = false;
         
         // Start of user code deleteFolder
-        // TODO Implement code to delete a resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        deleted = folderFacade.delete(id);
         // End of user code
         return deleted;
     }

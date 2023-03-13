@@ -1,6 +1,7 @@
 package cz.vutbr.fit.danielpindur.oslc.shared.services.clients;
 
 import com.atlassian.httpclient.api.HttpClient;
+import com.atlassian.httpclient.api.ResponsePromise;
 import com.atlassian.jira.rest.client.internal.async.AbstractAsynchronousRestClient;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.models.FolderModel;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.parsers.FolderParser;
@@ -21,5 +22,10 @@ public class FolderRestClient extends AbstractAsynchronousRestClient {
     public Promise<FolderModel> get(final String projectKey, final Integer folderId) {
         final URI uri = UriBuilder.fromUri(this.baseUri).path("projects").path(projectKey).path("folders").path(folderId.toString()).build();
         return getAndParse(uri, new FolderParser());
+    }
+
+    public Promise<Void> deleteFolder(final String projectKey, final Integer folderId) {
+        final URI uri = UriBuilder.fromUri(this.baseUri).path("projects").path(projectKey).path("folders").path(folderId.toString()).build();
+        return this.delete(uri);
     }
 }
