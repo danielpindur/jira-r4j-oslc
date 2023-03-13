@@ -8,5 +8,6 @@
     "RequirementCollectionIssueTypeName" : "Requirement Collection",
     "IssueLinkTypeName" : "Decompose",
     "IdentifierFieldName" : "Identifier",
-    "LabelsFieldName" : "Labels"
+    "LabelsFieldName" : "Labels",
+    "RootFolderId" : "ROOT"
 }

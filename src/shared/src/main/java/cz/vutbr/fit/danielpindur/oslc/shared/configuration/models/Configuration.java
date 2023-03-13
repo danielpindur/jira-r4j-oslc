@@ -18,6 +18,9 @@ public class Configuration {
     @JsonProperty("LabelsFieldName")
     public String LabelsFieldName;
 
+    @JsonProperty("RootFolderId")
+    public String RootFolderId;
+
     @JsonProperty("JiraServer")
     public JiraServer JiraServer;
 }

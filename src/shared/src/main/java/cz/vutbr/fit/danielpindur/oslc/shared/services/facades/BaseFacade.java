@@ -5,7 +5,9 @@ import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
+import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.FolderRestClient;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.IssueLinkRestClient;
+import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.IssueRestClientExtended;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.UserRestClientExtended;
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.models.Configuration;
@@ -46,8 +48,6 @@ public class BaseFacade {
 
     protected ProjectRestClient getProjectClient() { return restClient.getProjectClient(); }
 
-    protected IssueRestClient getIssueClient() { return restClient.getIssueClient(); }
-
     protected MetadataRestClient getMetadataClient() { return restClient.getMetadataClient(); }
 
     protected SearchRestClient getSearchClient() { return restClient.getSearchClient(); }
@@ -67,6 +67,15 @@ public class BaseFacade {
 
     protected UserRestClientExtended getUserClient() {
         return new UserRestClientExtended(URI.create(configuration.JiraServer.Url + "/rest/api/latest"), getHttpClient());
+    }
+
+    protected IssueRestClientExtended getIssueClient() {
+        return new IssueRestClientExtended(URI.create(configuration.JiraServer.Url + "/rest/api/latest"),getHttpClient(), restClient.getSessionClient(), getMetadataClient());
+    }
+
+
+    protected FolderRestClient getFolderClient() {
+        return new FolderRestClient(URI.create(configuration.JiraServer.Url + "/rest/com.easesolutions.jira.plugins.requirements/2.0"), getHttpClient());
     }
 
 }

@@ -17,6 +17,7 @@
 
 package cz.vutbr.fit.danielpindur.oslc.r4j.servlet;
 
+import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,6 +26,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+
+import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 
@@ -117,6 +120,12 @@ public class Application extends javax.ws.rs.core.Application {
 
         
         // Start of user code Custom Resource Classes
+        try {
+            ConfigurationProvider.Initialize();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
         // End of user code
 
         RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(OslcConstants.PATH_ALLOWED_VALUES,           AllowedValues.class);

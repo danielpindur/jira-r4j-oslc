@@ -12,7 +12,7 @@ public class RequirementFacade extends IssueFacade {
         var jiraIssueId = resource.getId().intValue();
         var projectIdString = SafeConvert(resource.getProject().getId());
 
-        var identifier = GetIssueGUID(resource, true);
+        var identifier = getIssueClient().getIssueGUID(resource, true);
 
         result.setTitle(resource.getSummary());
         result.setDescription(resource.getDescription());
@@ -42,7 +42,7 @@ public class RequirementFacade extends IssueFacade {
     public Requirement create(final Requirement requirement) {
         var identifier = requirement.getIdentifier() != null
                         ? requirement.getIdentifier()
-                        : CreateIssueGUID();
+                        : getIssueClient().CreateIssueGUID();
 
         var projectUri = requirement.getProject().getValue();
 
@@ -61,7 +61,8 @@ public class RequirementFacade extends IssueFacade {
 
     public Requirement get(final String id) {
         var issue = getIssueByIdentifier(id);
-        if (issue == null || !IsRequirement(issue)) {
+
+        if (issue == null || !getIssueClient().IsRequirement(issue)) {
             return null;
         }
 

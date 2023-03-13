@@ -92,14 +92,6 @@ public class IssueFacade extends BaseFacade {
         return getIssue(stringId);
     }
 
-    protected boolean IsRequirement(final Issue issue) {
-        return issue != null && issue.getIssueType().getName().equalsIgnoreCase(configuration.RequirementIssueTypeName);
-    }
-
-    protected boolean IsRequirementCollection(final Issue issue) {
-        return issue != null && issue.getIssueType().getName().equalsIgnoreCase(configuration.RequirementCollectionIssueTypeName);
-    }
-
     private boolean IsDecomposedByLink(final IssueLink link) {
         return link.getIssueLinkType().getName().equalsIgnoreCase(configuration.IssueLinkTypeName)
                 && link.getIssueLinkType().getDirection().equals(IssueLinkType.Direction.INBOUND);
@@ -113,11 +105,11 @@ public class IssueFacade extends BaseFacade {
     private Link ConstructLinkForDecomposeLink(final String id) {
         var issue = getIssue(id);
 
-        if (IsRequirement(issue)) {
-            return resourcesFactory.constructLinkForRequirement(GetIssueGUID(issue, true));
+        if (getIssueClient().IsRequirement(issue)) {
+            return resourcesFactory.constructLinkForRequirement(getIssueClient().getIssueGUID(issue, true));
         }
-        else if (IsRequirementCollection(issue)) {
-            return resourcesFactory.constructLinkForRequirementCollection(GetIssueGUID(issue, true));
+        else if (getIssueClient().IsRequirementCollection(issue)) {
+            return resourcesFactory.constructLinkForRequirementCollection(getIssueClient().getIssueGUID(issue, true));
         }
 
         // Issue is not Requirement or Requirement Collection, omit from link
@@ -207,8 +199,8 @@ public class IssueFacade extends BaseFacade {
 
         var fields = getMetadataClient().getFields().claim();
 
-        var labelsFieldId = GetFieldId(configuration.LabelsFieldName, fields);
-        var identifierFieldId = GetFieldId(configuration.IdentifierFieldName, fields);
+        var labelsFieldId = getIssueClient().GetFieldId(configuration.LabelsFieldName, fields);
+        var identifierFieldId = getIssueClient().GetFieldId(configuration.IdentifierFieldName, fields);
 
         if (labelsFieldId == null) {
             throw new WebApplicationException("Field Labels not found, failed to create issue!", Response.Status.CONFLICT);
@@ -236,41 +228,8 @@ public class IssueFacade extends BaseFacade {
         }
     }
 
-    protected String GetFieldId(final String fieldName, Iterable<Field> fields) {
-        for (var field : fields ) {
-            if (field.getName().equalsIgnoreCase(fieldName)) {
-                 return field.getId();
-            }
-        }
-
-        return null;
-    }
-
-    protected String GetFieldId(final String fieldName) {
-        var fields = getMetadataClient().getFields().claim();
-        return GetFieldId(fieldName, fields);
-    }
-
-    protected String GetFieldStringValue(final String fieldName, final Issue issue) {
-        var fieldId = GetFieldId(fieldName);
-        if (fieldId == null) {
-            throw new WebApplicationException("Failed to find fieldId for " + fieldName + "!", Response.Status.CONFLICT);
-        }
-
-        if (fieldId.equalsIgnoreCase("Labels")) {
-            return String.join(",", issue.getLabels());
-        }
-
-        var field = issue.getField(fieldId);
-        if (field == null) {
-            throw new WebApplicationException("Failed to find field for fieldId " + fieldId + "!", Response.Status.CONFLICT);
-        }
-
-        return field.getValue() != null ? field.getValue().toString() : null;
-    }
-
     protected Set<String> GetFieldStringSetValue(final String fieldName, final Issue issue) {
-        var fieldId = GetFieldId(fieldName);
+        var fieldId = getIssueClient().GetFieldId(fieldName);
         if (fieldId == null) {
             throw new WebApplicationException("Failed to find fieldId for " + fieldName + "!", Response.Status.CONFLICT);
         }
@@ -285,35 +244,6 @@ public class IssueFacade extends BaseFacade {
         }
 
         return field.getValue() != null ? (HashSet<String>) field.getValue() : new HashSet<String>();
-    }
-
-    protected String GetIssueGUID(final Issue issue, final boolean first) {
-        var identifierFieldName = configuration.IdentifierFieldName;
-        var identifier = GetFieldStringValue(identifierFieldName, issue);
-
-        if (identifier != null) {
-            return identifier;
-        }
-
-        if (!first) {
-            throw new WebApplicationException("Failed to generate GUID for issue " + issue.getKey() + "!", Response.Status.INTERNAL_SERVER_ERROR);
-        }
-
-        identifier = CreateIssueGUID();
-        getIssueClient().updateIssue(
-                issue.getKey(),
-                new IssueInputBuilder(issue.getProject().getKey(), issue.getIssueType().getId())
-                        .setFieldInput(new FieldInput(GetFieldId(identifierFieldName), identifier))
-                        .build())
-                .claim();
-
-        var updated = getIssue(issue.getId());
-
-        return GetIssueGUID(updated, false);
-    }
-
-    protected String CreateIssueGUID() {
-        return randomUUID().toString();
     }
 
     protected String GetIdFromUri(final URI uri) {
@@ -339,7 +269,7 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Issue with identifier (" + identifier +") not found!", Response.Status.NOT_FOUND);
         }
 
-        var labelsFieldId = GetFieldId(configuration.LabelsFieldName);
+        var labelsFieldId = getIssueClient().GetFieldId(configuration.LabelsFieldName);
 
         if (labelsFieldId == null) {
             throw new WebApplicationException("Field Labels not found, failed to create issue!", Response.Status.CONFLICT);

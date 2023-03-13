@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.core.UriBuilder;
 
+import cz.vutbr.fit.danielpindur.oslc.r4j.clients.JiraAdaptorClient;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 import org.eclipse.lyo.oslc4j.core.OSLC4JUtils;
 import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Folder;
@@ -48,6 +49,33 @@ public class ResourcesFactory {
     }
 
     // Start of user code class_methods
+    private final String jiraBasePath = JiraAdaptorClient.getServiceProviderURI();
+
+    public URI constructURIForRequirement(final String id) {
+        Map<String, Object> pathParameters = new HashMap<String, Object>();
+        pathParameters.put("id", id);
+        String instanceURI = "requirement/Requirement/{id}";
+
+        final UriBuilder builder = UriBuilder.fromUri(this.jiraBasePath);
+        return builder.path(instanceURI).buildFromMap(pathParameters);
+    }
+
+    public Link constructLinkForRequirement(final String id) {
+        return new Link(constructURIForRequirement(id));
+    }
+
+    public URI constructURIForRequirementCollection(final String id) {
+        Map<String, Object> pathParameters = new HashMap<String, Object>();
+        pathParameters.put("id", id);
+        String instanceURI = "requirementCollection/RequirementCollection/{id}";
+
+        final UriBuilder builder = UriBuilder.fromUri(this.jiraBasePath);
+        return builder.path(instanceURI).buildFromMap(pathParameters);
+    }
+
+    public Link constructLinkForRequirementCollection(final String id) {
+        return new Link(constructURIForRequirementCollection(id));
+    }
     // End of user code
 
     //methods for Folder resource
@@ -72,6 +100,4 @@ public class ResourcesFactory {
     public Link constructLinkForFolder(final String id) {
         return new Link(constructURIForFolder(id));
     }
-    
-
 }

@@ -18,6 +18,7 @@
 package cz.vutbr.fit.danielpindur.oslc.r4j.servlet;
 
 import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.glassfish.hk2.api.Factory;

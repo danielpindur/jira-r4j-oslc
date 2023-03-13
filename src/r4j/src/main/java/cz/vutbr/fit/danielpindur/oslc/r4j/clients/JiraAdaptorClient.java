@@ -38,8 +38,13 @@ public class JiraAdaptorClient
     // End of user code
     
     // Start of user code class_methods
+    // TODO: should be based on serviceProviderCatalogURI
+    public static String getServiceProviderURI() {
+        return "http://localhost:8081/jira/services";
+    }
     // End of user code
 
+    // TODO: this needs to come from config file
     static String serviceProviderCatalogURI = "http://localhost:8081/jira/services/catalog/singleton";
 
     public static ServiceProviderCatalog getServiceProviderCatalog() throws Exception {
