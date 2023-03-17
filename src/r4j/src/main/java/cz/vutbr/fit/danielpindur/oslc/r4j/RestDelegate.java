@@ -112,8 +112,7 @@ public class RestDelegate {
         
         
         // Start of user code createFolder
-        // TODO Implement code to create a resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        newResource = folderFacade.create(aResource);
         // End of user code
         return newResource;
     }
@@ -124,8 +123,7 @@ public class RestDelegate {
         
         
         // Start of user code createFolderFromDialog
-        // TODO Implement code to create a resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        newResource = folderFacade.create(aResource);
         // End of user code
         return newResource;
     }

@@ -9,4 +9,5 @@ public class FolderModel {
     public Set<Integer> SubfolderIds = new HashSet<Integer>();
     public Integer ParentId;
     public Set<String> ContainsIssueKeys = new HashSet<String>();
+    public Integer Id;
 }

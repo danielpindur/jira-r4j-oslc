@@ -246,11 +246,6 @@ public class IssueFacade extends BaseFacade {
         return field.getValue() != null ? (HashSet<String>) field.getValue() : new HashSet<String>();
     }
 
-    protected String GetIdFromUri(final URI uri) {
-        var exploded = uri.toString().split("/");
-        return exploded[exploded.length - 1];
-    }
-
     protected boolean deleteIssue(final String identifier) {
         var issue = getIssueByIdentifier(identifier);
         if (issue == null) {

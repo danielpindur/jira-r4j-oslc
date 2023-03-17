@@ -1,4 +1,4 @@
-package cz.vutbr.fit.danielpindur.oslc.shared.services.parsers;
+package cz.vutbr.fit.danielpindur.oslc.shared.services.clients.json.parsers;
 
 import com.atlassian.jira.rest.client.internal.json.JsonObjectParser;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.models.FolderModel;
@@ -14,6 +14,7 @@ public class FolderParser implements JsonObjectParser<FolderModel>{
         result.Title = json.getString("name");
         result.ParentId = Integer.parseInt(json.getString("parentId"));
         result.Description = json.getString("description");
+        result.Id = Integer.parseInt(json.getString("id"));
 
         var issues = json.getJSONArray("issues");
         for (int i = 0; i < issues.length(); i++) {

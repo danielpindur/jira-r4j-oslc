@@ -78,4 +78,8 @@ public class BaseFacade {
         return new FolderRestClient(URI.create(configuration.JiraServer.Url + "/rest/com.easesolutions.jira.plugins.requirements/2.0"), getHttpClient());
     }
 
+    protected String GetIdFromUri(final URI uri) {
+        var exploded = uri.toString().split("/");
+        return exploded[exploded.length - 1];
+    }
 }
