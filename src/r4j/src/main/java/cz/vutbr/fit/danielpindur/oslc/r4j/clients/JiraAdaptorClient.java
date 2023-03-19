@@ -25,6 +25,8 @@ import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Requirement;
 import cz.vutbr.fit.danielpindur.oslc.r4j.resources.RequirementCollection;
 
 // Start of user code imports
+import javax.ws.rs.client.ClientBuilder;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 // End of user code
 
 
@@ -42,10 +44,9 @@ public class JiraAdaptorClient
     public static String getServiceProviderURI() {
         return "http://localhost:8081/jira/services";
     }
-    // End of user code
-
     // TODO: this needs to come from config file
     static String serviceProviderCatalogURI = "http://localhost:8081/jira/services/catalog/singleton";
+    // End of user code
 
     public static ServiceProviderCatalog getServiceProviderCatalog() throws Exception {
         OslcClient client = new OslcClient();
@@ -53,6 +54,10 @@ public class JiraAdaptorClient
         ServiceProviderCatalog catalog = null;
 
         // Start of user code getServiceProviderCatalog_init
+        // TODO: pass auth
+        ClientBuilder builder = ClientBuilder.newBuilder();
+        builder.register(HttpAuthenticationFeature.basic("user", ("user").getBytes()));
+        client = new OslcClient(builder);
         // End of user code
 
         response = client.getResource(serviceProviderCatalogURI,OSLCConstants.CT_RDF);
@@ -70,6 +75,10 @@ public class JiraAdaptorClient
         Requirement resource = null;
 
         // Start of user code getRequirement_init
+        // TODO: pass auth
+        ClientBuilder builder = ClientBuilder.newBuilder();
+        builder.register(HttpAuthenticationFeature.basic("user", ("user").getBytes()));
+        client = new OslcClient(builder);
         // End of user code
 
         response = client.getResource(resourceURI, OSLCConstants.CT_RDF);
@@ -87,6 +96,10 @@ public class JiraAdaptorClient
         RequirementCollection resource = null;
 
         // Start of user code getRequirementCollection_init
+        // TODO: pass auth
+        ClientBuilder builder = ClientBuilder.newBuilder();
+        builder.register(HttpAuthenticationFeature.basic("user", ("user").getBytes()));
+        client = new OslcClient(builder);
         // End of user code
 
         response = client.getResource(resourceURI, OSLCConstants.CT_RDF);

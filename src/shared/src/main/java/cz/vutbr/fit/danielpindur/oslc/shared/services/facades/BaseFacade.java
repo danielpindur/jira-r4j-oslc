@@ -5,10 +5,7 @@ import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
-import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.FolderRestClient;
-import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.IssueLinkRestClient;
-import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.IssueRestClientExtended;
-import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.UserRestClientExtended;
+import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.*;
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.models.Configuration;
 import org.slf4j.Logger;
@@ -75,7 +72,8 @@ public class BaseFacade {
 
 
     protected FolderRestClient getFolderClient() {
-        return new FolderRestClient(URI.create(configuration.JiraServer.Url + "/rest/com.easesolutions.jira.plugins.requirements/2.0"), getHttpClient());
+        var oldFolderRestClient = new OldFolderRestClient(URI.create(configuration.JiraServer.Url + "/rest/com.easesolutions.jira.plugins.requirements/1.0"), getHttpClient());
+        return new FolderRestClient(URI.create(configuration.JiraServer.Url + "/rest/com.easesolutions.jira.plugins.requirements/2.0"), getHttpClient(), oldFolderRestClient);
     }
 
     protected String GetIdFromUri(final URI uri) {

@@ -4,7 +4,10 @@ import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.Project;
 import cz.vutbr.fit.danielpindur.oslc.r4j.ResourcesFactory;
+import cz.vutbr.fit.danielpindur.oslc.r4j.clients.JiraAdaptorClient;
 import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Folder;
+import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Requirement;
+import cz.vutbr.fit.danielpindur.oslc.r4j.resources.RequirementCollection;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.facades.BaseFacade;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.inputs.FolderInput;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.models.FolderModel;
@@ -29,6 +32,9 @@ public class FolderFacade extends BaseFacade {
         var parentIdentifier = ConstructFolderIdentifier(projectKey, resource.ParentId);
         result.setParent(parentIdentifier != null ? resourcesFactory.constructLinkForFolder(parentIdentifier) : null);
 
+        var folderPath = getFolderClient().getFolderPath(GetFolderId(folderIdentifier), projectKey);
+        result.setPath(folderPath);
+
         result.setSubfolder(GetSubfolderLinks(resource.SubfolderIds, projectKey));
         result.setContains(GetContainsLinks(resource.ContainsIssueKeys));
 
@@ -44,6 +50,15 @@ public class FolderFacade extends BaseFacade {
             }
         }
         return subfolderLinks;
+    }
+
+    private boolean IsRootFolder(final String identifier) {
+        var folderId = GetFolderId(identifier);
+        return folderId == -1;
+    }
+
+    private boolean ParentChanged(final Folder original, final Folder update) {
+        return original.getParent() != update.getParent();
     }
 
     private Set<Link> GetContainsLinks(final Set<String> issueKeys) {
@@ -134,9 +149,6 @@ public class FolderFacade extends BaseFacade {
         }
     }
 
-    // TODO: make root folder non-editable
-    // TODO: remove path from folder
-    // TODO: folderId = 0 should be converted to null
     public Folder get(final String id) {
         var projectKey = GetProjectKey(id);
         ValidateProject(projectKey);
@@ -153,9 +165,15 @@ public class FolderFacade extends BaseFacade {
         return result != null ? MapResourceToResult(id, result, projectKey) : null;
     }
 
-    // TODO: probably don't want root node to be removable
-    // TODO: probably want subfolders to be read-only and have modifieable parent
+    private boolean exists(final String id) {
+        return get(id) != null;
+    }
+
     public boolean delete(final String id) {
+        if (IsRootFolder(id)) {
+            throw new WebApplicationException("Root folder of project cannot be edited", Response.Status.BAD_REQUEST);
+        }
+
         var folder = get(id);
         if (folder == null) {
             throw new WebApplicationException("Folder with identifier (" + id +") not found!", Response.Status.NOT_FOUND);
@@ -168,14 +186,74 @@ public class FolderFacade extends BaseFacade {
         return deletedFolder == null;
     }
 
+    private void ValidateFolder(final Folder resource) {
+        if (resource.getTitle() == null || resource.getTitle().isEmpty()) {
+            throw new WebApplicationException("Title cannot be null", Response.Status.BAD_REQUEST);
+        }
+
+        if (resource.getParent() == null) {
+            throw new WebApplicationException("Parent cannot be null", Response.Status.BAD_REQUEST);
+        }
+    }
+
+    private void ValidateParentFolder(final String parentFolderIdentifier, final String newTitle) {
+        if (!exists(parentFolderIdentifier)) {
+            throw new WebApplicationException("Root folder of project cannot be edited", Response.Status.NOT_FOUND);
+        }
+
+        var subfolderNames = getFolderClient()
+                .getSubfolderNames(
+                        GetFolderId(parentFolderIdentifier),
+                        GetProjectKey(parentFolderIdentifier)).claim();
+        if (subfolderNames.contains(newTitle)) {
+            throw new WebApplicationException("Folder " + parentFolderIdentifier + " already contains folder with name=" + newTitle, Response.Status.BAD_REQUEST);
+        }
+    }
+
+    private String GetIssueKeyFromLink(final Link link) {
+        Requirement requirement = null;
+        RequirementCollection requirementCollection = null;
+
+        try {
+            requirement = JiraAdaptorClient.getRequirement(link.getValue().toString());
+        } catch (Exception ignored) { }
+
+        try {
+            requirementCollection = JiraAdaptorClient.getRequirementCollection(link.getValue().toString());
+        } catch (Exception ignored) { }
+
+        if (requirement != null) {
+            return requirement.getShortTitle();
+        } else if (requirementCollection != null) {
+            return requirementCollection.getShortTitle();
+        } else {
+            throw new WebApplicationException("Failed to find resource for " + link.getValue().toString(), Response.Status.NOT_FOUND);
+        }
+    }
+
+    private void CreateContainsLinks(final Set<Link> links, final Integer folderId, final String projectKey) {
+        for (var link : links) {
+            var issueKey = GetIssueKeyFromLink(link);
+            getFolderClient().createContainsLink(folderId, projectKey, issueKey).claim();
+        }
+    }
+
+    private void RemoveAllContainsLinks(final Set<String> links, final Integer folderId, final String projectKey) {
+        for (var link : links) {
+            getFolderClient().removeContainsLink(folderId, projectKey, link).claim();
+        }
+    }
+
+    // TODO: path read only property
+    // TODO: subfolder read only property
     public Folder create(final Folder resource) {
-        // TODO: validate all needed properties are passed in resource
-        // TODO: path read only property
-        // TODO: validate parent folder doesn't contain folder with the same name
+        ValidateFolder(resource);
+
         var parentFolderIdentifier = GetIdFromUri(resource.getParent().getValue());
         var projectKey = GetProjectKey(parentFolderIdentifier);
         ValidateProject(projectKey);
 
+        ValidateParentFolder(parentFolderIdentifier, resource.getTitle());
         var folderInput = new FolderInput(resource.getTitle(), resource.getDescription(), GetFolderId(parentFolderIdentifier));
 
         FolderModel createdFolder = null;
@@ -184,10 +262,32 @@ public class FolderFacade extends BaseFacade {
         } catch (Exception e) {
             throw new WebApplicationException("Failed to create folder!", Response.Status.INTERNAL_SERVER_ERROR);
         }
-        // TODO: contains
 
-        return MapResourceToResult(ConstructFolderIdentifier(projectKey, createdFolder.Id), createdFolder, projectKey);
+        CreateContainsLinks(resource.getContains(), createdFolder.Id, projectKey);
+
+        return get(ConstructFolderIdentifier(projectKey, createdFolder.Id));
     }
 
+    public Folder updateFolder(final String id, final Folder resource) {
+        if (IsRootFolder(id)) {
+            throw new WebApplicationException("Root folder of project cannot be edited", Response.Status.BAD_REQUEST);
+        }
 
+        ValidateFolder(resource);
+
+        var beforeUpdate = get(id);
+        var parentFolderIdentifier = GetIdFromUri(resource.getParent().getValue());
+
+        if (ParentChanged(beforeUpdate, resource)) {
+            ValidateParentFolder(parentFolderIdentifier, resource.getTitle());
+        }
+
+        var folderInput = new FolderInput(resource.getTitle(), resource.getDescription(), GetFolderId(parentFolderIdentifier));
+        var updated = getFolderClient().updateFolder(folderInput, GetProjectKey(id), GetFolderId(id)).claim();
+
+        RemoveAllContainsLinks(updated.ContainsIssueKeys, GetFolderId(id), GetProjectKey(id));
+        CreateContainsLinks(resource.getContains(), GetFolderId(id), GetProjectKey(id));
+
+        return get(id);
+    }
 }

@@ -155,8 +155,7 @@ public class RestDelegate {
         Folder updatedResource = null;
         
         // Start of user code updateFolder
-        // TODO Implement code to update and return a resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        updatedResource = folderFacade.updateFolder(id, aResource);
         // End of user code
         return updatedResource;
     }
