@@ -56,6 +56,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.UriBuilder;
 
+import cz.vutbr.fit.danielpindur.oslc.shared.errors.ErrorHandler;
 import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
 import org.apache.wink.json4j.JSONArray;
@@ -109,6 +110,7 @@ public class ServiceProviderService1
     private static final Logger log = LoggerFactory.getLogger(ServiceProviderService1.class);
 
     // Start of user code class_attributes
+    private static final ErrorHandler errorHandler = new ErrorHandler(log);
     // End of user code
 
     // Start of user code class_methods
@@ -171,6 +173,7 @@ public class ServiceProviderService1
         // Start of user code queryRequirements
         // Here additional logic can be implemented that complements main action taken in RestDelegate
         // End of user code
+        // TODO: error handler
 
         List<Requirement> resources = delegate.queryRequirements(httpServletRequest, where, prefix, paging, page, pageSize);
         UriBuilder uriBuilder = UriBuilder.fromUri(uriInfo.getAbsolutePath())
@@ -184,7 +187,7 @@ public class ServiceProviderService1
             uriBuilder.queryParam("oslc.prefix", prefix);
         }
         httpServletRequest.setAttribute("queryUri", uriBuilder.build().toString());
-        if ((OSLC4JUtils.hasLyoStorePagingPreciseLimit() && resources.size() >= pageSize) 
+        if ((OSLC4JUtils.hasLyoStorePagingPreciseLimit() && resources.size() >= pageSize)
             || (!OSLC4JUtils.hasLyoStorePagingPreciseLimit() && resources.size() > pageSize)) {
             resources = resources.subList(0, pageSize);
             uriBuilder.replaceQueryParam("page", page + 1);
@@ -303,6 +306,7 @@ public class ServiceProviderService1
         // Start of user code queryRequirementCollections
         // Here additional logic can be implemented that complements main action taken in RestDelegate
         // End of user code
+        // TODO: error handler
 
         List<RequirementCollection> resources = delegate.queryRequirementCollections(httpServletRequest, where, prefix, paging, page, pageSize);
         UriBuilder uriBuilder = UriBuilder.fromUri(uriInfo.getAbsolutePath())
@@ -531,22 +535,11 @@ public class ServiceProviderService1
             final Requirement aResource
         ) throws IOException, ServletException
     {
-        try {
+        return errorHandler.Execute("Create Requirement", () -> {
             Requirement newResource = delegate.createRequirement(httpServletRequest, aResource);
             httpServletResponse.setHeader("ETag", delegate.getETagFromRequirement(newResource));
             return Response.created(newResource.getAbout()).entity(newResource).header(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2).build();
-        }
-        catch (WebApplicationException e) {
-            Error errorResource = new Error();
-            var statusCode = e.getResponse().getStatus();
-            errorResource.setStatusCode(Integer.toString(statusCode));
-            errorResource.setMessage(e.getMessage());
-            return Response.status(statusCode).entity(errorResource).build();
-        }
-        catch (Exception e) {
-            log.error("ERROR: Create Requirement", e);
-            throw e;
-        }
+        });
     }
 
     /**
@@ -580,9 +573,11 @@ public class ServiceProviderService1
             final RequirementCollection aResource
         ) throws IOException, ServletException
     {
-        RequirementCollection newResource = delegate.createRequirementCollection(httpServletRequest, aResource);
-        httpServletResponse.setHeader("ETag", delegate.getETagFromRequirementCollection(newResource));
-        return Response.created(newResource.getAbout()).entity(newResource).header(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2).build();
+        return errorHandler.Execute("Create Requirement Collection", () -> {
+            RequirementCollection newResource = delegate.createRequirementCollection(httpServletRequest, aResource);
+            httpServletResponse.setHeader("ETag", delegate.getETagFromRequirementCollection(newResource));
+            return Response.created(newResource.getAbout()).entity(newResource).header(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2).build();
+        });
     }
 
     /**

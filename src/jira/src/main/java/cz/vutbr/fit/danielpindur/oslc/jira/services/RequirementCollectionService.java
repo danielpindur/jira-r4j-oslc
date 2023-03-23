@@ -56,6 +56,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.UriBuilder;
 
+import cz.vutbr.fit.danielpindur.oslc.shared.errors.ErrorHandler;
 import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
 import org.eclipse.lyo.oslc4j.provider.json4j.JsonHelper;
@@ -100,6 +101,7 @@ public class RequirementCollectionService
     private static final Logger log = LoggerFactory.getLogger(RequirementCollectionService.class);
 
     // Start of user code class_attributes
+    private static final ErrorHandler errorHandler = new ErrorHandler(log);
     // End of user code
 
     // Start of user code class_methods
@@ -327,18 +329,20 @@ public class RequirementCollectionService
     {
         // Start of user code deleteRequirementCollection_init
         // End of user code
-        final RequirementCollection aResource = delegate.getRequirementCollection(httpServletRequest, id);
+        return errorHandler.Execute("Delete Requirement Collection", () -> {
+            final RequirementCollection aResource = delegate.getRequirementCollection(httpServletRequest, id);
 
-        if (aResource != null) {
-            // Start of user code deleteRequirementCollection
-            // End of user code
-            boolean deleted = delegate.deleteRequirementCollection(httpServletRequest, id);
-            if (deleted)
-                return Response.ok().header(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2).build();
-            else
-                throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
-        }
-        throw new WebApplicationException(Status.NOT_FOUND);
+            if (aResource != null) {
+                // Start of user code deleteRequirementCollection
+                // End of user code
+                boolean deleted = delegate.deleteRequirementCollection(httpServletRequest, id);
+                if (deleted)
+                    return Response.ok().header(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2).build();
+                else
+                    throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+            }
+            throw new WebApplicationException(Status.NOT_FOUND);
+        });
     }
 
     @PUT
@@ -365,25 +369,27 @@ public class RequirementCollectionService
     {
         // Start of user code updateRequirementCollection_init
         // End of user code
-        final RequirementCollection originalResource = delegate.getRequirementCollection(httpServletRequest, id);
+        return errorHandler.Execute("Update Requirement Collection", () -> {
+            final RequirementCollection originalResource = delegate.getRequirementCollection(httpServletRequest, id);
 
-        if (originalResource != null) {
-            final String originalETag = delegate.getETagFromRequirementCollection(originalResource);
+            if (originalResource != null) {
+                final String originalETag = delegate.getETagFromRequirementCollection(originalResource);
 
-            if ((eTagHeader == null) || (originalETag.equals(eTagHeader))) {
-                // Start of user code updateRequirementCollection
-                // End of user code
-                final RequirementCollection updatedResource = delegate.updateRequirementCollection(httpServletRequest, aResource, id);
-                httpServletResponse.setHeader("ETag", delegate.getETagFromRequirementCollection(updatedResource));
-                return Response.ok().header(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2).build();
+                if ((eTagHeader == null) || (originalETag.equals(eTagHeader))) {
+                    // Start of user code updateRequirementCollection
+                    // End of user code
+                    final RequirementCollection updatedResource = delegate.updateRequirementCollection(httpServletRequest, aResource, id);
+                    httpServletResponse.setHeader("ETag", delegate.getETagFromRequirementCollection(updatedResource));
+                    return Response.ok().header(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2).build();
+                }
+                else {
+                    throw new WebApplicationException(Status.PRECONDITION_FAILED);
+                }
             }
             else {
-                throw new WebApplicationException(Status.PRECONDITION_FAILED);
+                throw new WebApplicationException(Status.NOT_FOUND);
             }
-        }
-        else {
-            throw new WebApplicationException(Status.NOT_FOUND);
-        }
+        });
     }
 
 }

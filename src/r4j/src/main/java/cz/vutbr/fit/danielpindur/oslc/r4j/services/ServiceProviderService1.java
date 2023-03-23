@@ -56,6 +56,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.UriBuilder;
 
+import cz.vutbr.fit.danielpindur.oslc.shared.errors.ErrorHandler;
 import org.apache.wink.json4j.JSONException;
 import org.apache.wink.json4j.JSONObject;
 import org.apache.wink.json4j.JSONArray;
@@ -108,6 +109,7 @@ public class ServiceProviderService1
     private static final Logger log = LoggerFactory.getLogger(ServiceProviderService1.class);
 
     // Start of user code class_attributes
+    private static final ErrorHandler errorHandler = new ErrorHandler(log);
     // End of user code
 
     // Start of user code class_methods
@@ -170,6 +172,7 @@ public class ServiceProviderService1
         // Start of user code queryFolders
         // Here additional logic can be implemented that complements main action taken in RestDelegate
         // End of user code
+        // TODO: error handler
 
         List<Folder> resources = delegate.queryFolders(httpServletRequest, where, prefix, paging, page, pageSize);
         UriBuilder uriBuilder = UriBuilder.fromUri(uriInfo.getAbsolutePath())
@@ -344,9 +347,11 @@ public class ServiceProviderService1
             final Folder aResource
         ) throws IOException, ServletException
     {
-        Folder newResource = delegate.createFolder(httpServletRequest, aResource);
-        httpServletResponse.setHeader("ETag", delegate.getETagFromFolder(newResource));
-        return Response.created(newResource.getAbout()).entity(newResource).header(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2).build();
+        return errorHandler.Execute("Create Folder", () -> {
+            Folder newResource = delegate.createFolder(httpServletRequest, aResource);
+            httpServletResponse.setHeader("ETag", delegate.getETagFromFolder(newResource));
+            return Response.created(newResource.getAbout()).entity(newResource).header(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2).build();
+        });
     }
 
     /**
