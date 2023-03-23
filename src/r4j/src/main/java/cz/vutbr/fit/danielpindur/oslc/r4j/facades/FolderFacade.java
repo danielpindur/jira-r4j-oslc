@@ -244,8 +244,6 @@ public class FolderFacade extends BaseFacade {
         }
     }
 
-    // TODO: path read only property
-    // TODO: subfolder read only property
     public Folder create(final Folder resource) {
         ValidateFolder(resource);
 
@@ -282,6 +280,7 @@ public class FolderFacade extends BaseFacade {
             ValidateParentFolder(parentFolderIdentifier, resource.getTitle());
         }
 
+        // TODO: parent contains folder should take into account the name of the current folder -> update name to the same 
         var folderInput = new FolderInput(resource.getTitle(), resource.getDescription(), GetFolderId(parentFolderIdentifier));
         var updated = getFolderClient().updateFolder(folderInput, GetProjectKey(id), GetFolderId(id)).claim();
 

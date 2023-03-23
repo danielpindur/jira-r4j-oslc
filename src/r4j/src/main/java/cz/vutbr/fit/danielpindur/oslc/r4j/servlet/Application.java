@@ -17,7 +17,6 @@
 
 package cz.vutbr.fit.danielpindur.oslc.r4j.servlet;
 
-import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,8 +25,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
-
-import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 
@@ -58,6 +55,7 @@ import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
+import cz.vutbr.fit.danielpindur.oslc.r4j.services.RootServicesService;
 import cz.vutbr.fit.danielpindur.oslc.r4j.services.ServiceProviderCatalogService;
 import cz.vutbr.fit.danielpindur.oslc.r4j.services.ServiceProviderService;
 import cz.vutbr.fit.danielpindur.oslc.r4j.services.ResourceShapeService;
@@ -77,6 +75,8 @@ import cz.vutbr.fit.danielpindur.oslc.r4j.services.ServiceProviderService1;
 import cz.vutbr.fit.danielpindur.oslc.r4j.services.FolderService;
 
 // Start of user code imports
+import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
+import java.io.FileNotFoundException;
 // End of user code
 
 // Start of user code pre_class_code
@@ -118,6 +118,15 @@ public class Application extends javax.ws.rs.core.Application {
         RESOURCE_CLASSES.add(OpenApiResource.class);
         RESOURCE_CLASSES.add(AcceptHeaderOpenApiResource.class);
 
+        // OAuth resources
+        RESOURCE_CLASSES.add(RootServicesService.class);
+        try {
+            RESOURCE_CLASSES.add(Class.forName("org.eclipse.lyo.server.oauth.webapp.services.ConsumersService"));
+            RESOURCE_CLASSES.add(Class.forName("org.eclipse.lyo.server.oauth.webapp.services.OAuthService"));
+        } catch (ClassNotFoundException e) {
+            // Start of user code OAuthServiceClasses_notFound
+            // End of user code
+        }
         
         // Start of user code Custom Resource Classes
         try {

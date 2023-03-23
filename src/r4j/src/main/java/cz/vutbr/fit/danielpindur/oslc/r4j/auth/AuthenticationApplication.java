@@ -13,7 +13,7 @@
  */
 // End of user code
 
-package cz.vutbr.fit.danielpindur.oslc.jira.auth;
+package cz.vutbr.fit.danielpindur.oslc.r4j.auth;
 
 import java.util.Base64;
 import java.util.AbstractMap.SimpleEntry;
@@ -41,10 +41,10 @@ import org.eclipse.lyo.server.oauth.core.AuthenticationException;
 
 public class AuthenticationApplication implements Application {
 
-    public final static String APPLICATION_NAME = "JiraAdaptor";
-    public final static String OAUTH_REALM = "JiraAdaptor";
-    protected final static String APPLICATION_CONNECTOR_SESSION_ATTRIBUTE = "cz.vutbr.fit.danielpindur.oslc.jira.auth.ApplicationConnector";
-    protected final static String APPLICATION_CONNECTOR_ADMIN_SESSION_ATTRIBUTE = "cz.vutbr.fit.danielpindur.oslc.jira.auth.AdminSession";
+    public final static String APPLICATION_NAME = "R4JAdaptor";
+    public final static String OAUTH_REALM = "R4JAdaptor";
+    protected final static String APPLICATION_CONNECTOR_SESSION_ATTRIBUTE = "cz.vutbr.fit.danielpindur.oslc.r4j.auth.ApplicationConnector";
+    protected final static String APPLICATION_CONNECTOR_ADMIN_SESSION_ATTRIBUTE = "cz.vutbr.fit.danielpindur.oslc.r4j.auth.AdminSession";
     private final static Logger log = LoggerFactory.getLogger(AuthenticationApplication.class);
 
     public final static String AUTHORIZATION_HEADER = "Authorization";

@@ -16,15 +16,14 @@ public class RequirementCollectionFacade extends IssueFacade {
 
         result.setTitle(resource.getSummary());
         result.setDescription(resource.getDescription());
-        result.setShortTitle(resource.getKey()); // TODO: Check if set RO
+        result.setShortTitle(resource.getKey());
         result.setJiraId(jiraIssueId);
-        result.setIdentifier(identifier);  // TODO: Check if readonly
+        result.setIdentifier(identifier);
         result.setAbout(resourcesFactory.constructURIForRequirementCollection(identifier));
         result.setCreated(resource.getCreationDate().toDate());
         result.setSubject(GetFieldStringSetValue(configuration.LabelsFieldName, resource));
         result.setModified(resource.getUpdateDate().toDate());
         result.setProject(resourcesFactory.constructLinkForProject(projectIdString));
-        // TODO: Creator should be probably always one instead of array
         result.setCreator(
                 new HashSet<Link>(){{
                     add(GetCreatorLink(resource));

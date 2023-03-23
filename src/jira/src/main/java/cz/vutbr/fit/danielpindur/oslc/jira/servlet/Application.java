@@ -17,7 +17,6 @@
 
 package cz.vutbr.fit.danielpindur.oslc.jira.servlet;
 
-import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -80,6 +79,7 @@ import cz.vutbr.fit.danielpindur.oslc.jira.services.ProjectService;
 
 // Start of user code imports
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
+import java.io.FileNotFoundException;
 // End of user code
 
 // Start of user code pre_class_code

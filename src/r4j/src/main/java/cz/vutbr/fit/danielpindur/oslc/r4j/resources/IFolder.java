@@ -97,7 +97,7 @@ public interface IFolder
     @OslcOccurs(Occurs.ZeroOrMany)
     @OslcValueType(ValueType.Resource)
     @OslcRange({Jira_r4jDomainConstants.FOLDER_TYPE})
-    @OslcReadOnly(false)
+    @OslcReadOnly(true)
     public Set<Link> getSubfolder();
 
     @OslcName("parent")
@@ -112,7 +112,7 @@ public interface IFolder
     @OslcPropertyDefinition(Jira_r4jDomainConstants.JIRA_R4J_NAMSPACE + "path")
     @OslcOccurs(Occurs.ExactlyOne)
     @OslcValueType(ValueType.String)
-    @OslcReadOnly(false)
+    @OslcReadOnly(true)
     public String getPath();
 
     @OslcName("contains")

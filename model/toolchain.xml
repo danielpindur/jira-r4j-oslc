@@ -31,7 +31,7 @@
     <configuration xsi:type="oslc4j_ai:MavenServerConfiguration" rootServerBaseUrl="http://localhost:8081/" applicationContextPath="/jira" servletUrlPattern="/services/*" jettyPort="8081">
       <generalConfiguration filesBasePath="./src/jira" javaBasePackageName="cz.vutbr.fit.danielpindur.oslc.jira"/>
       <projectConfiguration xsi:type="oslc4j_ai:MavenProjectConfiguration" lyoVersion="5.0.0.Final" groupId="cz.vutbr.fit.danielpindur.oslc.jira" artifactId="jira" version="0.0.1-SNAPSHOT"/>
-      <authenticationConfiguration applicationName="Jira Adaptor" oauthRealm="Jira Adaptor"/>
+      <authenticationConfiguration applicationName="JiraAdaptor" oauthRealm="JiraAdaptor"/>
     </configuration>
   </adaptorInterfaces>
   <adaptorInterfaces name="R4J">
@@ -51,6 +51,7 @@
     <configuration xsi:type="oslc4j_ai:MavenServerConfiguration" rootServerBaseUrl="http://localhost:8082/" applicationContextPath="/r4j" servletUrlPattern="/services/*" jettyPort="8082">
       <generalConfiguration filesBasePath="./src/r4j" javaBasePackageName="cz.vutbr.fit.danielpindur.oslc.r4j"/>
       <projectConfiguration xsi:type="oslc4j_ai:MavenProjectConfiguration" lyoVersion="5.0.0.Final" groupId="cz.vutbr.fit.danielpindur.oslc.r4j" artifactId="r4j" version="0.0.1-SNAPSHOT"/>
+      <authenticationConfiguration applicationName="R4JAdaptor" oauthRealm="R4JAdaptor"/>
     </configuration>
   </adaptorInterfaces>
   <specification>
@@ -85,9 +86,9 @@
     </domainSpecifications>
     <domainSpecifications name="JIRA R4J" namespaceURI="http://fit.vutbr.cz/group/verifit/oslc/ns/jira_r4j#" namespacePrefix="//@specification/@domainPrefixes[name='jira_r4j']">
       <resources id="_TL3lIa1sEe2IH_zh0OGsFw" name="Folder" resourceProperties="_B2L6gKoxEe2JELvxKSEu4w _JkXuMKoxEe2JELvxKSEu4w _SLU88KoxEe2JELvxKSEu4w _TL2-Ea1sEe2IH_zh0OGsFw _TL3lIK1sEe2IH_zh0OGsFw _YNKw0K3lEe2IH_zh0OGsFw _GXxg8K4DEe2tbPU5kf8csQ"/>
-      <resourceProperties id="_TL2-Ea1sEe2IH_zh0OGsFw" name="subfolder" occurs="zeroOrMany" valueType="Resource" range="_TL3lIa1sEe2IH_zh0OGsFw"/>
+      <resourceProperties id="_TL2-Ea1sEe2IH_zh0OGsFw" name="subfolder" occurs="zeroOrMany" readOnly="true" valueType="Resource" range="_TL3lIa1sEe2IH_zh0OGsFw"/>
       <resourceProperties id="_TL3lIK1sEe2IH_zh0OGsFw" name="parent" occurs="zeroOrOne" valueType="Resource" range="_TL3lIa1sEe2IH_zh0OGsFw"/>
-      <resourceProperties id="_YNKw0K3lEe2IH_zh0OGsFw" name="path" valueType="String"/>
+      <resourceProperties id="_YNKw0K3lEe2IH_zh0OGsFw" name="path" readOnly="true" valueType="String"/>
       <resourceProperties id="_GXxg8K4DEe2tbPU5kf8csQ" name="contains" occurs="zeroOrMany" valueType="Resource" range="_mJ99AaouEe2JELvxKSEu4w _mJ99AKouEe2JELvxKSEu4w"/>
     </domainSpecifications>
     <domainPrefixes name="oslc_rm"/>

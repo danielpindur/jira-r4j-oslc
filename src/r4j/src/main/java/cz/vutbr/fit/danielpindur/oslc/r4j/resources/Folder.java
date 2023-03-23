@@ -215,7 +215,7 @@ public class Folder
     @OslcOccurs(Occurs.ZeroOrMany)
     @OslcValueType(ValueType.Resource)
     @OslcRange({Jira_r4jDomainConstants.FOLDER_TYPE})
-    @OslcReadOnly(false)
+    @OslcReadOnly(true)
     public Set<Link> getSubfolder()
     {
         // Start of user code getterInit:subfolder
@@ -244,7 +244,7 @@ public class Folder
     @OslcPropertyDefinition(Jira_r4jDomainConstants.JIRA_R4J_NAMSPACE + "path")
     @OslcOccurs(Occurs.ExactlyOne)
     @OslcValueType(ValueType.String)
-    @OslcReadOnly(false)
+    @OslcReadOnly(true)
     public String getPath()
     {
         // Start of user code getterInit:path

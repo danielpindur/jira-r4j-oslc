@@ -14,14 +14,16 @@ import java.util.Objects;
 public class ProjectFacade extends BaseFacade {
     @Inject ResourcesFactory resourcesFactory;
 
+    // TODO: validate returned HTTP codes - align with OSLC standard
+    // TODO: should update return updated object?
     private Project MapResourceToResult(final com.atlassian.jira.rest.client.api.domain.Project resource) {
         var result = new Project();
         var projectIdString = Objects.requireNonNull(resource.getId()).toString();
 
-        result.setShortTitle(resource.getKey()); // TODO: Check if I can change shortitle independently of title, else change to RO
+        result.setShortTitle(resource.getKey());
         result.setDescription(resource.getDescription());
         result.setTitle(resource.getName());
-        result.setIdentifier(projectIdString); // TODO: Check if readonly, can be only number - okay or not?
+        result.setIdentifier(projectIdString);
         result.setAbout(resourcesFactory.constructURIForProject(projectIdString));
 
         return result;

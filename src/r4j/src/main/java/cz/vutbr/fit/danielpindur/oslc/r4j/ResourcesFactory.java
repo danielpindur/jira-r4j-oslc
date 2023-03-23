@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.core.UriBuilder;
 
-import cz.vutbr.fit.danielpindur.oslc.r4j.clients.JiraAdaptorClient;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 import org.eclipse.lyo.oslc4j.core.OSLC4JUtils;
 import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Folder;
@@ -32,6 +31,7 @@ import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Requirement;
 import cz.vutbr.fit.danielpindur.oslc.r4j.resources.RequirementCollection;
 
 // Start of user code imports
+import cz.vutbr.fit.danielpindur.oslc.r4j.clients.JiraAdaptorClient;
 // End of user code
 
 // Start of user code pre_class_code
@@ -100,4 +100,6 @@ public class ResourcesFactory {
     public Link constructLinkForFolder(final String id) {
         return new Link(constructURIForFolder(id));
     }
+    
+
 }
