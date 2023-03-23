@@ -13,6 +13,21 @@ public final class ConfigurationProvider {
         var configurationReader = new ConfigurationReader();
 
         configuration = configurationReader.Read();
+        Validate();
+    }
+
+    private void Validate() {
+        if (configuration == null) {
+            throw new RuntimeException("Configuration is missing");
+        }
+
+        if (configuration.IdentifierFieldName.equalsIgnoreCase(configuration.LabelsFieldName)) {
+            throw new RuntimeException("Cannot save both Identifier and Labels to " + configuration.IdentifierFieldName + ", if you want the Identifier to be stored in Labels field enable SaveIdentifierInLabelsField instead!");
+        }
+
+        if (configuration.RequirementCollectionIssueTypeName.equalsIgnoreCase(configuration.RequirementIssueTypeName)) {
+            throw new RuntimeException("IssueType for Requirement and Requirement collection cannot be same!");
+        }
     }
 
     public static ConfigurationProvider getInstance() {

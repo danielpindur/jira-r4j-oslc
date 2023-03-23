@@ -5,6 +5,7 @@ import com.atlassian.jira.rest.client.api.domain.*;
 import com.atlassian.jira.rest.client.api.domain.input.FieldInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.api.domain.input.LinkIssuesInput;
+import com.atlassian.jira.rest.client.api.RestClientException;
 import cz.vutbr.fit.danielpindur.oslc.jira.ResourcesFactory;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.facades.BaseFacade;
 import org.eclipse.lyo.oslc4j.core.model.Link;
@@ -170,10 +171,17 @@ public class IssueFacade extends BaseFacade {
     }
 
     protected BasicIssue createIssue(final String description, final String issueTypeName, final String projectId, final String title, final String identifier, final Set<String> subject) {
-        var project = getProjectClient().getProject(projectId).claim();
+        com.atlassian.jira.rest.client.api.domain.Project project = null;
+        try {
+            project = getProjectClient().getProject(projectId).claim();
+        } catch (RestClientException e) {
+            if (!e.getStatusCode().isPresent() || e.getStatusCode().get() != 404) {
+                throw e;
+            }
+        }
 
         if (project == null) {
-            throw new WebApplicationException("Project with " + projectId + " not found!", Response.Status.BAD_REQUEST);
+            throw new WebApplicationException("Project with " + projectId + " not found!", Response.Status.NOT_FOUND);
         }
 
         var issueTypes = project.getIssueTypes();

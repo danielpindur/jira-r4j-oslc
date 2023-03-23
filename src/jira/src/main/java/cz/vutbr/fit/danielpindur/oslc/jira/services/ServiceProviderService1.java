@@ -92,6 +92,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 // Start of user code imports
+import org.eclipse.lyo.oslc4j.core.model.Error;
 // End of user code
 
 // Start of user code pre_class_code
@@ -530,9 +531,22 @@ public class ServiceProviderService1
             final Requirement aResource
         ) throws IOException, ServletException
     {
-        Requirement newResource = delegate.createRequirement(httpServletRequest, aResource);
-        httpServletResponse.setHeader("ETag", delegate.getETagFromRequirement(newResource));
-        return Response.created(newResource.getAbout()).entity(newResource).header(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2).build();
+        try {
+            Requirement newResource = delegate.createRequirement(httpServletRequest, aResource);
+            httpServletResponse.setHeader("ETag", delegate.getETagFromRequirement(newResource));
+            return Response.created(newResource.getAbout()).entity(newResource).header(ServerConstants.HDR_OSLC_VERSION, ServerConstants.OSLC_VERSION_V2).build();
+        }
+        catch (WebApplicationException e) {
+            Error errorResource = new Error();
+            var statusCode = e.getResponse().getStatus();
+            errorResource.setStatusCode(Integer.toString(statusCode));
+            errorResource.setMessage(e.getMessage());
+            return Response.status(statusCode).entity(errorResource).build();
+        }
+        catch (Exception e) {
+            log.error("ERROR: Create Requirement", e);
+            throw e;
+        }
     }
 
     /**

@@ -84,6 +84,7 @@ public class FolderRestClient extends AbstractAsynchronousRestClient {
         }
     }
 
+    // TODO: add validate data changed even though 500 was returned
     public Promise<FolderModel> updateFolder(final FolderInput input, final String projectKey, final Integer folderId) {
         // Get current watchers to not override them in the update
         var watchers = getWatchers(folderId, projectKey).claim();
