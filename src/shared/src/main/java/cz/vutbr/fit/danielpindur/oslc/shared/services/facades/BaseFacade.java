@@ -8,24 +8,63 @@ import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.*;
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.models.Configuration;
+import cz.vutbr.fit.danielpindur.oslc.shared.session.SessionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import java.io.FileNotFoundException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.Objects;
 
 public class BaseFacade {
-    private final JiraRestClient restClient;
     protected static final Logger log = LoggerFactory.getLogger(BaseFacade.class);
     protected Configuration configuration = ConfigurationProvider.getInstance().GetConfiguration();
 
-    public BaseFacade() {
-        // TODO: Link Basic auth to Adaptor basic auth
-        // TODO: Add OAuth
-        restClient = new AsynchronousJiraRestClientFactory()
-                .createWithBasicHttpAuthentication(URI.create(configuration.JiraServer.Url), "test_user", "testpassword");
+    private DisposableHttpClient cachedHttpClient;
+    private JiraRestClient cachedJiraClient;
+    private AuthenticationHandler cachedAuthenticationHandler;
+
+    public BaseFacade() { }
+
+    private AuthenticationHandler getAuthenticationHandler() {
+        if (cachedAuthenticationHandler == null) {
+            var session = SessionProvider.GetSession();
+
+            if (session == null) {
+                throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+            }
+
+            var username = session.getAttribute(SessionProvider.BASIC_USERNAME).toString();
+            var password = session.getAttribute(SessionProvider.BASIC_PASSWORD).toString();
+
+            if (username == null || password == null) {
+                throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+            }
+
+            cachedAuthenticationHandler = new BasicHttpAuthenticationHandler(username, password);
+        }
+
+        return cachedAuthenticationHandler;
+    }
+
+    // TODO: Add OAuth
+    private DisposableHttpClient getHttpClient() {
+        if (cachedHttpClient == null) {
+            cachedHttpClient = new AsynchronousHttpClientFactory()
+                    .createClient(URI.create(configuration.JiraServer.Url), getAuthenticationHandler());
+        }
+
+        return cachedHttpClient;
+    }
+
+    private JiraRestClient getRestClient() {
+        if (cachedJiraClient == null) {
+            cachedJiraClient = new AsynchronousJiraRestClientFactory()
+                    .createWithAuthenticationHandler(URI.create(configuration.JiraServer.Url), getAuthenticationHandler());
+        }
+
+        return cachedJiraClient;
     }
 
     protected boolean containsTerms(final String target, final String terms) {
@@ -43,20 +82,11 @@ public class BaseFacade {
         return Objects.requireNonNull(number).toString();
     }
 
-    protected ProjectRestClient getProjectClient() { return restClient.getProjectClient(); }
+    protected ProjectRestClient getProjectClient() { return getRestClient().getProjectClient(); }
 
-    protected MetadataRestClient getMetadataClient() { return restClient.getMetadataClient(); }
+    protected MetadataRestClient getMetadataClient() { return getRestClient().getMetadataClient(); }
 
-    protected SearchRestClient getSearchClient() { return restClient.getSearchClient(); }
-
-    // TODO: Link Basic auth to Adaptor basic auth
-    // TODO: Add OAuth
-    // TODO: Probably unify with the base
-    private DisposableHttpClient getHttpClient() {
-        var authenticationHandler = new BasicHttpAuthenticationHandler("test_user", "testpassword");
-        return new AsynchronousHttpClientFactory()
-                .createClient(URI.create(configuration.JiraServer.Url), authenticationHandler);
-    }
+    protected SearchRestClient getSearchClient() { return getRestClient().getSearchClient(); }
 
     protected IssueLinkRestClient getIssueLinkRestClient() {
         return new IssueLinkRestClient(URI.create(configuration.JiraServer.Url + "/rest/api/latest"), getHttpClient());
@@ -67,7 +97,7 @@ public class BaseFacade {
     }
 
     protected IssueRestClientExtended getIssueClient() {
-        return new IssueRestClientExtended(URI.create(configuration.JiraServer.Url + "/rest/api/latest"),getHttpClient(), restClient.getSessionClient(), getMetadataClient());
+        return new IssueRestClientExtended(URI.create(configuration.JiraServer.Url + "/rest/api/latest"),getHttpClient(), getRestClient().getSessionClient(), getMetadataClient());
     }
 
 

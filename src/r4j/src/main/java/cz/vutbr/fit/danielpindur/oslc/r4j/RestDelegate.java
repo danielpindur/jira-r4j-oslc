@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.ServletContextEvent;
 import java.util.List;
 import java.util.ArrayList;
+
+import cz.vutbr.fit.danielpindur.oslc.shared.session.SessionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,9 +90,14 @@ public class RestDelegate {
         
         
         // Start of user code queryFolders
-        // TODO Implement code to return a set of resources.
-        // An empty List should imply that no resources where found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            // TODO Implement code to return a set of resources.
+            // An empty List should imply that no resources where found.
+            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return resources;
     }
@@ -100,9 +107,14 @@ public class RestDelegate {
         
         
         // Start of user code FolderSelector
-        // TODO Implement code to return a set of resources, based on search criteria 
-        // An empty List should imply that no resources where found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            // TODO Implement code to return a set of resources, based on search criteria
+            // An empty List should imply that no resources where found.
+            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return resources;
     }
@@ -112,7 +124,12 @@ public class RestDelegate {
         
         
         // Start of user code createFolder
-        newResource = folderFacade.create(aResource);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            newResource = folderFacade.create(aResource);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return newResource;
     }
@@ -123,7 +140,12 @@ public class RestDelegate {
         
         
         // Start of user code createFolderFromDialog
-        newResource = folderFacade.create(aResource);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            newResource = folderFacade.create(aResource);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return newResource;
     }
@@ -136,7 +158,12 @@ public class RestDelegate {
         
         
         // Start of user code getFolder
-        aResource = folderFacade.get(id);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            aResource = folderFacade.get(id);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return aResource;
     }
@@ -146,7 +173,12 @@ public class RestDelegate {
         Boolean deleted = false;
         
         // Start of user code deleteFolder
-        deleted = folderFacade.delete(id);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            deleted = folderFacade.delete(id);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return deleted;
     }
@@ -155,7 +187,12 @@ public class RestDelegate {
         Folder updatedResource = null;
         
         // Start of user code updateFolder
-        updatedResource = folderFacade.updateFolder(id, aResource);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            updatedResource = folderFacade.updateFolder(id, aResource);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return updatedResource;
     }

@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cz.vutbr.fit.danielpindur.oslc.shared.session.SessionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,20 +118,10 @@ public class AuthenticationApplication implements Application {
     @Override
     public void login(HttpServletRequest request, String username, String password) throws AuthenticationException {
         // Start of user code login
-        //TODO: replace with code with real logic to login. You should also decide whether the login is admin or not.
-        log.warn("CAUTION! You are using fake login checks, which ought to be changed!");
-        if ((username.equals("user") && password.equals("user")) || (username.equals("admin") && password.equals("admin"))) {
-            bindApplicationConnectorToSession(request, username);
-        }
-        else {
-            throw new AuthenticationException("Login failed!");
-        }
-        if (username.equals("admin") && password.equals("admin")) {
-            request.getSession().setAttribute(APPLICATION_CONNECTOR_ADMIN_SESSION_ATTRIBUTE, true);
-        }
-        else {
-            request.getSession().setAttribute(APPLICATION_CONNECTOR_ADMIN_SESSION_ATTRIBUTE, false);
-        }
+        bindApplicationConnectorToSession(request, username);
+        request.getSession().setAttribute(APPLICATION_CONNECTOR_ADMIN_SESSION_ATTRIBUTE, false);
+        request.getSession().setAttribute(SessionProvider.BASIC_USERNAME, username);
+        request.getSession().setAttribute(SessionProvider.BASIC_PASSWORD, password);
         // End of user code
         return;
     }

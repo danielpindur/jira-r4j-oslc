@@ -18,17 +18,12 @@ package cz.vutbr.fit.danielpindur.oslc.jira;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.ServletContextEvent;
 import java.util.List;
-import java.util.ArrayList;
+
+import cz.vutbr.fit.danielpindur.oslc.shared.session.SessionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eclipse.lyo.oslc4j.core.model.ServiceProvider;
-import org.eclipse.lyo.oslc4j.core.OSLC4JUtils;
-import org.eclipse.lyo.oslc4j.core.model.AbstractResource;
-import cz.vutbr.fit.danielpindur.oslc.jira.servlet.ServiceProviderCatalogSingleton;
-import cz.vutbr.fit.danielpindur.oslc.jira.ServiceProviderInfo;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Person;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Project;
 import cz.vutbr.fit.danielpindur.oslc.jira.resources.Requirement;
@@ -97,9 +92,14 @@ public class RestDelegate {
         
         
         // Start of user code queryRequirements
-        // TODO Implement code to return a set of resources.
-        // An empty List should imply that no resources where found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            // TODO Implement code to return a set of resources.
+            // An empty List should imply that no resources where found.
+            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return resources;
     }
@@ -109,9 +109,14 @@ public class RestDelegate {
         
         
         // Start of user code queryRequirementCollections
-        // TODO Implement code to return a set of resources.
-        // An empty List should imply that no resources where found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            // TODO Implement code to return a set of resources.
+            // An empty List should imply that no resources where found.
+            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return resources;
     }
@@ -121,9 +126,14 @@ public class RestDelegate {
         
         
         // Start of user code RequirementSelector
-        // TODO Implement code to return a set of resources, based on search criteria 
-        // An empty List should imply that no resources where found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            // TODO Implement code to return a set of resources, based on search criteria
+            // An empty List should imply that no resources where found.
+            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return resources;
     }
@@ -133,9 +143,14 @@ public class RestDelegate {
         
         
         // Start of user code RequirementCollectionSelector
-        // TODO Implement code to return a set of resources, based on search criteria 
-        // An empty List should imply that no resources where found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            // TODO Implement code to return a set of resources, based on search criteria
+            // An empty List should imply that no resources where found.
+            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return resources;
     }
@@ -146,7 +161,12 @@ public class RestDelegate {
         
         // Start of user code createRequirement
         // TODO: validate all needed properties are present as well as aResource exists
-        newResource = requirementFacade.create(aResource);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            newResource = requirementFacade.create(aResource);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return newResource;
     }
@@ -157,7 +177,12 @@ public class RestDelegate {
         
         // Start of user code createRequirementCollection
         // TODO: validate all needed properties are present as well as aResource exists
-        newResource = requirementCollectionFacade.create(aResource);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            newResource = requirementCollectionFacade.create(aResource);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return newResource;
     }
@@ -168,8 +193,13 @@ public class RestDelegate {
         
         
         // Start of user code createRequirementFromDialog
-        // TODO: validate all needed properties are present as well as aResource exists
-        newResource = requirementFacade.create(aResource);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            // TODO: validate all needed properties are present as well as aResource exists
+            newResource = requirementFacade.create(aResource);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return newResource;
     }
@@ -179,8 +209,13 @@ public class RestDelegate {
         
         
         // Start of user code createRequirementCollectionFromDialog
-        // TODO: validate all needed properties are present as well as aResource exists
-        newResource = requirementCollectionFacade.create(aResource);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            // TODO: validate all needed properties are present as well as aResource exists
+            newResource = requirementCollectionFacade.create(aResource);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return newResource;
     }
@@ -192,9 +227,14 @@ public class RestDelegate {
         
         
         // Start of user code queryPersons
-        // TODO Implement code to return a set of resources.
-        // An empty List should imply that no resources where found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            // TODO Implement code to return a set of resources.
+            // An empty List should imply that no resources where found.
+            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return resources;
     }
@@ -204,7 +244,12 @@ public class RestDelegate {
         
         
         // Start of user code PersonSelector
-        resources = personFacade.search(terms);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            resources = personFacade.search(terms);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return resources;
     }
@@ -217,9 +262,14 @@ public class RestDelegate {
         
         
         // Start of user code queryProjects
-        // TODO Implement code to return a set of resources.
-        // An empty List should imply that no resources where found.
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            // TODO Implement code to return a set of resources.
+            // An empty List should imply that no resources where found.
+            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return resources;
     }
@@ -229,7 +279,12 @@ public class RestDelegate {
         
         
         // Start of user code ProjectSelector
-        resources = projectFacade.search(terms);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            resources = projectFacade.search(terms);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return resources;
     }
@@ -243,7 +298,12 @@ public class RestDelegate {
         
         
         // Start of user code getRequirement
-        aResource = requirementFacade.get(id);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            aResource = requirementFacade.get(id);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return aResource;
     }
@@ -256,7 +316,13 @@ public class RestDelegate {
         if (id == null) {
             throw new WebApplicationException("Missing id parameter!", Response.Status.BAD_REQUEST);
         }
-        deleted = requirementFacade.delete(id);
+
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            deleted = requirementFacade.delete(id);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return deleted;
     }
@@ -270,8 +336,14 @@ public class RestDelegate {
             log.error("Requirement UPDATE: received an empty request");
             throw new WebApplicationException("Requirement UPDATE: received an empty request", Response.Status.BAD_REQUEST);
         }
-        // TODO: verify if project is specified as read-only
-        updatedResource = requirementFacade.update(aResource, id);
+
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            // TODO: verify if project is specified as read-only
+            updatedResource = requirementFacade.update(aResource, id);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return updatedResource;
     }
@@ -281,7 +353,12 @@ public class RestDelegate {
         
         
         // Start of user code getRequirementCollection
-        aResource = requirementCollectionFacade.get(id);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            aResource = requirementCollectionFacade.get(id);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return aResource;
     }
@@ -294,7 +371,13 @@ public class RestDelegate {
         if (id == null) {
             throw new WebApplicationException("Missing id parameter!", Response.Status.BAD_REQUEST);
         }
-        deleted = requirementCollectionFacade.delete(id);
+
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            deleted = requirementCollectionFacade.delete(id);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return deleted;
     }
@@ -307,8 +390,15 @@ public class RestDelegate {
             log.error("Requirement Collection UPDATE: received an empty request");
             throw new WebApplicationException("Requirement UPDATE: received an empty request", Response.Status.BAD_REQUEST);
         }
-        // TODO: verify if project is specified as read-only
-        updatedResource = requirementCollectionFacade.update(aResource, id);
+
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            // TODO: verify if project is specified as read-only
+            updatedResource = requirementCollectionFacade.update(aResource, id);
+        } finally {
+            SessionProvider.ClearSession();
+        }
+
         // End of user code
         return updatedResource;
     }
@@ -318,7 +408,12 @@ public class RestDelegate {
         
         
         // Start of user code getPerson
-        aResource = personFacade.get(id);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            aResource = personFacade.get(id);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return aResource;
     }
@@ -330,7 +425,12 @@ public class RestDelegate {
         
         
         // Start of user code getProject
-        aResource = projectFacade.get(id);
+        try {
+            SessionProvider.SetSession(httpServletRequest.getSession());
+            aResource = projectFacade.get(id);
+        } finally {
+            SessionProvider.ClearSession();
+        }
         // End of user code
         return aResource;
     }

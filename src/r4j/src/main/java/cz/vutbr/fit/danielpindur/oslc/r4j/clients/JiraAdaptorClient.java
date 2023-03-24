@@ -17,7 +17,12 @@
 
 package cz.vutbr.fit.danielpindur.oslc.r4j.clients;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+
+import com.atlassian.jira.rest.client.api.AuthenticationHandler;
+import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
+import cz.vutbr.fit.danielpindur.oslc.shared.session.SessionProvider;
 import org.eclipse.lyo.client.OSLCConstants;
 import org.eclipse.lyo.client.OslcClient;
 import org.eclipse.lyo.oslc4j.core.model.ServiceProviderCatalog;
@@ -46,6 +51,25 @@ public class JiraAdaptorClient
     }
     // TODO: this needs to come from config file
     static String serviceProviderCatalogURI = "http://localhost:8081/jira/services/catalog/singleton";
+
+    // TODO: Handle oAuth
+    private static HttpAuthenticationFeature getAuthenticationHandler() {
+        var session = SessionProvider.GetSession();
+
+        if (session == null) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+
+        var username = session.getAttribute(SessionProvider.BASIC_USERNAME).toString();
+        var password = session.getAttribute(SessionProvider.BASIC_PASSWORD).toString();
+
+        if (username == null || password == null) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+
+        return HttpAuthenticationFeature.basic(username, password.getBytes());
+    }
+
     // End of user code
 
     public static ServiceProviderCatalog getServiceProviderCatalog() throws Exception {
@@ -54,9 +78,8 @@ public class JiraAdaptorClient
         ServiceProviderCatalog catalog = null;
 
         // Start of user code getServiceProviderCatalog_init
-        // TODO: pass auth
         ClientBuilder builder = ClientBuilder.newBuilder();
-        builder.register(HttpAuthenticationFeature.basic("user", ("user").getBytes()));
+        builder.register(getAuthenticationHandler());
         client = new OslcClient(builder);
         // End of user code
 
@@ -75,9 +98,8 @@ public class JiraAdaptorClient
         Requirement resource = null;
 
         // Start of user code getRequirement_init
-        // TODO: pass auth
         ClientBuilder builder = ClientBuilder.newBuilder();
-        builder.register(HttpAuthenticationFeature.basic("user", ("user").getBytes()));
+        builder.register(getAuthenticationHandler());
         client = new OslcClient(builder);
         // End of user code
 
@@ -96,9 +118,8 @@ public class JiraAdaptorClient
         RequirementCollection resource = null;
 
         // Start of user code getRequirementCollection_init
-        // TODO: pass auth
         ClientBuilder builder = ClientBuilder.newBuilder();
-        builder.register(HttpAuthenticationFeature.basic("user", ("user").getBytes()));
+        builder.register(getAuthenticationHandler());
         client = new OslcClient(builder);
         // End of user code
 
