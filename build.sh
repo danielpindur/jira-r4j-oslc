@@ -36,6 +36,7 @@ main () {
     echo
 
     mvn -f "$ROOTDIR/src/shared/pom.xml" clean install || exit "$?"
+    mvn -f "$ROOTDIR/src/oauth/pom.xml" clean install || exit "$?"
 
 
     echo

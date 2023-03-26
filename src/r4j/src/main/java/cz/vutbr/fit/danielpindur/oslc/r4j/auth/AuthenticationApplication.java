@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
 import cz.vutbr.fit.danielpindur.oslc.shared.session.SessionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,6 +119,10 @@ public class AuthenticationApplication implements Application {
     @Override
     public void login(HttpServletRequest request, String username, String password) throws AuthenticationException {
         // Start of user code login
+        if (!ConfigurationProvider.getInstance().GetConfiguration().JiraServer.EnableBasicAuth) {
+            throw new AuthenticationException("Basic Authentication is not enabled for this adaptor!");
+        }
+
         bindApplicationConnectorToSession(request, username);
         request.getSession().setAttribute(APPLICATION_CONNECTOR_ADMIN_SESSION_ATTRIBUTE, false);
         request.getSession().setAttribute(SessionProvider.BASIC_USERNAME, username);
