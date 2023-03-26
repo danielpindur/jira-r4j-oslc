@@ -21,6 +21,9 @@ public class Configuration {
     @JsonProperty("SaveIdentifierInLabelsField")
     public Boolean SaveIdentifierInLabelsField;
 
+    @JsonProperty("LabelsIdentifierFormat")
+    public String LabelsIdentifierFormat;
+
     @JsonProperty("RootFolderId")
     public String RootFolderId;
 

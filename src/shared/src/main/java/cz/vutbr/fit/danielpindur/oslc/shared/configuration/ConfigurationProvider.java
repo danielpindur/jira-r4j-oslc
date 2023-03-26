@@ -21,8 +21,8 @@ public final class ConfigurationProvider {
             throw new RuntimeException("Configuration is missing");
         }
 
-        if (configuration.IdentifierFieldName.equalsIgnoreCase(configuration.LabelsFieldName)) {
-            throw new RuntimeException("Cannot save both Identifier and Labels to " + configuration.IdentifierFieldName + ", if you want the Identifier to be stored in Labels field enable SaveIdentifierInLabelsField instead!");
+        if (configuration.IdentifierFieldName.equalsIgnoreCase(configuration.LabelsFieldName) && !configuration.SaveIdentifierInLabelsField) {
+            throw new RuntimeException("Cannot save both Identifier and Labels to " + configuration.IdentifierFieldName + ", if you want the Identifier to be stored in Labels field enable SaveIdentifierInLabelsField to override this error!");
         }
 
         if (configuration.RequirementCollectionIssueTypeName.equalsIgnoreCase(configuration.RequirementIssueTypeName)) {

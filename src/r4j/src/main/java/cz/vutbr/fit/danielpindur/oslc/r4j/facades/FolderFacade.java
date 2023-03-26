@@ -58,7 +58,7 @@ public class FolderFacade extends BaseFacade {
     }
 
     private boolean ParentChanged(final Folder original, final Folder update) {
-        return original.getParent() != update.getParent();
+        return !original.getParent().getValue().toString().equalsIgnoreCase(update.getParent().getValue().toString());
     }
 
     private Set<Link> GetContainsLinks(final Set<String> issueKeys) {
@@ -280,7 +280,6 @@ public class FolderFacade extends BaseFacade {
             ValidateParentFolder(parentFolderIdentifier, resource.getTitle());
         }
 
-        // TODO: parent contains folder should take into account the name of the current folder -> update name to the same
         var folderInput = new FolderInput(resource.getTitle(), resource.getDescription(), GetFolderId(parentFolderIdentifier));
         var updated = getFolderClient().updateFolder(folderInput, GetProjectKey(id), GetFolderId(id)).claim();
 

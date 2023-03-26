@@ -20,7 +20,7 @@ public class RequirementFacade extends IssueFacade {
         result.setJiraId(jiraIssueId);
         result.setIdentifier(identifier);
         result.setAbout(resourcesFactory.constructURIForRequirement(identifier));
-        result.setSubject(GetFieldStringSetValue(configuration.LabelsFieldName, resource));
+        result.setSubject(getIssueClient().getFieldStringSetValueWithoutIdentifier(configuration.LabelsFieldName, resource));
         result.setCreated(resource.getCreationDate().toDate());
         result.setModified(resource.getUpdateDate().toDate());
         result.setProject(resourcesFactory.constructLinkForProject(projectIdString));

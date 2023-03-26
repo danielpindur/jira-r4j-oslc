@@ -21,7 +21,7 @@ public class RequirementCollectionFacade extends IssueFacade {
         result.setIdentifier(identifier);
         result.setAbout(resourcesFactory.constructURIForRequirementCollection(identifier));
         result.setCreated(resource.getCreationDate().toDate());
-        result.setSubject(GetFieldStringSetValue(configuration.LabelsFieldName, resource));
+        result.setSubject(getIssueClient().getFieldStringSetValueWithoutIdentifier(configuration.LabelsFieldName, resource));
         result.setModified(resource.getUpdateDate().toDate());
         result.setProject(resourcesFactory.constructLinkForProject(projectIdString));
         result.setCreator(

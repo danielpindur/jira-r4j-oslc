@@ -4,11 +4,12 @@
         "EnableBasicAuth" : true,
         "EnableOAuth" : false
     },
-    "RequirementIssueTypeName" : "Requirement",
-    "RequirementCollectionIssueTypeName" : "Requirement Collection",
-    "IssueLinkTypeName" : "Decompose",
-    "IdentifierFieldName" : "Identifier",
+    "RequirementIssueTypeName" : "Bug",
+    "RequirementCollectionIssueTypeName" : "Story",
+    "IssueLinkTypeName" : "Relates",
+    "IdentifierFieldName" : "Labels",
     "LabelsFieldName" : "Labels",
+    "LabelsIdentifierFormat" : "Identifier:{0}",
     "RootFolderId" : "ROOT",
     "SaveIdentifierInLabelsField": true
 }

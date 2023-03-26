@@ -9,6 +9,7 @@
     "IssueLinkTypeName" : "Relates",
     "IdentifierFieldName" : "Identifier",
     "LabelsFieldName" : "Labels",
+    "LabelsIdentifierFormat" : "Identifier:{0}",
     "RootFolderId" : "ROOT",
     "SaveIdentifierInLabelsField": false
 }

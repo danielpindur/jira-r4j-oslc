@@ -7,6 +7,7 @@ import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.api.domain.input.LinkIssuesInput;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import cz.vutbr.fit.danielpindur.oslc.jira.ResourcesFactory;
+import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.facades.BaseFacade;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 
@@ -21,9 +22,20 @@ import static java.util.UUID.randomUUID;
 public class IssueFacade extends BaseFacade {
     @Inject ResourcesFactory resourcesFactory;
 
+    protected String getIdentifierSearchQuery(final String identifier) {
+        if (configuration.SaveIdentifierInLabelsField) {
+            return configuration.LabelsFieldName + " = " + getIssueClient().getFormattedLabelsIdentifier(identifier);
+        } else {
+            return configuration.IdentifierFieldName + " ~ " + identifier;
+        }
+    }
+
     protected Issue getIssueByIdentifier(final String identifier) {
 
-        var searchString = configuration.IdentifierFieldName + " ~ " + identifier;
+        var searchString = getIdentifierSearchQuery(identifier);
+
+        // TODO: add unauthorized catch
+        // TODO: verify all endpoints responds correctly with 401
         var search = getSearchClient().searchJql(searchString).claim();
         if (search.getTotal() == 0) {
             return null;
@@ -199,9 +211,8 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Selected project doesn't contain issueType " + issueTypeName + "!", Response.Status.BAD_REQUEST);
         }
 
-        var searchQuery = configuration.IdentifierFieldName + " ~ " + identifier;
-        var identifierSearch = getSearchClient().searchJql(searchQuery).claim();
-        if (identifierSearch.getTotal() > 0) {
+        var issueWithSameIdentifier = getIssueByIdentifier(identifier);
+        if (issueWithSameIdentifier != null) {
             throw new WebApplicationException("Issue with same identifier (" + identifier +") already exists!", Response.Status.CONFLICT);
         }
 
@@ -223,35 +234,29 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Title has to be specified, failed to create issue!", Response.Status.BAD_REQUEST);
         }
 
-        var issue = new IssueInputBuilder(project.getKey(), issueType.getId(), title)
-                .setFieldInput(new FieldInput(labelsFieldId, subject))
-                .setFieldInput(new FieldInput(identifierFieldId, identifier))
-                .setDescription(description)
-                .build();
+        var issueInputBuilder = new IssueInputBuilder(project.getKey(), issueType.getId(), title)
+                .setDescription(description);
+
+        if (configuration.SaveIdentifierInLabelsField) {
+            var subjectsWithIdentifier = subject;
+            subjectsWithIdentifier.add(getIssueClient().getFormattedLabelsIdentifier(identifier));
+
+            issueInputBuilder
+                    .setFieldInput(new FieldInput(labelsFieldId, subjectsWithIdentifier));
+        } else {
+            issueInputBuilder
+                    .setFieldInput(new FieldInput(labelsFieldId, subject))
+                    .setFieldInput(new FieldInput(identifierFieldId, identifier));
+        }
+
+        var issue = issueInputBuilder.build();
 
         try {
+            // TODO: problem with Epic as it requires EPIC name field as well
             return getIssueClient().createIssue(issue).claim();
         } catch (Exception e) {
             throw new WebApplicationException("Failed to create " + issueTypeName + "!", Response.Status.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    protected Set<String> GetFieldStringSetValue(final String fieldName, final Issue issue) {
-        var fieldId = getIssueClient().GetFieldId(fieldName);
-        if (fieldId == null) {
-            throw new WebApplicationException("Failed to find fieldId for " + fieldName + "!", Response.Status.CONFLICT);
-        }
-
-        if (fieldId.equalsIgnoreCase("Labels")) {
-            return issue.getLabels();
-        }
-
-        var field = issue.getField(fieldId);
-        if (field == null) {
-            throw new WebApplicationException("Failed to find field for fieldId " + fieldId + "!", Response.Status.CONFLICT);
-        }
-
-        return field.getValue() != null ? (HashSet<String>) field.getValue() : new HashSet<String>();
     }
 
     protected boolean deleteIssue(final String identifier) {
@@ -283,10 +288,20 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Title has to be specified, failed to create issue!", Response.Status.BAD_REQUEST);
         }
 
-        var updatedIssue = new IssueInputBuilder(issue.getProject().getKey(), issue.getIssueType().getId(), title)
-                .setFieldInput(new FieldInput(labelsFieldId, subject))
-                .setDescription(description)
-                .build();
+        var issueInputBuilder = new IssueInputBuilder(issue.getProject().getKey(), issue.getIssueType().getId(), title)
+                .setDescription(description);
+
+        if (configuration.SaveIdentifierInLabelsField) {
+            var subjectsWithIdentifier = subject;
+            subjectsWithIdentifier.add(getIssueClient().getFormattedLabelsIdentifier(identifier));
+
+            issueInputBuilder
+                    .setFieldInput(new FieldInput(labelsFieldId, subjectsWithIdentifier));
+        } else {
+            issueInputBuilder.setFieldInput(new FieldInput(labelsFieldId, subject));
+        }
+
+        var updatedIssue = issueInputBuilder.build();
 
         getIssueClient().updateIssue(issue.getKey(), updatedIssue).claim();
     }

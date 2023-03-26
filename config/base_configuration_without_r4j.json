@@ -9,5 +9,7 @@
     "IssueLinkTypeName" : "Decompose",
     "IdentifierFieldName" : "Identifier",
     "LabelsFieldName" : "Labels",
-    "RootFolderId" : "ROOT"
+    "LabelsIdentifierFormat" : "Identifier:{0}",
+    "RootFolderId" : "ROOT",
+    "SaveIdentifierInLabelsField": false
 }
