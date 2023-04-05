@@ -7,6 +7,8 @@
 % \begin{document}
 
 \chapter{Introduction}
+\todo{Gramar check}
+\todo{Style document}
 This chapter summerizes the motivation and objectives of this thesis, the solution taken to achieve the objectives and the results of the thesis. In the last section the structure of the thesis is presented.
 
 \section{Motivation and Objectives}
@@ -15,19 +17,60 @@ This work was instigaten by Honeywell\todo{Do I need to cite this or use full co
 \section{Solution}
 There are two ways to add OSLC support to a web application, either as a addon or standalone web application. After careful consideration a decision was made to create the adaptor as a standalone web application. The main reason for this decision was to reduce coupling between the web application and the OSLC interface. This allows for easier maintenance and development, as well as the possibility to use the OSLC adaptor with other web applications, beside Jira R4J, in the future. 
 
-\todo{Decision to split to Jira and R4J adaptors}
+During the initial design phase, it was also decided to split the adaptor into two separate adaptors, one for Jira, responsible for the main functionality specified by the Requirement Management Specification, and one for R4J, providing additional functionality, such as the ability to create folders and link requirements to folders. This decision was made in order explore the possibility of not needing to use the R4J pluggin at all, and instead use Jira directly. This also leads to the final solution being generic and less coupled to specific web application, allowing for easier enhancement or replacement of the underlying web application in the future.
 
 Both adaptors were created using Eclipse Lyo\todo{Cite?}, a project containing SDKs and other utilities, used for easier development of OSLC applications. Lyo Designer\todo{Cite?} was used to create the Domain models and Adaptor models\todo{Not sure if it should be called Toolchain model or what}, modeling the data and capabilities of both adaptors. These models were then fed to Code Generator\todo{Cite?} to generate the code skeletos, compliant with the OSLC specification, for the adaptors. The generated skeletons were then filled with the actual code, implementing the functionality of the adaptors, and extended with additional functionality, such as OAuth2 authentication.
 
 \section{Results}
+\todo{Pravděpodobně dává smysl napsat až po dokončení implementace}
 
 \section{Structure of the Thesis}
+\todo{Napsat až po konečném rozložení kapitol}
 
-\chapter{OSLC}
+%=========================================================================
+
+\chapter{Requirements Management}
+\todo{Do I want special chapter for this?}
+
+%=========================================================================
+
+\chapter{OSLC - Open Services for Lifecycle Collaboration}
+This chapter provides a brief overview of the OSLC (Open Services for Lifecycle Collaboration) \cite{oslc}, its fundamental technologies, and the Core and Requirement Management specifications, which are used in this thesis.
+
+\section{Overview}
+\todo{Overview}
+
+\section{Fundamental Technologies}
+OSLC is build on top of several fundamental technologies. This section list these technologies and introduces briefly each of them.
+
+\subsection*{REST}
+REST (REpresentational State Transfer) \cite{rest} is a web software architecture style, describing set of contstraints and properties, which should be followed in comunication between computer systems, most commonly between client and server. In REST architecture the server is responsible for exposing a common interface, which allows the client to access resources by using standard HTTP methods. Each resource, the server is providing, has an unique identifier, that allows the resource to be identified unambiguously and completely. When requested, the server responds with a representation of the resource. The client can then use this resource to create new resources and update or delete existing resources. The comunication between the server and the client is stateless, meaning every request the server receives can be fully understood in isolation, without the context of previous requests. Most common HTTP methods used in REST are POST, GET, PUT and DELETE, which corresponds to the CRUD operations (Create, Read, Update and Delete).
+
+\subsection*{RDF}
+RDF (Resource Description Framework) \cite{rdf}
+
+\subsection*{Linked Data}
+
+\section{OSLC Specifications}
+
+\subsection*{OSLC Core Specification}
+
+\subsection*{OSLC Requirement Management Specification}
+
+\section{Eclipse Lyo}
+
+%=========================================================================
 
 \chapter{Jira}
 \todo{Jira + R4J}
 \todo{Co přesně přidává R4J do Jira}
+
+%=========================================================================
+
+\chapter{Authentication}
+\todo{Basic Auth}
+\todo{OAuth2}
+
 
 \chapter{Adaptor Design}
 \todo{Návrh v lyu}
