@@ -12,14 +12,14 @@
 This chapter summerizes the motivation and objectives of this thesis, the solution taken to achieve the objectives and the results of the thesis. In the last section the structure of the thesis is presented.
 
 \section{Motivation and Objectives}
-This work was instigaten by Honeywell\todo{Do I need to cite this or use full company name?}. The company currently uses IBM Doors\todo{Cite?} as a solution for for requirement management. As IBM Doors has slowly become obsolete, the company is considering to switch to a new solution - Jira R4J\todo{Cite?}. Honeywell currently provides its clients access to requirements stored in IBM Doors via the OSLC\todo{Cite?} interface for Requirement Management Specification\todo{Cite?}, which comes with IBM Doors. The company is interested in providing the same access to requirements stored in Jira R4J. The goal of this thesis is to explore and create a solution that will allow Honeywell to provide its clients access to requirements stored in Jira R4J via the OSLC interface for Requirement Management Specification.
+This work was instigaten by Honeywell International Inc. \cite{honeywell}. The company currently uses IBM Doors \cite{ibm_doors} as a solution for for requirement management. As IBM Doors has slowly become obsolete, the company is considering to switch to a new solution - Jira R4J. Honeywell currently provides its clients access to requirements stored in IBM Doors via the OSLC interface for Requirement Management Specification, which comes with IBM Doors. The company is interested in providing the same access to requirements stored in Jira R4J. The goal of this thesis is to explore and create a solution that will allow Honeywell to provide its clients access to requirements stored in Jira R4J via the OSLC interface for Requirement Management Specification.
 
 \section{Solution}
 There are two ways to add OSLC support to a web application, either as a addon or standalone web application. After careful consideration a decision was made to create the adaptor as a standalone web application. The main reason for this decision was to reduce coupling between the web application and the OSLC interface. This allows for easier maintenance and development, as well as the possibility to use the OSLC adaptor with other web applications, beside Jira R4J, in the future. 
 
 During the initial design phase, it was also decided to split the adaptor into two separate adaptors, one for Jira, responsible for the main functionality specified by the Requirement Management Specification, and one for R4J, providing additional functionality, such as the ability to create folders and link requirements to folders. This decision was made in order explore the possibility of not needing to use the R4J pluggin at all, and instead use Jira directly. This also leads to the final solution being generic and less coupled to specific web application, allowing for easier enhancement or replacement of the underlying web application in the future.
 
-Both adaptors were created using Eclipse Lyo\todo{Cite?}, a project containing SDKs and other utilities, used for easier development of OSLC applications. Lyo Designer\todo{Cite?} was used to create the Domain models and Adaptor models\todo{Not sure if it should be called Toolchain model or what}, modeling the data and capabilities of both adaptors. These models were then fed to Code Generator\todo{Cite?} to generate the code skeletos, compliant with the OSLC specification, for the adaptors. The generated skeletons were then filled with the actual code, implementing the functionality of the adaptors, and extended with additional functionality, such as OAuth2 authentication.
+Both adaptors were created using Eclipse Lyo, a project containing SDKs and other utilities, used for easier development of OSLC applications. Lyo Designer was used to create the Domain models and Adaptor models\todo{Not sure if it should be called Toolchain model or what}, modeling the data and capabilities of both adaptors. These models were then fed to Code Generator to generate the code skeletos, compliant with the OSLC specification, for the adaptors. The generated skeletons were then filled with the actual code, implementing the functionality of the adaptors, and extended with additional functionality, such as OAuth2 authentication.
 
 \section{Results}
 \todo{Pravděpodobně dává smysl napsat až po dokončení implementace}
@@ -34,36 +34,106 @@ Both adaptors were created using Eclipse Lyo\todo{Cite?}, a project containing S
 
 %=========================================================================
 
-\chapter{OSLC - Open Services for Lifecycle Collaboration}
+\chapter{Jira}
+\todo{Jira + R4J}
+\todo{Co přesně přidává R4J do Jira}
+
+%=========================================================================
+
+\chapter{Tool Integration}
+\todo{Current situation of tool integration and why OSLC is needed}
+
+%=========================================================================
+
+\chapter{OSLC -- Open Services for Lifecycle Collaboration}
 This chapter provides a brief overview of the OSLC (Open Services for Lifecycle Collaboration) \cite{oslc}, its fundamental technologies, and the Core and Requirement Management specifications, which are used in this thesis.
 
 \section{Overview}
-\todo{Overview}
+OSLC \cite{oslc} is an OASIS Open Project \cite{oasis_open} responsible for developing a set of open specifications, which are used for easier integration of software tools. More detailed overview of the OSLC project can be found in the OSLC Primer \cite{oslc_primer}.
+
+The initiation of the OSLC project was driven by increasing number of software tools, which are used in software development lifecycle. These tools are usually developed by different organizations, which leads to the problem of difficult tool integration. In the past, this was solved by developing specific translators and adaptors for each tool, which was a time consuming and expensive process. OSLC was created to solve this problem, by creating a set of open specifications to integrate the resources managed by the software tools into the web of data.
+
+OSLC offers two different methods of data integration - Linking data via HTTP and Linking Data via HTML User Interface \cite{oslc_primary_integration_techniques}.
+
+\subsection*{Linking data via HTTP}
+Linking of the data via HTTP is based on OSLC definied common tool protocol for accessing, creating, updating and deleting resources. The protocol is based on internet technologies and standards, such as REST, RDF and Linked Data, described in section \ref{sec:oslc_fundamental_technologies}. It allows any other tool, that implements the same specification, to access any of the managed resources. Linking of the data is done by referencing resources by HTTP URIs in the representations of other data.
+
+\subsection*{Linking Data via HTML User Interface}
+\label {sec:oslc_linking_data_via_html_user_interface}
+OSLC protocol can be used to link data via HTML user interface as well, making use of the REST code on demand contstraint. This allows the client to access and display fragments of a existing user interface, provided by the tool, without the need to implement the user interface itself. This delegated user interface then enables the client to access the resources managed by the tool.
 
 \section{Fundamental Technologies}
+\label {sec:oslc_fundamental_technologies}
 OSLC is build on top of several fundamental technologies. This section list these technologies and introduces briefly each of them.
 
 \subsection*{REST}
 REST (REpresentational State Transfer) \cite{rest} is a web software architecture style, describing set of contstraints and properties, which should be followed in comunication between computer systems, most commonly between client and server. In REST architecture the server is responsible for exposing a common interface, which allows the client to access resources by using standard HTTP methods. Each resource, the server is providing, has an unique identifier, that allows the resource to be identified unambiguously and completely. When requested, the server responds with a representation of the resource. The client can then use this resource to create new resources and update or delete existing resources. The comunication between the server and the client is stateless, meaning every request the server receives can be fully understood in isolation, without the context of previous requests. Most common HTTP methods used in REST are POST, GET, PUT and DELETE, which corresponds to the CRUD operations (Create, Read, Update and Delete).
 
 \subsection*{RDF}
-RDF (Resource Description Framework) \cite{rdf}
+RDF (Resource Description Framework) \cite{rdf} is a W3C (World Wide Web Consortium) \cite{w3c} standard for representing data on web. It describes resources in the form of a directed graph, where information about each element are represented as a triplets. Tripletes are statements about the resource composed of subject, predicate and object. The subject describes the the resource, and the predicate specifies its properties and relationships, between the subject and the object. Most widely used RDF serialization formats are Turtle \cite{turtle}, RDF/XML and RDF/JSON.
+\todo{This might use an image}
 
 \subsection*{Linked Data}
+Linked Data \cite{linked_data} are structured data containing references to other data. This enables computers to query and interpret the data, allowing the internet to become one big database. The main principles of Linked Data are \cite{linked_data_design_issues}:
+\begin{enumerate}
+  \item URIs \cite{uri_rfc} are used as names to identify things
+  \item People can lookup things using HTTTP URIs
+  \item Information returned as a result of the search are provided in an open standard format (for example RDF)
+  \item Returned information contain more URIs, enabling discovery of other things
+\end{enumerate}
 
 \section{OSLC Specifications}
+OSLC defines a set of open specifications for integrating software tools. OSLC consists of multiple working groups, which are each responsible for development of a specific specification. There are two types of specifications - Core and Domain. The Core specification provides a basis for the Domain specifications, which are then focused on a specific field, for example Requirement Management, Change Management, Configuration Management, etc. This section provides a summary of the OSLC Core and Requirement Management specifications, which are used in this thesis.
 
-\subsection*{OSLC Core Specification}
+\subsection{OSLC Core Specification}
+\todo{https://docs.oasis-open-projects.org/oslc-op/core/v3.0/os/images/oslc-architecture.png}
+At the time of writing this thesis, the current version of OSLC Core Specification \cite{oslc_core_specification} is 3.0. The OSLC Core Specification defines set of common principles, capabilities and restrictions, which should be common accross all OSLC Domain Specifications. Specific OSLC Domain Specification will then describe, which of these capabilities are required or optional for conformance with the specification. In the follwoing sections a basic overview of these capabilities is provided.
 
-\subsection*{OSLC Requirement Management Specification}
+\subsection*{Resource Shape}
+OSLC works with resources, which are uniquequly identified by an URI \cite{uri_rfc}, and are represented by RDF triples. Resource Shape \cite{oslc_core_resource_shape} is a resource of type oslc:ResourceShape, that describes the contents and contstraints of other resources.
+\todo{Possible image: https://docs.oasis-open-projects.org/oslc-op/core/v3.0/os/images/shapes-overview.png - probably remake without the blue boxes}
+Each Resource Shape has a defined set of Properties, of type oslc:Property, which specify the value type and cardinality of the property. The value type of the property can be either a reference to another Resource Shape, or a basic data type. Cardinality of the Property specifies if the Property is required, optional or can be present multiple times. OSLC Core Specification defines these basic data types: XMLLiteral, boolean, dateTime, decimal, double, float, integer, string and langString.
+
+\subsection*{Discovery}
+For the reasons of flexibility, and to reduce coupling, the OSLC Core Specification does not specify unequivocally which capabilities the server has to provide. Instead it offers a mechanism for incremental discovery of services and capabilities, the target server has implemented.
+\todo{This could also use some image/diagram (https://docs.oasis-open-projects.org/oslc-op/core/v3.0/os/images/CoreDiscoveryUML.png)}
+The server always has to specify the starting point of discovery, which is the Service Provider Catalog. The Service Provider Catalog is a resource containing a list of available Service Providers, which then contain all of the available Services. From there, the client is able to find the URIs for Creation Factories, Dialogs and Query services. For additional information about the Discovery mechanism can be found in the Discovery section of the OSLC Core Specification \cite{oslc_core_discovery}.
+
+\subsection*{Basic Capabilities}
+OSLC Core Specification defines basic CRUD (Create, Read, Update, Delete) operations for resources, however the decesion about which of these operations are required or optional for which resource is specified in each of the OSLC Domain Specifications. Read, Update and Delete operations are performed by their respective HTTP request method to the URI of the target resource. Create operation is performed by a POST operation to the Creation Factory URI for specific resource. 
+
+\subsection*{Delegated UI}
+OSLC Core Specification introduces Delegated UI \cite{oslc_core_delegated_ui} for resource creation -- Creation Dialog, and resource selection -- Selection Dialog. Both of these dialogs are examples of linking of the data via HTML mentioned in \ref{sec:oslc_linking_data_via_html_user_interface}. Dialogs are returned as a combination of HTML iframe and JavaScript code. The decesion about which of these dialogs are required or optional is again left up to the OSLC Domain Specification.
+
+\subsection*{Query Capability}
+%OSLC Query provides a mechanism for a client to query or search for RDF resources by performing a GET or POST on a oslc:queryBase URI. 
+
+\todo{Query Capability}
+
+\todo{Extensions?}
+
+\todo{Authentication? + Error messages}
+
+\subsection{OSLC Requirement Management Specification}
+At the time of writing this thesis, the current version of OSLC Requirement Management Specification \cite{oslc_requirement_management_specification} is 2.1.
+
+\todo{Intro}
+
+\todo{Requirement}
+
+\todo{Requirement Collection}
+
+\todo{Anything else to talk about here?}
 
 \section{Eclipse Lyo}
 
-%=========================================================================
+\todo{Intro}
 
-\chapter{Jira}
-\todo{Jira + R4J}
-\todo{Co přesně přidává R4J do Jira}
+\subsection*{OSLC4J SDK}
+
+\subsection*{Lyo Designer}
+
+\subsection*{Code Generator}
 
 %=========================================================================
 
