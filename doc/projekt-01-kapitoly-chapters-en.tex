@@ -30,22 +30,27 @@ Both adaptors were created using Eclipse Lyo, a project containing SDKs and othe
 %=========================================================================
 
 \chapter{Requirements Management}
+\todo{Gramar check}
+\todo{Style document}
+% something along the way of brief overview is needed for better understanding of the problems and requirements of the thesis
+
 \todo{Do I want special chapter for this?}
+%Requirements are the basis for defining what the system stakeholders (users, customers, suppliers and so on) need from a system and also what the system must do in order to meet those needs, and how the surrounding processes must be orchestrated so that quality, scope and timescale objectives are satisfied. 
 
 %=========================================================================
 
 \chapter{Jira}
+Jira \cite{jira} is issue tracking and project management tool developed by Atlassian \cite{atlassian}.
+\todo{Gramar check}
+\todo{Style document}
 \todo{Jira + R4J}
 \todo{Co přesně přidává R4J do Jira}
 
 %=========================================================================
 
-\chapter{Tool Integration}
-\todo{Current situation of tool integration and why OSLC is needed}
-
-%=========================================================================
-
 \chapter{OSLC -- Open Services for Lifecycle Collaboration}
+\todo{Gramar check}
+\todo{Style document}
 This chapter provides a brief overview of the OSLC (Open Services for Lifecycle Collaboration) \cite{oslc}, its fundamental technologies, and the Core and Requirement Management specifications, which are used in this thesis.
 
 \section{Overview}
@@ -87,11 +92,13 @@ OSLC defines a set of open specifications for integrating software tools. OSLC c
 
 \subsection{OSLC Core Specification}
 \todo{https://docs.oasis-open-projects.org/oslc-op/core/v3.0/os/images/oslc-architecture.png}
-At the time of writing this thesis, the current version of OSLC Core Specification \cite{oslc_core_specification} is 3.0. The OSLC Core Specification defines set of common principles, capabilities and restrictions, which should be common accross all OSLC Domain Specifications. Specific OSLC Domain Specification will then describe, which of these capabilities are required or optional for conformance with the specification. In the follwoing sections a basic overview of these capabilities is provided.
+At the time of writing this thesis, the current version of OSLC Core Specification \cite{oslc_core_specification} is 3.0. The OSLC Core Specification defines set of common principles, capabilities and restrictions, which should be common accross all OSLC Domain Specifications. Specific OSLC Domain Specification will then describe, which of these capabilities are required or optional for conformance with the specification. It also introduces several resource types and properties with the namespace http://open-services.net/ns/core\# and prefix oslc. In the follwoing sections a basic overview of the core concepts is provided.
 
 \subsection*{Resource Shape}
 OSLC works with resources, which are uniquequly identified by an URI \cite{uri_rfc}, and are represented by RDF triples. Resource Shape \cite{oslc_core_resource_shape} is a resource of type oslc:ResourceShape, that describes the contents and contstraints of other resources.
+
 \todo{Possible image: https://docs.oasis-open-projects.org/oslc-op/core/v3.0/os/images/shapes-overview.png - probably remake without the blue boxes}
+
 Each Resource Shape has a defined set of Properties, of type oslc:Property, which specify the value type and cardinality of the property. The value type of the property can be either a reference to another Resource Shape, or a basic data type. Cardinality of the Property specifies if the Property is required, optional or can be present multiple times. OSLC Core Specification defines these basic data types: XMLLiteral, boolean, dateTime, decimal, double, float, integer, string and langString.
 
 \subsection*{Discovery}
@@ -106,54 +113,70 @@ OSLC Core Specification defines basic CRUD (Create, Read, Update, Delete) operat
 OSLC Core Specification introduces Delegated UI \cite{oslc_core_delegated_ui} for resource creation -- Creation Dialog, and resource selection -- Selection Dialog. Both of these dialogs are examples of linking of the data via HTML mentioned in \ref{sec:oslc_linking_data_via_html_user_interface}. Dialogs are returned as a combination of HTML iframe and JavaScript code. The decesion about which of these dialogs are required or optional is again left up to the OSLC Domain Specification.
 
 \subsection*{Query Capability}
-%OSLC Query provides a mechanism for a client to query or search for RDF resources by performing a GET or POST on a oslc:queryBase URI. 
+As OSLC server manages large amount of resources, it has to provide a way for clients to search and filter these resourecs. OSLC Core Specification specifies a mechanism for this, called OSLC Query \cite{oslc_core_query}. OSLC Query allows clients to lookup a set of resourecs by performing a GET or POST requests on a oslc:queryBase URI. It offers two separate capabilities, a full-text search, identified by oslc.searchTerms parameter, and a query search for resources containing specifiec properties and values, identified by oslc.where parameter. Each query search must consist of at least one property, comparison operator and value. The result of the search is returned as a resource of type oslc:QueryResult, which contain a list of references to the resourecs found.
+\todo{Maybe some XML example here for query}
 
-\todo{Query Capability}
-
-\todo{Extensions?}
-
-\todo{Authentication? + Error messages}
+\subsection*{Authentication and Error Responses}
+OSLC Core Specification provides guidance on how to handle authentication and error resposes. Allowed authentication methods are Basic Authentication and OAuth. All error resonses should be returned as a resource of type oslc:Error \cite{oslc_core_error}, which contains a human-readable message and a machine-readable error code. This enables clients to handle errors in a generic way.
 
 \subsection{OSLC Requirement Management Specification}
-At the time of writing this thesis, the current version of OSLC Requirement Management Specification \cite{oslc_requirement_management_specification} is 2.1.
+At the time of writing this thesis, the current version of OSLC Requirement Management Specification \cite{oslc_requirement_management_specification} is 2.1. The specification builds on top of the OSLC Core Specification and specifies, which of the capabilities are required or optional for conformance with the specification. The main goal is to provide an extensive, but not limiting, interface for requirement management system and support a wide range of integration scenarios. One of the main requirements for an OSLC RM Server is the ability to accept and return resources in RDF/XML, XML and JSON. It also introduces new resource types, in the namespace of http://open-services.net/ns/rm\# and with prefix oslc\_rm. These resource types are described in the following sections.
 
-\todo{Intro}
+\subsection*{Requirement}
+oslc\_rm:Requirement \cite{oslc_rm_requirement} is a resource shape used for describing the statement of need. \todo{mabye I want to refer this to the section about requirement management requirement} Requirement Management Specification defines extensive set of properties and contstraints \cite{oslc_rm_requirement_constraints} for the requirement shape, but there are few that are especialy important in the context of this work. 
 
-\todo{Requirement}
+Each individual requirement should have a title, usualy containing the name of the requirement, and a description, which consists of the actual statement of need. These two requisities realized by the properties dcterms:title and dcterms:description.
 
-\todo{Requirement Collection}
+Requirements should also be able to reference other requirements or requirement collections, which are related to them. This is done by the properties oslc\_rm:decomposedBy and oslc\_rm:decomposes, the difference being the direction of the relationship.
 
-\todo{Anything else to talk about here?}
+\subsection*{Requirement Collection}
+oslc\_rm:RequirementCollection \cite{oslc_rm_requirement_collection} is a resource shape used for describing a collection of requirements, which constitute some statement of need. Requirement Management Specification again defines the constraints and properties for this resource shape \cite{oslc_rm_requirement_collection_constraints}, but they are nearly the same as for oslc\_rm:Requirement resource shape.
 
 \section{Eclipse Lyo}
-
-\todo{Intro}
+Eclipse Lyo \cite{eclipse_lyo} is an open source project hosted by the Eclipse Foundation \cite{eclipse} and developed by the OSLC community. It provides a Java SDK, as well as other utilities, to enable easier adoption of the OSLC technologies and better developer experience. The following sections gives a concise summary of the key components of Eclipes Lyo.
 
 \subsection*{OSLC4J SDK}
+OSLC4J Software Developement Kit (available at Maven Repository \cite{maven_oslc4j}) is a set of Java libraries used for building OSLC compliant REST-based servers and clients. It includes support for common OSLC capabilities, resource shapes and service provider documents and marshaling and unmarshaling of resources to Java objects. 
 
 \subsection*{Lyo Designer}
+Lyo Designer \cite{lyo_designer} is Eclipse plugin used for graphical design of OSLC adaptors. It offers the capability to model the OSLC resources, their properties and constraints, as well as the OSLC services. For separation of concers, Lyo Designer provides three views for modeling different parts of the final adaptor:
 
-\subsection*{Code Generator}
+\begin{itemize}
+  \item Domain Specification View - for modeling the OSLC resources, their properties and relationships between them
+  \item Toolchain View - for modeling the relationships between separate adaptors and resources, they consume and produce
+  \item Adapter Interface View - for modeling the services and capabilities of a single adaptor
+\end{itemize}
+
+Lyo Designer also contains an utility called Code Generator, which is capable of generating code skeletons, compliant with OSLC, from the graphical models of the adaptors designed in Lyo Designer. The generated code is based on the OSLC4J SDK and can be used as a starting point for the implementation of the adaptor. The generated code contains designated places, where the developer should add code, which provides the functionality for the adaptor. This allows the code to be regenarated, upon the changes to the model, without breaking or losing any of the underlying implementation and custom code.
 
 %=========================================================================
 
 \chapter{Authentication}
+\todo{Gramar check}
+\todo{Style document}
 \todo{Basic Auth}
 \todo{OAuth2}
 
 
 \chapter{Adaptor Design}
+\todo{Gramar check}
+\todo{Style document}
 \todo{Návrh v lyu}
 \todo{Rozdělení na Jira a R4J adaptory}
 \todo{Identifikátory Requirement a RequirementCollection}
+\todo{Mapping of properties}
 
 \chapter{Implementation}
+\todo{Gramar check}
+\todo{Style document}
 \todo{Authentizace Basic + OAuth, not sure if here nebo v Adaptor Design zmínit jak to generuje Lyo a jak to používáme/bylo změno}
 \todo{Popis toho jaké jdou dělat query}
 \todo{Konfigurační soubory pro Jiru a R4J}
 \todo{Možnost uložení identifikátorů v labels fieldu}
 
 \chapter{Evaluation and Testing}
+\todo{Gramar check}
+\todo{Style document}
 \todo{Testování v Postmanovi}
 \todo{Testování pomocí ReqIF souboru}
 \todo{Limitace + co dělat když nejde něco přidat do Jiry, permision needed for user to do CRUD operations}
@@ -162,7 +185,8 @@ At the time of writing this thesis, the current version of OSLC Requirement Mana
 \todo{BUGv R4J API: 500 returned při updatu folderu s parent=ROOT}
 
 \chapter{Conclusion}
-
+\todo{Gramar check}
+\todo{Style document}
 
 
 %=========================================================================
