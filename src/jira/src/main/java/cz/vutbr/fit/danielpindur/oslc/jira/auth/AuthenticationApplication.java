@@ -25,8 +25,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
-import cz.vutbr.fit.danielpindur.oslc.shared.session.SessionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,12 +34,15 @@ import org.eclipse.lyo.server.oauth.core.AuthenticationException;
 
 
 // Start of user code imports
+import cz.vutbr.fit.danielpindur.oslc.shared.authentication.OSLCAuthenticationApplication;
+import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
+import cz.vutbr.fit.danielpindur.oslc.shared.session.SessionProvider;
 // End of user code
 
 // Start of user code pre_class_code
 // End of user code
 
-public class AuthenticationApplication implements Application {
+public class AuthenticationApplication implements OSLCAuthenticationApplication {
 
     public final static String APPLICATION_NAME = "JiraAdaptor";
     public final static String OAUTH_REALM = "JiraAdaptor";
@@ -119,7 +120,7 @@ public class AuthenticationApplication implements Application {
     @Override
     public void login(HttpServletRequest request, String username, String password) throws AuthenticationException {
         // Start of user code login
-        if (!ConfigurationProvider.getInstance().GetConfiguration().JiraServer.EnableBasicAuth) {
+        if (!ConfigurationProvider.GetConfiguration().JiraServer.EnableBasicAuth) {
             throw new AuthenticationException("Basic Authentication is not enabled for this adaptor!");
         }
 

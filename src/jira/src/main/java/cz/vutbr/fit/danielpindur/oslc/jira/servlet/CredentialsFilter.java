@@ -22,6 +22,7 @@ import java.util.Enumeration;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Optional;
 
+import cz.vutbr.fit.danielpindur.oslc.shared.authentication.AuthenticationStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,6 @@ import net.oauth.server.OAuthServlet;
 import org.eclipse.lyo.server.oauth.consumerstore.FileSystemConsumerStore;
 import org.eclipse.lyo.server.oauth.core.OAuthConfiguration;
 import org.eclipse.lyo.server.oauth.core.OAuthRequest;
-import org.eclipse.lyo.server.oauth.core.token.SimpleTokenStrategy;
 import org.eclipse.lyo.server.oauth.core.AuthenticationException;
 
 import cz.vutbr.fit.danielpindur.oslc.jira.auth.AuthenticationApplication;
@@ -198,33 +198,9 @@ public class CredentialsFilter implements Filter {
          * Override some SimpleTokenStrategy methods so that we can keep the
          * BugzillaConnection associated with the OAuth tokens.
          */
-        config.setTokenStrategy(new SimpleTokenStrategy() {
-            @Override
-            public void markRequestTokenAuthorized(HttpServletRequest httpRequest, String requestToken)
-                    throws OAuthProblemException {
-                // Start of user code markRequestTokenAuthorized_init
-                // End of user code
-                authenticationApplication.putApplicationConnector(requestToken, authenticationApplication.getApplicationConnectorFromSession(httpRequest));
-                // Start of user code markRequestTokenAuthorized_mid
-                // End of user code
-                super.markRequestTokenAuthorized(httpRequest, requestToken);
-                // Start of user code markRequestTokenAuthorized_final
-                // End of user code
-            }
+        config.setTokenStrategy(new AuthenticationStrategy(authenticationApplication));
 
-            @Override
-            public void generateAccessToken(OAuthRequest oAuthRequest) throws OAuthProblemException, IOException {
-                // Start of user code generateAccessToken_init
-                // End of user code
-                String requestToken = oAuthRequest.getMessage().getToken();
-                // Start of user code generateAccessToken_mid
-                // End of user code
-                super.generateAccessToken(oAuthRequest);
-                authenticationApplication.moveApplicationConnector(requestToken, oAuthRequest.getAccessor().accessToken);
-                // Start of user code generateAccessToken_final
-                // End of user code
-            }
-        });
+        var test = config.getTokenStrategy();
 
         try {
             // For now, hard-code the consumers.

@@ -30,7 +30,13 @@ public final class ConfigurationProvider {
         }
     }
 
-    public static ConfigurationProvider getInstance() {
+    private static ConfigurationProvider getInstance() {
+        if (INSTANCE == null) {
+            try {
+                Initialize();
+            } catch (Exception ignored) { }
+        }
+
         return INSTANCE;
     }
 
@@ -38,7 +44,7 @@ public final class ConfigurationProvider {
         INSTANCE = new ConfigurationProvider();
     }
 
-    public Configuration GetConfiguration() {
-        return configuration;
+    public static Configuration GetConfiguration() {
+        return getInstance().configuration;
     }
 }

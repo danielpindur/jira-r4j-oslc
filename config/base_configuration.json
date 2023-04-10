@@ -1,6 +1,6 @@
 {
     "JiraServer" : {
-        "Url" : "http://localhost:8080",
+        "Url" : "https://localhost:8080",
         "EnableBasicAuth" : true,
         "EnableOAuth" : false
     },

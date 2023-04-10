@@ -19,7 +19,7 @@ import java.util.Objects;
 
 public class BaseFacade {
     protected static final Logger log = LoggerFactory.getLogger(BaseFacade.class);
-    protected Configuration configuration = ConfigurationProvider.getInstance().GetConfiguration();
+    protected Configuration configuration = ConfigurationProvider.GetConfiguration();
 
     private DisposableHttpClient cachedHttpClient;
     private JiraRestClient cachedJiraClient;

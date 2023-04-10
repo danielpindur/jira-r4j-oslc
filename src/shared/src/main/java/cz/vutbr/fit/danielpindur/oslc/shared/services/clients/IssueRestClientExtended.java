@@ -30,7 +30,7 @@ public class IssueRestClientExtended extends AsynchronousIssueRestClient {
     public IssueRestClientExtended(URI baseUri, HttpClient client, SessionRestClient sessionRestClient, MetadataRestClient metadataRestClient) {
         super(baseUri, client, sessionRestClient, metadataRestClient);
         this.baseUri = baseUri;
-        configuration = ConfigurationProvider.getInstance().GetConfiguration();
+        configuration = ConfigurationProvider.GetConfiguration();
         this.metadataRestClient = metadataRestClient;
     }
 

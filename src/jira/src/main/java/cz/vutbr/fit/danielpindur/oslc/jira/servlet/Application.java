@@ -107,6 +107,13 @@ public class Application extends javax.ws.rs.core.Application {
     }
     static
     {
+        try {
+            ConfigurationProvider.Initialize();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        
         RESOURCE_CLASSES.addAll(JenaProvidersRegistry.getProviders());
         RESOURCE_CLASSES.addAll(Json4JProvidersRegistry.getProviders());
         RESOURCE_CLASSES.add(ServiceProviderService1.class);
@@ -129,20 +136,13 @@ public class Application extends javax.ws.rs.core.Application {
         // OAuth resources
         RESOURCE_CLASSES.add(RootServicesService.class);
         try {
-            RESOURCE_CLASSES.add(Class.forName("org.eclipse.lyo.server.oauth.webapp.services.ConsumersService"));
-            RESOURCE_CLASSES.add(Class.forName("org.eclipse.lyo.server.oauth.webapp.services.OAuthService"));
+            RESOURCE_CLASSES.add(Class.forName("cz.vutbr.fit.danielpindur.oslc.shared.services.OAuthService"));
         } catch (ClassNotFoundException e) {
             // Start of user code OAuthServiceClasses_notFound
             // End of user code
         }
         
         // Start of user code Custom Resource Classes
-        try {
-            ConfigurationProvider.Initialize();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
         // End of user code
 
         RESOURCE_SHAPE_PATH_TO_RESOURCE_CLASS_MAP.put(OslcConstants.PATH_ALLOWED_VALUES,           AllowedValues.class);

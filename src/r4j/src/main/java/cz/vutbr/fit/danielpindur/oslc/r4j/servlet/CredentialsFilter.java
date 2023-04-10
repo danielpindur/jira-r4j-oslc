@@ -226,6 +226,8 @@ public class CredentialsFilter implements Filter {
             }
         });
 
+        var test = config.getTokenStrategy();
+
         try {
             // For now, hard-code the consumers.
             config.setConsumerStore(new FileSystemConsumerStore(authenticationApplication.getOslcConsumerStoreFilename()));

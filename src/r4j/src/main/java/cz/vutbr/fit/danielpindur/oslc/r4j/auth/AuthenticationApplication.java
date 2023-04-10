@@ -119,7 +119,7 @@ public class AuthenticationApplication implements Application {
     @Override
     public void login(HttpServletRequest request, String username, String password) throws AuthenticationException {
         // Start of user code login
-        if (!ConfigurationProvider.getInstance().GetConfiguration().JiraServer.EnableBasicAuth) {
+        if (!ConfigurationProvider.GetConfiguration().JiraServer.EnableBasicAuth) {
             throw new AuthenticationException("Basic Authentication is not enabled for this adaptor!");
         }
 

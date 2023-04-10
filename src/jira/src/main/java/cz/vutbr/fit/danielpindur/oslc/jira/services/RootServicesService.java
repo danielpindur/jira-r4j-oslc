@@ -54,14 +54,14 @@ public class RootServicesService {
      * 
      * See https://jazz.net/wiki/bin/view/Main/RootServicesSpec
      */
+    //TODO: Fix
     @GET
     @Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML })
     public Response getRootServices() {
         String about = UriBuilder.fromUri(OSLC4JUtils.getServletURI()).path("rootservices").build().toString();
         String serviceProviderCatalog = ServiceProviderCatalogSingleton.getUri().toString();
-        String oauthRequestConsumerKeyUrl = UriBuilder.fromUri(OSLC4JUtils.getServletURI()).path("oauth/requestKey").build().toString();
-        String oauthApprovalModuleUrl = UriBuilder.fromUri(OSLC4JUtils.getServletURI()).path("oauth/approveKey").build().toString();
         String oauthRequestTokenUrl = UriBuilder.fromUri(OSLC4JUtils.getServletURI()).path("oauth/requestToken").build().toString();
+        // TODO: Do I need authorize?
         String oauthUserAuthorizationUrl = UriBuilder.fromUri(OSLC4JUtils.getServletURI()).path("oauth/authorize").build().toString();
         String oauthAccessTokenUrl = UriBuilder.fromUri(OSLC4JUtils.getServletURI()).path("oauth/accessToken").build().toString();
         // Start of user code init
@@ -81,8 +81,6 @@ public class RootServicesService {
                 "    <oslc_cm:cmServiceProviders rdf:resource=\"" + serviceProviderCatalog + "\" />" + "\n" +
                 "    <jfs:oauthRealmName>" + AuthenticationApplication.OAUTH_REALM + "</jfs:oauthRealmName>" + "\n" +
                 "    <jfs:oauthDomain>" + OSLC4JUtils.getPublicURI() + "</jfs:oauthDomain>" + "\n" +
-                "    <jfs:oauthRequestConsumerKeyUrl rdf:resource=\"" + oauthRequestConsumerKeyUrl + "\"/>" + "\n" +
-                "    <jfs:oauthApprovalModuleUrl rdf:resource=\"" + oauthApprovalModuleUrl + "\"/>" + "\n" +
                 "    <jfs:oauthRequestTokenUrl rdf:resource=\"" + oauthRequestTokenUrl + "\"/>" + "\n" +
                 "    <jfs:oauthUserAuthorizationUrl rdf:resource=\"" + oauthUserAuthorizationUrl + "\"/>" + "\n" +
                 "    <jfs:oauthAccessTokenUrl rdf:resource=\"" + oauthAccessTokenUrl + "\"/>" + "\n" +

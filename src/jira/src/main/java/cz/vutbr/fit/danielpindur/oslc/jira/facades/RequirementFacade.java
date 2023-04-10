@@ -7,6 +7,8 @@ import org.eclipse.lyo.oslc4j.core.model.Link;
 import java.util.HashSet;
 
 public class RequirementFacade extends IssueFacade {
+    // TODO: move check if issue exists for linking before issue creation
+    // TODO: same thing for folder
     private Requirement MapResourceToResult(final Issue resource) {
         var result = new Requirement();
         var jiraIssueId = resource.getId().intValue();
