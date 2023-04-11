@@ -2,7 +2,7 @@
     "JiraServer" : {
         "Url" : "https://localhost:8080",
         "EnableBasicAuth" : true,
-        "EnableOAuth" : false
+        "EnableOAuth" : true
     },
     "RequirementIssueTypeName" : "Requirement",
     "RequirementCollectionIssueTypeName" : "Requirement Collection",

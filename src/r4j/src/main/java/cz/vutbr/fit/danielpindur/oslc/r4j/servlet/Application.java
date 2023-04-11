@@ -120,14 +120,7 @@ public class Application extends javax.ws.rs.core.Application {
 
         // OAuth resources
         RESOURCE_CLASSES.add(RootServicesService.class);
-        try {
-            RESOURCE_CLASSES.add(Class.forName("org.eclipse.lyo.server.oauth.webapp.services.ConsumersService"));
-            RESOURCE_CLASSES.add(Class.forName("org.eclipse.lyo.server.oauth.webapp.services.OAuthService"));
-        } catch (ClassNotFoundException e) {
-            // Start of user code OAuthServiceClasses_notFound
-            // End of user code
-        }
-        
+
         // Start of user code Custom Resource Classes
         try {
             ConfigurationProvider.Initialize();

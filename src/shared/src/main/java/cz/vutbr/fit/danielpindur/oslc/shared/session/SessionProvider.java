@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSession;
 public final class SessionProvider {
     public static String BASIC_USERNAME = "Username";
     public static String BASIC_PASSWORD = "Password";
+    public static String OAUTH_TOKEN = "OAuth_Token";
 
     private static SessionProvider INSTANCE;
 

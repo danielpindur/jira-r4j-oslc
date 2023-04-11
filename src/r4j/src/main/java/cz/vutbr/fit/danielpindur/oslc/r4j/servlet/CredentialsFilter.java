@@ -111,31 +111,20 @@ public class CredentialsFilter implements Filter {
                 
                 //Check if this is an OAuth1 request.
                 //String clientRequestURL = UriBuilder.fromUri(OSLC4JUtils.getServletURI()).path(request.getPathInfo()).build().toString();
-                OAuthMessage message = OAuthServlet.getMessage(request, null);
+                var authorizationHeader = request.getHeader("Authorization");
+                var containsToken = authorizationHeader != null && authorizationHeader.contains("Bearer");
                 // Start of user code checkOauth1_Init
                 // End of user code
-                log.trace(request.getPathInfo() + " - checking for oauth1 authentication");
-                if (message.getToken() != null) {
-                    log.trace(request.getPathInfo() + " - Found an oauth1 token. Validating it.");
+                log.trace(request.getPathInfo() + " - checking for oauth2 authentication");
+                if (containsToken) {
+                    log.trace(request.getPathInfo() + " - Found an oauth2 token.");
                     try {
-                        OAuthRequest oAuthRequest = new OAuthRequest(request);
-                        oAuthRequest.validate();
-                        String applicationConnector = authenticationApplication.getApplicationConnector(message.getToken());
-                        if (applicationConnector == null) {
-                            // Start of user code checkOauth1_applicationConnectorNull
-                            // End of user code
-                            log.trace(request.getPathInfo() + " - oauth1 authentication not valid. Raising an exception TOKEN_REJECTED");
-                            throw new OAuthProblemException(OAuth.Problems.TOKEN_REJECTED);
-                        }
-                        log.trace(request.getPathInfo() + " - oauth1 authentication is valid. Done.");
-                        authenticationApplication.bindApplicationConnectorToSession(request, applicationConnector);
-                    } catch (OAuthException e) {
-                        // Start of user code checkOauth1_exception
-                        // End of user code
-                        OAuthServlet.handleException(response, e, AuthenticationApplication.OAUTH_REALM);
+                        authenticationApplication.getTokenAuthenticationFromRequest(request);
+                    } catch (AuthenticationException e) {
+                        authenticationApplication.sendUnauthorizedResponse(request, response, e);
                         return;
                     }
-                } 
+                }
                 else {
                     // This is not an OAuth request, so check for authentication in the session
                     // Start of user code checkSession_Init
@@ -225,8 +214,6 @@ public class CredentialsFilter implements Filter {
                 // End of user code
             }
         });
-
-        var test = config.getTokenStrategy();
 
         try {
             // For now, hard-code the consumers.

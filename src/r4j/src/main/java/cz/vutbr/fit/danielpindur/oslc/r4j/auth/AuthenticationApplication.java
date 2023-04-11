@@ -82,6 +82,27 @@ public class AuthenticationApplication implements Application {
     }
 
     // Start of user code instance_methods
+    public void getTokenAuthenticationFromRequest(HttpServletRequest request) throws AuthenticationException {
+        if (!ConfigurationProvider.GetConfiguration().JiraServer.EnableOAuth) {
+            throw new AuthenticationException("OAuth Authentication is not enabled for this adaptor!");
+        }
+
+        var token = getTokenFromRequest(request);
+        if (token == null) {
+            throw new AuthenticationException("Expected to find OAuth token, but found nothing!");
+        }
+
+        bindApplicationConnectorToSession(request, token);
+        request.getSession().setAttribute(APPLICATION_CONNECTOR_ADMIN_SESSION_ATTRIBUTE, false);
+        request.getSession().setAttribute(SessionProvider.OAUTH_TOKEN, token);
+    }
+
+    private String getTokenFromRequest(final HttpServletRequest request) {
+        var header = request.getHeader("Authorization");
+        if (header == null) return null;
+
+        return header.replaceAll("^Bearer\\s+", "");
+    }
     // End of user code
 
     public static AuthenticationApplication getApplication() {

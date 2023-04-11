@@ -34,7 +34,6 @@ import org.eclipse.lyo.server.oauth.core.AuthenticationException;
 
 
 // Start of user code imports
-import cz.vutbr.fit.danielpindur.oslc.shared.authentication.OSLCAuthenticationApplication;
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
 import cz.vutbr.fit.danielpindur.oslc.shared.session.SessionProvider;
 // End of user code
@@ -42,7 +41,7 @@ import cz.vutbr.fit.danielpindur.oslc.shared.session.SessionProvider;
 // Start of user code pre_class_code
 // End of user code
 
-public class AuthenticationApplication implements OSLCAuthenticationApplication {
+public class AuthenticationApplication implements Application {
 
     public final static String APPLICATION_NAME = "JiraAdaptor";
     public final static String OAUTH_REALM = "JiraAdaptor";
@@ -83,6 +82,27 @@ public class AuthenticationApplication implements OSLCAuthenticationApplication 
     }
 
     // Start of user code instance_methods
+    public void getTokenAuthenticationFromRequest(HttpServletRequest request) throws AuthenticationException {
+        if (!ConfigurationProvider.GetConfiguration().JiraServer.EnableOAuth) {
+            throw new AuthenticationException("OAuth Authentication is not enabled for this adaptor!");
+        }
+
+        var token = getTokenFromRequest(request);
+        if (token == null) {
+            throw new AuthenticationException("Expected to find OAuth token, but found nothing!");
+        }
+
+        bindApplicationConnectorToSession(request, token);
+        request.getSession().setAttribute(APPLICATION_CONNECTOR_ADMIN_SESSION_ATTRIBUTE, false);
+        request.getSession().setAttribute(SessionProvider.OAUTH_TOKEN, token);
+    }
+
+    private String getTokenFromRequest(final HttpServletRequest request) {
+        var header = request.getHeader("Authorization");
+        if (header == null) return null;
+
+        return header.replaceAll("^Bearer\\s+", "");
+    }
     // End of user code
 
     public static AuthenticationApplication getApplication() {

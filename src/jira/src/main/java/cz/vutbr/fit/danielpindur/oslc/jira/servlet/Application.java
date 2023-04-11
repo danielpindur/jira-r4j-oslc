@@ -135,12 +135,6 @@ public class Application extends javax.ws.rs.core.Application {
 
         // OAuth resources
         RESOURCE_CLASSES.add(RootServicesService.class);
-        try {
-            RESOURCE_CLASSES.add(Class.forName("cz.vutbr.fit.danielpindur.oslc.shared.services.OAuthService"));
-        } catch (ClassNotFoundException e) {
-            // Start of user code OAuthServiceClasses_notFound
-            // End of user code
-        }
         
         // Start of user code Custom Resource Classes
         // End of user code

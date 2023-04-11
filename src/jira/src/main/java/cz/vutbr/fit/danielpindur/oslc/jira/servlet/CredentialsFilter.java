@@ -22,7 +22,7 @@ import java.util.Enumeration;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Optional;
 
-import cz.vutbr.fit.danielpindur.oslc.shared.authentication.AuthenticationStrategy;
+import org.eclipse.lyo.server.oauth.core.token.SimpleTokenStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,32 +110,20 @@ public class CredentialsFilter implements Filter {
                 // End of user code
                 
                 //Check if this is an OAuth1 request.
-                //String clientRequestURL = UriBuilder.fromUri(OSLC4JUtils.getServletURI()).path(request.getPathInfo()).build().toString();
-                OAuthMessage message = OAuthServlet.getMessage(request, null);
+                var authorizationHeader = request.getHeader("Authorization");
+                var containsToken = authorizationHeader != null && authorizationHeader.contains("Bearer");
                 // Start of user code checkOauth1_Init
                 // End of user code
-                log.trace(request.getPathInfo() + " - checking for oauth1 authentication");
-                if (message.getToken() != null) {
-                    log.trace(request.getPathInfo() + " - Found an oauth1 token. Validating it.");
+                log.trace(request.getPathInfo() + " - checking for oauth2 authentication");
+                if (containsToken) {
+                    log.trace(request.getPathInfo() + " - Found an oauth2 token.");
                     try {
-                        OAuthRequest oAuthRequest = new OAuthRequest(request);
-                        oAuthRequest.validate();
-                        String applicationConnector = authenticationApplication.getApplicationConnector(message.getToken());
-                        if (applicationConnector == null) {
-                            // Start of user code checkOauth1_applicationConnectorNull
-                            // End of user code
-                            log.trace(request.getPathInfo() + " - oauth1 authentication not valid. Raising an exception TOKEN_REJECTED");
-                            throw new OAuthProblemException(OAuth.Problems.TOKEN_REJECTED);
-                        }
-                        log.trace(request.getPathInfo() + " - oauth1 authentication is valid. Done.");
-                        authenticationApplication.bindApplicationConnectorToSession(request, applicationConnector);
-                    } catch (OAuthException e) {
-                        // Start of user code checkOauth1_exception
-                        // End of user code
-                        OAuthServlet.handleException(response, e, AuthenticationApplication.OAUTH_REALM);
+                        authenticationApplication.getTokenAuthenticationFromRequest(request);
+                    } catch (AuthenticationException e) {
+                        authenticationApplication.sendUnauthorizedResponse(request, response, e);
                         return;
                     }
-                } 
+                }
                 else {
                     // This is not an OAuth request, so check for authentication in the session
                     // Start of user code checkSession_Init
@@ -198,9 +186,33 @@ public class CredentialsFilter implements Filter {
          * Override some SimpleTokenStrategy methods so that we can keep the
          * BugzillaConnection associated with the OAuth tokens.
          */
-        config.setTokenStrategy(new AuthenticationStrategy(authenticationApplication));
+        config.setTokenStrategy(new SimpleTokenStrategy() {
+            @Override
+            public void markRequestTokenAuthorized(HttpServletRequest httpRequest, String requestToken)
+                    throws OAuthProblemException {
+                // Start of user code markRequestTokenAuthorized_init
+                // End of user code
+                authenticationApplication.putApplicationConnector(requestToken, authenticationApplication.getApplicationConnectorFromSession(httpRequest));
+                // Start of user code markRequestTokenAuthorized_mid
+                // End of user code
+                super.markRequestTokenAuthorized(httpRequest, requestToken);
+                // Start of user code markRequestTokenAuthorized_final
+                // End of user code
+            }
 
-        var test = config.getTokenStrategy();
+            @Override
+            public void generateAccessToken(OAuthRequest oAuthRequest) throws OAuthProblemException, IOException {
+                // Start of user code generateAccessToken_init
+                // End of user code
+                String requestToken = oAuthRequest.getMessage().getToken();
+                // Start of user code generateAccessToken_mid
+                // End of user code
+                super.generateAccessToken(oAuthRequest);
+                authenticationApplication.moveApplicationConnector(requestToken, oAuthRequest.getAccessor().accessToken);
+                // Start of user code generateAccessToken_final
+                // End of user code
+            }
+        });
 
         try {
             // For now, hard-code the consumers.

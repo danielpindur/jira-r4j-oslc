@@ -28,11 +28,15 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
+
+import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
 import org.eclipse.lyo.oslc4j.core.model.OslcMediaType;
 import org.eclipse.lyo.oslc4j.core.OSLC4JUtils;
 import cz.vutbr.fit.danielpindur.oslc.r4j.ServerConstants;
 import cz.vutbr.fit.danielpindur.oslc.r4j.auth.AuthenticationApplication;
 import cz.vutbr.fit.danielpindur.oslc.r4j.servlet.ServiceProviderCatalogSingleton;
+
+import java.net.URI;
 
 // Start of user code imports
 // End of user code
@@ -57,13 +61,12 @@ public class RootServicesService {
     @GET
     @Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML })
     public Response getRootServices() {
+        var configuration = ConfigurationProvider.GetConfiguration();
+
         String about = UriBuilder.fromUri(OSLC4JUtils.getServletURI()).path("rootservices").build().toString();
         String serviceProviderCatalog = ServiceProviderCatalogSingleton.getUri().toString();
-        String oauthRequestConsumerKeyUrl = UriBuilder.fromUri(OSLC4JUtils.getServletURI()).path("oauth/requestKey").build().toString();
-        String oauthApprovalModuleUrl = UriBuilder.fromUri(OSLC4JUtils.getServletURI()).path("oauth/approveKey").build().toString();
-        String oauthRequestTokenUrl = UriBuilder.fromUri(OSLC4JUtils.getServletURI()).path("oauth/requestToken").build().toString();
-        String oauthUserAuthorizationUrl = UriBuilder.fromUri(OSLC4JUtils.getServletURI()).path("oauth/authorize").build().toString();
-        String oauthAccessTokenUrl = UriBuilder.fromUri(OSLC4JUtils.getServletURI()).path("oauth/accessToken").build().toString();
+        String oauthAuthorizeUrl = UriBuilder.fromUri(URI.create(configuration.JiraServer.Url)).path("rest/oauth2/latest/authorize").build().toString();
+        String oauthTokenUrl = UriBuilder.fromUri(URI.create(configuration.JiraServer.Url)).path("rest/oauth2/latest/token").build().toString();
         // Start of user code init
         // End of user code
         String response = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "\n" +
@@ -81,11 +84,8 @@ public class RootServicesService {
                 "    <oslc_cm:cmServiceProviders rdf:resource=\"" + serviceProviderCatalog + "\" />" + "\n" +
                 "    <jfs:oauthRealmName>" + AuthenticationApplication.OAUTH_REALM + "</jfs:oauthRealmName>" + "\n" +
                 "    <jfs:oauthDomain>" + OSLC4JUtils.getPublicURI() + "</jfs:oauthDomain>" + "\n" +
-                "    <jfs:oauthRequestConsumerKeyUrl rdf:resource=\"" + oauthRequestConsumerKeyUrl + "\"/>" + "\n" +
-                "    <jfs:oauthApprovalModuleUrl rdf:resource=\"" + oauthApprovalModuleUrl + "\"/>" + "\n" +
-                "    <jfs:oauthRequestTokenUrl rdf:resource=\"" + oauthRequestTokenUrl + "\"/>" + "\n" +
-                "    <jfs:oauthUserAuthorizationUrl rdf:resource=\"" + oauthUserAuthorizationUrl + "\"/>" + "\n" +
-                "    <jfs:oauthAccessTokenUrl rdf:resource=\"" + oauthAccessTokenUrl + "\"/>" + "\n" +
+                "    <jfs:oauthUserAuthorizationUrl rdf:resource=\"" + oauthAuthorizeUrl + "\"/>" + "\n" +
+                "    <jfs:oauthAccessTokenUrl rdf:resource=\"" + oauthTokenUrl + "\"/>" + "\n" +
                 "    </rdf:Description>" + "\n";
         // Start of user code pre_response
         // End of user code

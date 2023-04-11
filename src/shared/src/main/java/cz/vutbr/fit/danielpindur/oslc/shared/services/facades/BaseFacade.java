@@ -5,6 +5,7 @@ import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
+import cz.vutbr.fit.danielpindur.oslc.shared.authentication.OAuthHttpAuthenticationHandler;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.*;
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.models.Configuration;
@@ -12,6 +13,7 @@ import cz.vutbr.fit.danielpindur.oslc.shared.session.SessionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.net.URI;
@@ -35,17 +37,31 @@ public class BaseFacade {
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);
             }
 
-            var username = session.getAttribute(SessionProvider.BASIC_USERNAME).toString();
-            var password = session.getAttribute(SessionProvider.BASIC_PASSWORD).toString();
-
-            if (username == null || password == null) {
-                throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+            var token = session.getAttribute(SessionProvider.OAUTH_TOKEN);
+            if (token != null) {
+                cachedAuthenticationHandler = getOAuthAuthenticationHandler(token.toString());
             }
-
-            cachedAuthenticationHandler = new BasicHttpAuthenticationHandler(username, password);
+            else {
+                cachedAuthenticationHandler = getBasicAuthenticationHandler(session);
+            }
         }
 
         return cachedAuthenticationHandler;
+    }
+
+    private AuthenticationHandler getBasicAuthenticationHandler(final HttpSession session) {
+        var username = session.getAttribute(SessionProvider.BASIC_USERNAME);
+        var password = session.getAttribute(SessionProvider.BASIC_PASSWORD);
+
+        if (username == null || password == null) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+
+        return new BasicHttpAuthenticationHandler(username.toString(), password.toString());
+    }
+
+    private AuthenticationHandler getOAuthAuthenticationHandler(final String token) {
+        return new OAuthHttpAuthenticationHandler(token);
     }
 
     // TODO: Add OAuth
