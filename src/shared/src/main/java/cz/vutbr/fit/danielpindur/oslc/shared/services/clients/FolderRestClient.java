@@ -14,6 +14,8 @@ import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.json.parsers.Folde
 import io.atlassian.util.concurrent.Promise;
 import org.codehaus.jettison.json.JSONArray;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.Set;
@@ -84,7 +86,10 @@ public class FolderRestClient extends AbstractAsynchronousRestClient {
         }
     }
 
-    // TODO: add validate data changed even though 500 was returned
+    private boolean folderWasUpdated(final FolderInput update, final FolderModel updated) {
+        return updated.Title.equalsIgnoreCase(update.Title) && updated.Description.equalsIgnoreCase(update.Description);
+    }
+
     public Promise<FolderModel> updateFolder(final FolderInput input, final String projectKey, final Integer folderId) {
         // Get current watchers to not override them in the update
         var watchers = getWatchers(folderId, projectKey).claim();
@@ -97,6 +102,11 @@ public class FolderRestClient extends AbstractAsynchronousRestClient {
             try {
                 put(updateUri, input, new UpdateFolderInputJsonGenerator(watchers)).claim();
             } catch (Exception ignored) {}
+
+            var updatedFolder = get(projectKey, folderId).claim();
+            if (!folderWasUpdated(input, updatedFolder)) {
+                throw new WebApplicationException("Failed to update folder!", Response.Status.INTERNAL_SERVER_ERROR);
+            }
         }
         else {
             put(updateUri, input, new UpdateFolderInputJsonGenerator(watchers)).claim();
