@@ -68,6 +68,11 @@
             <artifactId>shared</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.lyo.core.query</groupId>
+            <artifactId>oslc-query</artifactId>
+            <version>${version.lyo}</version>
+        </dependency>
         <!-- End of user code
         -->
         <!-- General dependencies -->

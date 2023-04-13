@@ -77,7 +77,7 @@ public class RestDelegate {
 
         ServiceProviderInfo r1 = new ServiceProviderInfo();
         r1.name = "JIRA Provider";
-        r1.serviceProviderId = "1"; // TODO: Is this id okay?
+        r1.serviceProviderId = "1";
 
         serviceProviderInfos = new ServiceProviderInfo[1];
         serviceProviderInfos[0] = r1;
@@ -86,7 +86,7 @@ public class RestDelegate {
         return serviceProviderInfos;
     }
 
-    public List<Requirement> queryRequirements(HttpServletRequest httpServletRequest, String where, String prefix, boolean paging, int page, int limit)
+    public List<Requirement> queryRequirements(HttpServletRequest httpServletRequest, String where, String terms, String prefix, boolean paging, int page, int limit)
     {
         List<Requirement> resources = null;
         
@@ -94,16 +94,14 @@ public class RestDelegate {
         // Start of user code queryRequirements
         try {
             SessionProvider.SetSession(httpServletRequest.getSession());
-            // TODO Implement code to return a set of resources.
-            // An empty List should imply that no resources where found.
-            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+            resources = requirementFacade.queryRequirements(where, terms, prefix, paging, page, limit);
         } finally {
             SessionProvider.ClearSession();
         }
         // End of user code
         return resources;
     }
-    public List<RequirementCollection> queryRequirementCollections(HttpServletRequest httpServletRequest, String where, String prefix, boolean paging, int page, int limit)
+    public List<RequirementCollection> queryRequirementCollections(HttpServletRequest httpServletRequest, String where, String terms, String prefix, boolean paging, int page, int limit)
     {
         List<RequirementCollection> resources = null;
         
@@ -111,9 +109,7 @@ public class RestDelegate {
         // Start of user code queryRequirementCollections
         try {
             SessionProvider.SetSession(httpServletRequest.getSession());
-            // TODO Implement code to return a set of resources.
-            // An empty List should imply that no resources where found.
-            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+            resources = requirementCollectionFacade.queryRequirementCollections(where, terms, prefix, paging, page, limit);
         } finally {
             SessionProvider.ClearSession();
         }
@@ -128,9 +124,7 @@ public class RestDelegate {
         // Start of user code RequirementSelector
         try {
             SessionProvider.SetSession(httpServletRequest.getSession());
-            // TODO Implement code to return a set of resources, based on search criteria
-            // An empty List should imply that no resources where found.
-            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+            resources = requirementFacade.selectRequirements(terms);
         } finally {
             SessionProvider.ClearSession();
         }
@@ -145,9 +139,7 @@ public class RestDelegate {
         // Start of user code RequirementCollectionSelector
         try {
             SessionProvider.SetSession(httpServletRequest.getSession());
-            // TODO Implement code to return a set of resources, based on search criteria
-            // An empty List should imply that no resources where found.
-            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+            resources = requirementCollectionFacade.selectRequirementCollections(terms);
         } finally {
             SessionProvider.ClearSession();
         }
@@ -227,14 +219,9 @@ public class RestDelegate {
         
         
         // Start of user code queryPersons
-        try {
-            SessionProvider.SetSession(httpServletRequest.getSession());
-            // TODO Implement code to return a set of resources.
-            // An empty List should imply that no resources where found.
-            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
-        } finally {
-            SessionProvider.ClearSession();
-        }
+        // TODO Implement code to return a set of resources, based on search criteria
+        // An empty List should imply that no resources where found.
+        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
         // End of user code
         return resources;
     }
@@ -262,14 +249,9 @@ public class RestDelegate {
         
         
         // Start of user code queryProjects
-        try {
-            SessionProvider.SetSession(httpServletRequest.getSession());
-            // TODO Implement code to return a set of resources.
-            // An empty List should imply that no resources where found.
-            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
-        } finally {
-            SessionProvider.ClearSession();
-        }
+        // TODO Implement code to return a set of resources, based on search criteria
+        // An empty List should imply that no resources where found.
+        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
         // End of user code
         return resources;
     }
@@ -441,8 +423,7 @@ public class RestDelegate {
     {
         String eTag = null;
         // Start of user code getETagFromPerson
-        // TODO Implement code to return an ETag for a particular resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+
         // End of user code
         return eTag;
     }
@@ -450,8 +431,7 @@ public class RestDelegate {
     {
         String eTag = null;
         // Start of user code getETagFromProject
-        // TODO Implement code to return an ETag for a particular resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+
         // End of user code
         return eTag;
     }
@@ -459,8 +439,7 @@ public class RestDelegate {
     {
         String eTag = null;
         // Start of user code getETagFromRequirement
-        // TODO Implement code to return an ETag for a particular resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        eTag = aResource.getModified().toString();
         // End of user code
         return eTag;
     }
@@ -468,8 +447,7 @@ public class RestDelegate {
     {
         String eTag = null;
         // Start of user code getETagFromRequirementCollection
-        // TODO Implement code to return an ETag for a particular resource
-        // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+        eTag = aResource.getModified().toString();
         // End of user code
         return eTag;
     }

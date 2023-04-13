@@ -152,6 +152,7 @@ public class ServiceProviderService1
     public Requirement[] queryRequirements(
                                                     
                                                      @QueryParam("oslc.where") final String where,
+                                                     @QueryParam("oslc.searchTerms") final String terms,
                                                      @QueryParam("oslc.prefix") final String prefix,
                                                      @QueryParam("oslc.paging") final String pagingString,
                                                      @QueryParam("page") final String pageString,
@@ -175,7 +176,7 @@ public class ServiceProviderService1
         // End of user code
         // TODO: error handler
 
-        List<Requirement> resources = delegate.queryRequirements(httpServletRequest, where, prefix, paging, page, pageSize);
+        List<Requirement> resources = delegate.queryRequirements(httpServletRequest, where, terms, prefix, paging, page, pageSize);
         UriBuilder uriBuilder = UriBuilder.fromUri(uriInfo.getAbsolutePath())
             .queryParam("oslc.paging", "true")
             .queryParam("oslc.pageSize", pageSize)
@@ -210,6 +211,7 @@ public class ServiceProviderService1
     public void queryRequirementsAsHtml(
                                     
                                        @QueryParam("oslc.where") final String where,
+                                       @QueryParam("oslc.searchTerms") final String terms,
                                        @QueryParam("oslc.prefix") final String prefix,
                                        @QueryParam("oslc.paging") final String pagingString,
                                        @QueryParam("page") final String pageString,
@@ -231,7 +233,7 @@ public class ServiceProviderService1
         // Start of user code queryRequirementsAsHtml
         // End of user code
 
-        List<Requirement> resources = delegate.queryRequirements(httpServletRequest, where, prefix, paging, page, pageSize);
+        List<Requirement> resources = delegate.queryRequirements(httpServletRequest, where, terms, prefix, paging, page, pageSize);
 
         if (resources!= null) {
             // Start of user code queryRequirementsAsHtml_setAttributes
@@ -285,6 +287,7 @@ public class ServiceProviderService1
     public RequirementCollection[] queryRequirementCollections(
                                                     
                                                      @QueryParam("oslc.where") final String where,
+                                                     @QueryParam("oslc.searchTerms") final String searchTerms,
                                                      @QueryParam("oslc.prefix") final String prefix,
                                                      @QueryParam("oslc.paging") final String pagingString,
                                                      @QueryParam("page") final String pageString,
@@ -308,7 +311,7 @@ public class ServiceProviderService1
         // End of user code
         // TODO: error handler
 
-        List<RequirementCollection> resources = delegate.queryRequirementCollections(httpServletRequest, where, prefix, paging, page, pageSize);
+        List<RequirementCollection> resources = delegate.queryRequirementCollections(httpServletRequest, where, searchTerms, prefix, paging, page, pageSize);
         UriBuilder uriBuilder = UriBuilder.fromUri(uriInfo.getAbsolutePath())
             .queryParam("oslc.paging", "true")
             .queryParam("oslc.pageSize", pageSize)
@@ -343,6 +346,7 @@ public class ServiceProviderService1
     public void queryRequirementCollectionsAsHtml(
                                     
                                        @QueryParam("oslc.where") final String where,
+                                       @QueryParam("oslc.searchTerms") final String searchTerms,
                                        @QueryParam("oslc.prefix") final String prefix,
                                        @QueryParam("oslc.paging") final String pagingString,
                                        @QueryParam("page") final String pageString,
@@ -364,7 +368,7 @@ public class ServiceProviderService1
         // Start of user code queryRequirementCollectionsAsHtml
         // End of user code
 
-        List<RequirementCollection> resources = delegate.queryRequirementCollections(httpServletRequest, where, prefix, paging, page, pageSize);
+        List<RequirementCollection> resources = delegate.queryRequirementCollections(httpServletRequest, where, searchTerms, prefix, paging, page, pageSize);
 
         if (resources!= null) {
             // Start of user code queryRequirementCollectionsAsHtml_setAttributes

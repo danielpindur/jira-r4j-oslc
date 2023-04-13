@@ -2,15 +2,18 @@ package cz.vutbr.fit.danielpindur.oslc.shared.services.clients;
 
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.jira.rest.client.api.MetadataRestClient;
-import com.atlassian.jira.rest.client.api.RestClientException;
+import com.atlassian.jira.rest.client.api.SearchRestClient;
 import com.atlassian.jira.rest.client.api.SessionRestClient;
 import com.atlassian.jira.rest.client.api.domain.Field;
+import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.jira.rest.client.api.domain.input.FieldInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousIssueRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
+import cz.vutbr.fit.danielpindur.oslc.shared.builders.JiraQueryBuilder;
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.models.Configuration;
+import cz.vutbr.fit.danielpindur.oslc.shared.helpers.IssueHelper;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -19,31 +22,24 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static java.util.UUID.randomUUID;
-
 public class IssueRestClientExtended extends AsynchronousIssueRestClient {
     private final URI baseUri;
     private final Configuration configuration;
 
     private final MetadataRestClient metadataRestClient;
 
-    public IssueRestClientExtended(URI baseUri, HttpClient client, SessionRestClient sessionRestClient, MetadataRestClient metadataRestClient) {
+    private final SearchRestClient searchRestClient;
+
+    public IssueRestClientExtended(URI baseUri, HttpClient client, SessionRestClient sessionRestClient, MetadataRestClient metadataRestClient, SearchRestClient searchRestClient) {
         super(baseUri, client, sessionRestClient, metadataRestClient);
         this.baseUri = baseUri;
         configuration = ConfigurationProvider.GetConfiguration();
         this.metadataRestClient = metadataRestClient;
-    }
-
-    public boolean IsRequirement(final Issue issue) {
-        return issue != null && issue.getIssueType().getName().equalsIgnoreCase(configuration.RequirementIssueTypeName);
-    }
-
-    public boolean IsRequirementCollection(final Issue issue) {
-        return issue != null && issue.getIssueType().getName().equalsIgnoreCase(configuration.RequirementCollectionIssueTypeName);
+        this.searchRestClient = searchRestClient;
     }
 
     public String GetFieldId(final String fieldName, Iterable<Field> fields) {
-        for (var field : fields ) {
+        for (var field : fields) {
             if (field.getName().equalsIgnoreCase(fieldName)) {
                 return field.getId();
             }
@@ -153,7 +149,7 @@ public class IssueRestClientExtended extends AsynchronousIssueRestClient {
         }
 
         var subject = issue.getLabels();
-        subject.add(getFormattedLabelsIdentifier(identifier));
+        subject.add(IssueHelper.GetFormattedLabelsIdentifier(identifier));
 
         updateIssue(issue.getKey(),
                 new IssueInputBuilder(issue.getProject().getKey(), issue.getIssueType().getId())
@@ -168,15 +164,6 @@ public class IssueRestClientExtended extends AsynchronousIssueRestClient {
         } else {
             setIssueGUIDInIdentifierField(issue, identifier);
         }
-    }
-
-    public String getFormattedLabelsIdentifier(final String identifier) {
-        var format = configuration.LabelsIdentifierFormat;
-        return format.replace("{0}", identifier);
-    }
-
-    public String CreateIssueGUID() {
-        return randomUUID().toString();
     }
 
     public String getIssueGUID(final Issue issue, final boolean first) {
@@ -199,11 +186,49 @@ public class IssueRestClientExtended extends AsynchronousIssueRestClient {
             throw new WebApplicationException("Failed to generate GUID for issue " + issue.getKey() + "!", Response.Status.INTERNAL_SERVER_ERROR);
         }
 
-        identifier = CreateIssueGUID();
+        identifier = IssueHelper.CreateIssueGUID();
         setIssueGUID(issue, identifier);
 
         var updated = getIssue(issue.getKey()).claim();
 
         return getIssueGUID(updated, false);
+    }
+
+    public Issue searchIssueByIdentifier(final String identifier) {
+        var searchString = new JiraQueryBuilder().Identifier(identifier).build();
+
+        SearchResult search = null;
+
+        try {
+            search = searchRestClient.searchJql(searchString).claim();
+        } catch (Exception e) {
+            var message = e.getMessage();
+            if (message == null) throw e;
+
+            message = message.toUpperCase();
+            if (message.contains("ANONYMOUS")) {
+                throw new WebApplicationException("Unauthorized", Response.Status.UNAUTHORIZED);
+            }
+
+            throw e;
+        }
+
+        if (search.getTotal() == 0) {
+            return null;
+        }
+
+        if (search.getTotal() > 1) {
+            throw new WebApplicationException("Multiple issues with same identifier (" + identifier + ") exist!", Response.Status.CONFLICT);
+        }
+
+        var issues = search.getIssues();
+        Issue result = null;
+
+        for (Issue issue : issues) {
+            // Only one issue should make it here, resulting in single iteration
+            result = issue;
+        }
+
+        return result;
     }
 }

@@ -113,17 +113,12 @@ public class BaseFacade {
     }
 
     protected IssueRestClientExtended getIssueClient() {
-        return new IssueRestClientExtended(URI.create(configuration.JiraServer.Url + "/rest/api/latest"),getHttpClient(), getRestClient().getSessionClient(), getMetadataClient());
+        return new IssueRestClientExtended(URI.create(configuration.JiraServer.Url + "/rest/api/latest"),getHttpClient(), getRestClient().getSessionClient(), getMetadataClient(), getSearchClient());
     }
 
 
     protected FolderRestClient getFolderClient() {
         var oldFolderRestClient = new OldFolderRestClient(URI.create(configuration.JiraServer.Url + "/rest/com.easesolutions.jira.plugins.requirements/1.0"), getHttpClient());
         return new FolderRestClient(URI.create(configuration.JiraServer.Url + "/rest/com.easesolutions.jira.plugins.requirements/2.0"), getHttpClient(), oldFolderRestClient);
-    }
-
-    protected String GetIdFromUri(final URI uri) {
-        var exploded = uri.toString().split("/");
-        return exploded[exploded.length - 1];
     }
 }

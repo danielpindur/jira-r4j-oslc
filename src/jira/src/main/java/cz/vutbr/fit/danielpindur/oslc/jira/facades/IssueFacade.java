@@ -7,53 +7,29 @@ import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.api.domain.input.LinkIssuesInput;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import cz.vutbr.fit.danielpindur.oslc.jira.ResourcesFactory;
-import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
+import cz.vutbr.fit.danielpindur.oslc.shared.builders.JiraQueryBuilder;
+import cz.vutbr.fit.danielpindur.oslc.shared.helpers.IssueHelper;
+import cz.vutbr.fit.danielpindur.oslc.shared.helpers.UriHelper;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.facades.BaseFacade;
+import org.eclipse.lyo.core.query.QueryUtils;
+import org.eclipse.lyo.core.query.WhereClause;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import java.net.URI;
 import java.util.*;
-
-import static java.util.UUID.randomUUID;
 
 public class IssueFacade extends BaseFacade {
     @Inject ResourcesFactory resourcesFactory;
 
-    protected String getIdentifierSearchQuery(final String identifier) {
-        if (configuration.SaveIdentifierInLabelsField) {
-            return configuration.LabelsFieldName + " = " + getIssueClient().getFormattedLabelsIdentifier(identifier);
-        } else {
-            return configuration.IdentifierFieldName + " ~ " + identifier;
-        }
-    }
-
+    // TODO: verify all endpoints responds correctly with 401
+    // TODO: validate return codes
     protected Issue getIssueByIdentifier(final String identifier) {
+        var issue = getIssueClient().searchIssueByIdentifier(identifier);
 
-        var searchString = getIdentifierSearchQuery(identifier);
-
-        // TODO: add unauthorized catch
-        // TODO: verify all endpoints responds correctly with 401
-        var search = getSearchClient().searchJql(searchString).claim();
-        if (search.getTotal() == 0) {
-            return null;
-        }
-
-        if (search.getTotal() > 1) {
-            throw new WebApplicationException("Multiple issues with same identifier (" + identifier + ") exist!", Response.Status.CONFLICT);
-        }
-
-        var issues = search.getIssues();
-        Issue result = null;
-
-        for (Issue issue : issues) {
-            // Only one issue should make it here, resulting in single iteration
-            result = issue;
-        }
-
-        return getIssue(result.getId());
+        // Get issue with expandos
+        return issue != null ? getIssue(issue.getId()) : null;
     }
 
     private Set<String> GetContributors(final Issue issue) {
@@ -118,10 +94,10 @@ public class IssueFacade extends BaseFacade {
     private Link ConstructLinkForDecomposeLink(final String id) {
         var issue = getIssue(id);
 
-        if (getIssueClient().IsRequirement(issue)) {
+        if (IssueHelper.IsRequirement(issue)) {
             return resourcesFactory.constructLinkForRequirement(getIssueClient().getIssueGUID(issue, true));
         }
-        else if (getIssueClient().IsRequirementCollection(issue)) {
+        else if (IssueHelper.IsRequirementCollection(issue)) {
             return resourcesFactory.constructLinkForRequirementCollection(getIssueClient().getIssueGUID(issue, true));
         }
 
@@ -163,6 +139,18 @@ public class IssueFacade extends BaseFacade {
         }
 
         return decomposes;
+    }
+
+    protected void ValidateLinks(final Set<Link> links) {
+        if (links == null) return;
+
+        for (Link link : links) {
+            var identifier = UriHelper.GetIdFromUri(link.getValue());
+            var issue = getIssueByIdentifier(identifier);
+            if (issue == null) {
+                throw new WebApplicationException("Issue with identifier " + identifier + ", not found!", Response.Status.BAD_REQUEST);
+            }
+        }
     }
 
     private void CreateLink(final String identifierFrom, final String identifierTo, final String linkTypeName) {
@@ -239,7 +227,7 @@ public class IssueFacade extends BaseFacade {
 
         if (configuration.SaveIdentifierInLabelsField) {
             var subjectsWithIdentifier = subject;
-            subjectsWithIdentifier.add(getIssueClient().getFormattedLabelsIdentifier(identifier));
+            subjectsWithIdentifier.add(IssueHelper.GetFormattedLabelsIdentifier(identifier));
 
             issueInputBuilder
                     .setFieldInput(new FieldInput(labelsFieldId, subjectsWithIdentifier));
@@ -252,7 +240,6 @@ public class IssueFacade extends BaseFacade {
         var issue = issueInputBuilder.build();
 
         try {
-            // TODO: problem with Epic as it requires EPIC name field as well
             return getIssueClient().createIssue(issue).claim();
         } catch (Exception e) {
             throw new WebApplicationException("Failed to create " + issueTypeName + "!", Response.Status.INTERNAL_SERVER_ERROR);
@@ -293,7 +280,7 @@ public class IssueFacade extends BaseFacade {
 
         if (configuration.SaveIdentifierInLabelsField) {
             var subjectsWithIdentifier = subject;
-            subjectsWithIdentifier.add(getIssueClient().getFormattedLabelsIdentifier(identifier));
+            subjectsWithIdentifier.add(IssueHelper.GetFormattedLabelsIdentifier(identifier));
 
             issueInputBuilder
                     .setFieldInput(new FieldInput(labelsFieldId, subjectsWithIdentifier));
@@ -317,13 +304,13 @@ public class IssueFacade extends BaseFacade {
 
     protected void CreateDecomposedByLinks(final Set<Link> links, final String identifier) {
         for (Link link : links) {
-            CreateLink(GetIdFromUri(link.getValue()), identifier, configuration.IssueLinkTypeName);
+            CreateLink(UriHelper.GetIdFromUri(link.getValue()), identifier, configuration.IssueLinkTypeName);
         }
     }
 
     protected void CreateDecomposesLinks(final Set<Link> links, final String identifier) {
         for (Link link : links) {
-            CreateLink(identifier, GetIdFromUri(link.getValue()), configuration.IssueLinkTypeName);
+            CreateLink(identifier, UriHelper.GetIdFromUri(link.getValue()), configuration.IssueLinkTypeName);
         }
     }
 
@@ -337,5 +324,39 @@ public class IssueFacade extends BaseFacade {
         }
 
         throw new WebApplicationException("IssueLinkType with identifier (" + issueLinkTypeName +") not found!", Response.Status.CONFLICT);
+    }
+
+    protected Iterable<Issue> selectIssues(final String terms, final String issueTypeName) {
+        var searchString = new JiraQueryBuilder().Terms(terms).IssueType(issueTypeName).build();
+
+        // TODO: add unauthorized catch
+        // TODO: verify all endpoints responds correctly with 401
+        var search = getSearchClient().searchJql(searchString).claim();
+        if (search.getTotal() == 0) {
+            return null;
+        }
+
+        return search.getIssues();
+    }
+
+    protected Iterable<Issue> queryIssues(final String issueTypeName, final String where, final String terms, final String prefix, final boolean paging, final int page, final int limit) {
+        Map<String, String> parsedPrefix = null;
+        WhereClause parsedWhere = null;
+
+        try {
+            parsedPrefix = QueryUtils.parsePrefixes(prefix);
+        } catch (Exception e) {
+            throw new WebApplicationException("Failed to parse query prefixes!", Response.Status.BAD_REQUEST);
+        }
+
+        try {
+            parsedWhere = QueryUtils.parseWhere(where, parsedPrefix);
+        } catch (Exception e) {
+            throw new WebApplicationException("Failed to parse where!", Response.Status.BAD_REQUEST);
+        }
+
+        var query = new JiraQueryBuilder();
+
+        return null;
     }
 }

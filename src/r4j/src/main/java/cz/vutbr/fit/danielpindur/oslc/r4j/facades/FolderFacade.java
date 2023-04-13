@@ -8,6 +8,8 @@ import cz.vutbr.fit.danielpindur.oslc.r4j.clients.JiraAdaptorClient;
 import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Folder;
 import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Requirement;
 import cz.vutbr.fit.danielpindur.oslc.r4j.resources.RequirementCollection;
+import cz.vutbr.fit.danielpindur.oslc.shared.helpers.IssueHelper;
+import cz.vutbr.fit.danielpindur.oslc.shared.helpers.UriHelper;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.facades.BaseFacade;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.inputs.FolderInput;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.models.FolderModel;
@@ -82,9 +84,9 @@ public class FolderFacade extends BaseFacade {
                 throw new WebApplicationException("Failed to get GUID for issue " + issue.getKey() + "!", Response.Status.INTERNAL_SERVER_ERROR);
             }
 
-            if (getIssueClient().IsRequirement(issue)){
+            if (IssueHelper.IsRequirement(issue)){
                 containsLinks.add(resourcesFactory.constructLinkForRequirement(identifier));
-            } else if (getIssueClient().IsRequirementCollection(issue)) {
+            } else if (IssueHelper.IsRequirementCollection(issue)) {
                 containsLinks.add(resourcesFactory.constructLinkForRequirementCollection(identifier));
             }
         }
@@ -210,6 +212,25 @@ public class FolderFacade extends BaseFacade {
         }
     }
 
+    private void ValidateContains(final Set<Link> contains) {
+        for (Link link : contains) {
+            var identifier = UriHelper.GetIdFromUri(link.getValue());
+            var issue = getIssueClient().searchIssueByIdentifier(identifier);
+
+            if (issue == null) {
+                throw new WebApplicationException("Issue with identifier " + identifier + " not found!", Response.Status.BAD_REQUEST);
+            }
+
+            if (UriHelper.IsRequirementUri(link.getValue()) && !IssueHelper.IsRequirement(issue)) {
+                throw new WebApplicationException("Requirement with identifier " + identifier + " not found!", Response.Status.BAD_REQUEST);
+            }
+
+            if (UriHelper.IsRequirementCollectionUri(link.getValue()) && !IssueHelper.IsRequirementCollection(issue)) {
+                throw new WebApplicationException("Requirement Collection with identifier " + identifier + " not found!", Response.Status.BAD_REQUEST);
+            }
+        }
+    }
+
     private String GetIssueKeyFromLink(final Link link) {
         Requirement requirement = null;
         RequirementCollection requirementCollection = null;
@@ -247,11 +268,13 @@ public class FolderFacade extends BaseFacade {
     public Folder create(final Folder resource) {
         ValidateFolder(resource);
 
-        var parentFolderIdentifier = GetIdFromUri(resource.getParent().getValue());
+        var parentFolderIdentifier = UriHelper.GetIdFromUri(resource.getParent().getValue());
         var projectKey = GetProjectKey(parentFolderIdentifier);
         ValidateProject(projectKey);
 
         ValidateParentFolder(parentFolderIdentifier, resource.getTitle());
+        ValidateContains(resource.getContains());
+
         var folderInput = new FolderInput(resource.getTitle(), resource.getDescription(), GetFolderId(parentFolderIdentifier));
 
         FolderModel createdFolder = null;
@@ -274,11 +297,13 @@ public class FolderFacade extends BaseFacade {
         ValidateFolder(resource);
 
         var beforeUpdate = get(id);
-        var parentFolderIdentifier = GetIdFromUri(resource.getParent().getValue());
+        var parentFolderIdentifier = UriHelper.GetIdFromUri(resource.getParent().getValue());
 
         if (ParentChanged(beforeUpdate, resource)) {
             ValidateParentFolder(parentFolderIdentifier, resource.getTitle());
         }
+
+        ValidateContains(resource.getContains());
 
         var folderInput = new FolderInput(resource.getTitle(), resource.getDescription(), GetFolderId(parentFolderIdentifier));
         var updated = getFolderClient().updateFolder(folderInput, GetProjectKey(id), GetFolderId(id)).claim();
