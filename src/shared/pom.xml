@@ -66,6 +66,12 @@
             <artifactId>json</artifactId>
             <version>20160810</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.lyo.core.query</groupId>
+            <artifactId>oslc-query</artifactId>
+            <version>5.0.0.Final</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>

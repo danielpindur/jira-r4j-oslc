@@ -7,11 +7,13 @@ import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.api.domain.input.LinkIssuesInput;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import cz.vutbr.fit.danielpindur.oslc.jira.ResourcesFactory;
+import cz.vutbr.fit.danielpindur.oslc.jira.translators.IssueTranslator;
 import cz.vutbr.fit.danielpindur.oslc.shared.builders.JiraQueryBuilder;
 import cz.vutbr.fit.danielpindur.oslc.shared.helpers.IssueHelper;
 import cz.vutbr.fit.danielpindur.oslc.shared.helpers.UriHelper;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.facades.BaseFacade;
 import org.eclipse.lyo.core.query.QueryUtils;
+import org.eclipse.lyo.core.query.SimpleTerm;
 import org.eclipse.lyo.core.query.WhereClause;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 
@@ -344,19 +346,42 @@ public class IssueFacade extends BaseFacade {
         WhereClause parsedWhere = null;
 
         try {
-            parsedPrefix = QueryUtils.parsePrefixes(prefix);
+            if (prefix != null) {
+                parsedPrefix = QueryUtils.parsePrefixes(prefix);
+            }
         } catch (Exception e) {
             throw new WebApplicationException("Failed to parse query prefixes!", Response.Status.BAD_REQUEST);
         }
 
+        if (parsedPrefix == null && where != null) {
+            throw new WebApplicationException("oslc.where used without oslc.prefix", Response.Status.BAD_REQUEST);
+        }
+
         try {
-            parsedWhere = QueryUtils.parseWhere(where, parsedPrefix);
+            if (where != null) {
+                parsedWhere = QueryUtils.parseWhere(where, parsedPrefix);
+            }
         } catch (Exception e) {
             throw new WebApplicationException("Failed to parse where!", Response.Status.BAD_REQUEST);
         }
 
-        var query = new JiraQueryBuilder();
+        var queryBuilder = new JiraQueryBuilder(new IssueTranslator())
+                .IssueType(issueTypeName)
+                .Terms(terms);
 
-        return null;
+        if (parsedWhere != null) {
+            for (SimpleTerm term : parsedWhere.children()) {
+                queryBuilder.addTerm(term);
+            }
+        }
+
+        // TODO: add unauthorized catch
+        // TODO: verify all endpoints responds correctly with 401
+        var search = getSearchClient().searchJql(queryBuilder.build()).claim();
+        if (search.getTotal() == 0) {
+            return null;
+        }
+
+        return search.getIssues();
     }
 }

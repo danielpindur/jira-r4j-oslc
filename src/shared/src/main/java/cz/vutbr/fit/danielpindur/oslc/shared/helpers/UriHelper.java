@@ -4,7 +4,11 @@ import java.net.URI;
 
 public final class UriHelper {
     public static String GetIdFromUri(final URI uri) {
-        var exploded = uri.toString().split("/");
+        return GetIdFromUri(uri.toString());
+    }
+
+    public static String GetIdFromUri(final String uri) {
+        var exploded = uri.split("/");
         return exploded[exploded.length - 1];
     }
 

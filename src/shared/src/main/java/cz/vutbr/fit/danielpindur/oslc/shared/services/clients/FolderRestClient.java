@@ -2,6 +2,7 @@ package cz.vutbr.fit.danielpindur.oslc.shared.services.clients;
 
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.jira.rest.client.internal.async.AbstractAsynchronousRestClient;
+import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.json.generators.FolderInputJsonGenerator;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.json.generators.MoveFolderInputJsonGenerator;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.json.generators.UpdateContainsLinkInputJsonGenerator;
@@ -17,17 +18,28 @@ import org.codehaus.jettison.json.JSONArray;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import java.io.Closeable;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
 
-public class FolderRestClient extends AbstractAsynchronousRestClient {
+public class FolderRestClient extends AbstractAsynchronousRestClient implements Closeable {
     private final URI baseUri;
+    private final DisposableHttpClient client;
     private final OldFolderRestClient oldFolderRestClient;
 
-    public FolderRestClient(final URI baseUri, final HttpClient client, final OldFolderRestClient oldFolderRestClient) {
+    public FolderRestClient(final URI baseUri, final DisposableHttpClient client, final OldFolderRestClient oldFolderRestClient) {
         super(client);
         this.baseUri = baseUri;
+        this.client = client;
         this.oldFolderRestClient = oldFolderRestClient;
+    }
+
+    public void close() {
+        try {
+            this.client.destroy();
+            this.oldFolderRestClient.close();
+        } catch (Exception ignored) { }
     }
 
     public Promise<FolderModel> get(final String projectKey, final Integer folderId) {

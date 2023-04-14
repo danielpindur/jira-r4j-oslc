@@ -21,32 +21,34 @@ import java.util.Objects;
 
 public class BaseFacade {
     protected static final Logger log = LoggerFactory.getLogger(BaseFacade.class);
+    private URI baseUri;
     protected Configuration configuration = ConfigurationProvider.GetConfiguration();
-
-    private DisposableHttpClient cachedHttpClient;
-    private JiraRestClient cachedJiraClient;
-    private AuthenticationHandler cachedAuthenticationHandler;
 
     public BaseFacade() { }
 
     private AuthenticationHandler getAuthenticationHandler() {
-        if (cachedAuthenticationHandler == null) {
-            var session = SessionProvider.GetSession();
+        var session = SessionProvider.GetSession();
 
-            if (session == null) {
-                throw new WebApplicationException(Response.Status.UNAUTHORIZED);
-            }
-
-            var token = session.getAttribute(SessionProvider.OAUTH_TOKEN);
-            if (token != null) {
-                cachedAuthenticationHandler = getOAuthAuthenticationHandler(token.toString());
-            }
-            else {
-                cachedAuthenticationHandler = getBasicAuthenticationHandler(session);
-            }
+        if (session == null) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
 
-        return cachedAuthenticationHandler;
+        var token = session.getAttribute(SessionProvider.OAUTH_TOKEN);
+        if (token != null) {
+            return getOAuthAuthenticationHandler(token.toString());
+        }
+        else {
+            return getBasicAuthenticationHandler(session);
+        }
+
+    }
+
+    private URI getJiraBaseUri() {
+        if (baseUri == null) {
+            baseUri = URI.create(configuration.JiraServer.Url + "/rest/api/latest");
+        }
+
+        return baseUri;
     }
 
     private AuthenticationHandler getBasicAuthenticationHandler(final HttpSession session) {
@@ -64,23 +66,18 @@ public class BaseFacade {
         return new OAuthHttpAuthenticationHandler(token);
     }
 
-    // TODO: Add OAuth
     private DisposableHttpClient getHttpClient() {
-        if (cachedHttpClient == null) {
-            cachedHttpClient = new AsynchronousHttpClientFactory()
-                    .createClient(URI.create(configuration.JiraServer.Url), getAuthenticationHandler());
-        }
-
-        return cachedHttpClient;
+        var client = new AsynchronousHttpClientFactory()
+                .createClient(URI.create(configuration.JiraServer.Url), getAuthenticationHandler());
+        SessionProvider.AddClient(client);
+        return client;
     }
 
     private JiraRestClient getRestClient() {
-        if (cachedJiraClient == null) {
-            cachedJiraClient = new AsynchronousJiraRestClientFactory()
-                    .createWithAuthenticationHandler(URI.create(configuration.JiraServer.Url), getAuthenticationHandler());
-        }
-
-        return cachedJiraClient;
+        var jiraClient = new AsynchronousJiraRestClientFactory()
+                .createWithAuthenticationHandler(URI.create(configuration.JiraServer.Url), getAuthenticationHandler());
+        SessionProvider.AddJiraClient(jiraClient);
+        return jiraClient;
     }
 
     protected boolean containsTerms(final String target, final String terms) {
@@ -102,18 +99,18 @@ public class BaseFacade {
 
     protected MetadataRestClient getMetadataClient() { return getRestClient().getMetadataClient(); }
 
-    protected SearchRestClient getSearchClient() { return getRestClient().getSearchClient(); }
+    protected SearchRestClient getSearchClient() { return new SearchRestClientExtended(getJiraBaseUri(), getHttpClient()); }
 
     protected IssueLinkRestClient getIssueLinkRestClient() {
-        return new IssueLinkRestClient(URI.create(configuration.JiraServer.Url + "/rest/api/latest"), getHttpClient());
+        return new IssueLinkRestClient(getJiraBaseUri(), getHttpClient());
     }
 
     protected UserRestClientExtended getUserClient() {
-        return new UserRestClientExtended(URI.create(configuration.JiraServer.Url + "/rest/api/latest"), getHttpClient());
+        return new UserRestClientExtended(getJiraBaseUri(), getHttpClient());
     }
 
     protected IssueRestClientExtended getIssueClient() {
-        return new IssueRestClientExtended(URI.create(configuration.JiraServer.Url + "/rest/api/latest"),getHttpClient(), getRestClient().getSessionClient(), getMetadataClient(), getSearchClient());
+        return new IssueRestClientExtended(getJiraBaseUri(),getHttpClient(), getRestClient().getSessionClient(), getMetadataClient(), getSearchClient());
     }
 
 

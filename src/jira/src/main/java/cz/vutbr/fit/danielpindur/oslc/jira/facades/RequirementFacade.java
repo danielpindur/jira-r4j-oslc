@@ -26,8 +26,8 @@ public class RequirementFacade extends IssueFacade {
         result.setIdentifier(identifier);
         result.setAbout(resourcesFactory.constructURIForRequirement(identifier));
         result.setSubject(getIssueClient().getFieldStringSetValueWithoutIdentifier(configuration.LabelsFieldName, resource));
-        result.setCreated(resource.getCreationDate().toDate());
-        result.setModified(resource.getUpdateDate().toDate());
+        result.setCreated(resource.getCreationDate().toDateTimeISO().toDate());
+        result.setModified(resource.getCreationDate().toDateTimeISO().toDate());
         result.setProject(resourcesFactory.constructLinkForProject(projectIdString));
         result.setCreator(
                 new HashSet<Link>(){{
@@ -99,8 +99,7 @@ public class RequirementFacade extends IssueFacade {
         }
 
         for (Issue issue : issues) {
-            var identifier = getIssueClient().getIssueGUID(issue, true);
-            var requirement = get(identifier);
+            var requirement = MapResourceToResult(issue);
             requirements.add(requirement);
         }
 

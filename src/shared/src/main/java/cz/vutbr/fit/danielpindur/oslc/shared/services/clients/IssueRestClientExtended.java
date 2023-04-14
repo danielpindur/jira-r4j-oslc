@@ -1,6 +1,5 @@
 package cz.vutbr.fit.danielpindur.oslc.shared.services.clients;
 
-import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.jira.rest.client.api.MetadataRestClient;
 import com.atlassian.jira.rest.client.api.SearchRestClient;
 import com.atlassian.jira.rest.client.api.SessionRestClient;
@@ -10,6 +9,7 @@ import com.atlassian.jira.rest.client.api.domain.input.FieldInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousIssueRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
 import cz.vutbr.fit.danielpindur.oslc.shared.builders.JiraQueryBuilder;
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.models.Configuration;
@@ -17,25 +17,35 @@ import cz.vutbr.fit.danielpindur.oslc.shared.helpers.IssueHelper;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import java.io.Closeable;
+import java.io.IOException;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class IssueRestClientExtended extends AsynchronousIssueRestClient {
+public class IssueRestClientExtended extends AsynchronousIssueRestClient implements Closeable {
     private final URI baseUri;
     private final Configuration configuration;
+    private final DisposableHttpClient client;
 
     private final MetadataRestClient metadataRestClient;
 
     private final SearchRestClient searchRestClient;
 
-    public IssueRestClientExtended(URI baseUri, HttpClient client, SessionRestClient sessionRestClient, MetadataRestClient metadataRestClient, SearchRestClient searchRestClient) {
+    public IssueRestClientExtended(URI baseUri, DisposableHttpClient client, SessionRestClient sessionRestClient, MetadataRestClient metadataRestClient, SearchRestClient searchRestClient) {
         super(baseUri, client, sessionRestClient, metadataRestClient);
         this.baseUri = baseUri;
         configuration = ConfigurationProvider.GetConfiguration();
         this.metadataRestClient = metadataRestClient;
         this.searchRestClient = searchRestClient;
+        this.client = client;
+    }
+
+    public void close() {
+        try {
+            this.client.destroy();
+        } catch (Exception ignored) { }
     }
 
     public String GetFieldId(final String fieldName, Iterable<Field> fields) {
