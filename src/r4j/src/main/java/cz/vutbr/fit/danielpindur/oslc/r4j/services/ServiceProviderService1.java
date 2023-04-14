@@ -149,8 +149,8 @@ public class ServiceProviderService1
         }
     )
     public Folder[] queryFolders(
-                                                    
                                                      @QueryParam("oslc.where") final String where,
+                                                     @QueryParam("oslc.searchTerms") final String searchTerms,
                                                      @QueryParam("oslc.prefix") final String prefix,
                                                      @QueryParam("oslc.paging") final String pagingString,
                                                      @QueryParam("page") final String pageString,
@@ -174,7 +174,7 @@ public class ServiceProviderService1
         // End of user code
         // TODO: error handler
 
-        List<Folder> resources = delegate.queryFolders(httpServletRequest, where, prefix, paging, page, pageSize);
+        List<Folder> resources = delegate.queryFolders(httpServletRequest, where, searchTerms, prefix, paging, page, pageSize);
         UriBuilder uriBuilder = UriBuilder.fromUri(uriInfo.getAbsolutePath())
             .queryParam("oslc.paging", "true")
             .queryParam("oslc.pageSize", pageSize)
@@ -209,6 +209,7 @@ public class ServiceProviderService1
     public void queryFoldersAsHtml(
                                     
                                        @QueryParam("oslc.where") final String where,
+                                       @QueryParam("oslc.searchTerms") final String searchTerms,
                                        @QueryParam("oslc.prefix") final String prefix,
                                        @QueryParam("oslc.paging") final String pagingString,
                                        @QueryParam("page") final String pageString,
@@ -230,7 +231,7 @@ public class ServiceProviderService1
         // Start of user code queryFoldersAsHtml
         // End of user code
 
-        List<Folder> resources = delegate.queryFolders(httpServletRequest, where, prefix, paging, page, pageSize);
+        List<Folder> resources = delegate.queryFolders(httpServletRequest, where, searchTerms, prefix, paging, page, pageSize);
 
         if (resources!= null) {
             // Start of user code queryFoldersAsHtml_setAttributes

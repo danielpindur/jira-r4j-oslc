@@ -76,7 +76,7 @@ public class RestDelegate {
         // Start of user code "ServiceProviderInfo[] getServiceProviderInfos(...)"
         ServiceProviderInfo r1 = new ServiceProviderInfo();
         r1.name = "R4J Provider";
-        r1.serviceProviderId = "1"; // TODO: Is this id okay?
+        r1.serviceProviderId = "1";
 
         serviceProviderInfos = new ServiceProviderInfo[1];
         serviceProviderInfos[0] = r1;
@@ -84,7 +84,7 @@ public class RestDelegate {
         return serviceProviderInfos;
     }
 
-    public List<Folder> queryFolders(HttpServletRequest httpServletRequest, String where, String prefix, boolean paging, int page, int limit)
+    public List<Folder> queryFolders(HttpServletRequest httpServletRequest, String where, final String terms, String prefix, boolean paging, int page, int limit)
     {
         List<Folder> resources = null;
         
@@ -92,9 +92,7 @@ public class RestDelegate {
         // Start of user code queryFolders
         try {
             SessionProvider.SetSession(httpServletRequest.getSession());
-            // TODO Implement code to return a set of resources.
-            // An empty List should imply that no resources where found.
-            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+            resources = folderFacade.queryFolder(where, terms, prefix, paging, page, limit);
         } finally {
             SessionProvider.ClearSession();
         }
@@ -109,9 +107,7 @@ public class RestDelegate {
         // Start of user code FolderSelector
         try {
             SessionProvider.SetSession(httpServletRequest.getSession());
-            // TODO Implement code to return a set of resources, based on search criteria
-            // An empty List should imply that no resources where found.
-            // If you encounter problems, consider throwing the runtime exception WebApplicationException(message, cause, final httpStatus)
+            resources = folderFacade.selectFolders(terms);
         } finally {
             SessionProvider.ClearSession();
         }

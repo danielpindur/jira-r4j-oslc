@@ -4,12 +4,14 @@ import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.jira.rest.client.internal.async.AbstractAsynchronousRestClient;
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.json.parsers.ContainsLinkExistsParser;
+import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.json.parsers.EnabledProjectsKeysParser;
 import io.atlassian.util.concurrent.Promise;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 
 public class OldFolderRestClient extends AbstractAsynchronousRestClient implements Closeable {
     private final URI baseUri;
@@ -30,5 +32,10 @@ public class OldFolderRestClient extends AbstractAsynchronousRestClient implemen
     public Promise<Boolean> existsContainsLink(final String issueKey, final String projectKey) {
         final URI uri = UriBuilder.fromUri(this.baseUri).path("issue").path("req-path").path("key="+issueKey).build();
         return getAndParse(uri, new ContainsLinkExistsParser(projectKey));
+    }
+
+    public Promise<List<String>> getEnabledProjectKeys() {
+        final URI uri = UriBuilder.fromUri(this.baseUri).path("projects").build();
+        return getAndParse(uri, new EnabledProjectsKeysParser());
     }
 }

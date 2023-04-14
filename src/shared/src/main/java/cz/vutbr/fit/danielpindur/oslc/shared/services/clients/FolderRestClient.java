@@ -8,10 +8,12 @@ import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.json.generators.Mo
 import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.json.generators.UpdateContainsLinkInputJsonGenerator;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.json.generators.UpdateFolderInputJsonGenerator;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.json.parsers.FolderSubfolderNamesParser;
+import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.json.parsers.FolderTreeParser;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.json.parsers.FolderWatchersParser;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.inputs.FolderInput;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.models.FolderModel;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.json.parsers.FolderParser;
+import cz.vutbr.fit.danielpindur.oslc.shared.services.models.FolderTreeModel;
 import io.atlassian.util.concurrent.Promise;
 import org.codehaus.jettison.json.JSONArray;
 
@@ -21,6 +23,7 @@ import javax.ws.rs.core.UriBuilder;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 
 public class FolderRestClient extends AbstractAsynchronousRestClient implements Closeable {
@@ -43,8 +46,25 @@ public class FolderRestClient extends AbstractAsynchronousRestClient implements 
     }
 
     public Promise<FolderModel> get(final String projectKey, final Integer folderId) {
-        final URI uri = UriBuilder.fromUri(this.baseUri).path("projects").path(projectKey).path("folders").path(folderId.toString()).build();
+        return get(projectKey, folderId, true);
+    }
+
+    public Promise<FolderModel> get(final String projectKey, final Integer folderId, final Boolean includeIssues) {
+        final URI uri = UriBuilder.fromUri(this.baseUri).path("projects").path(projectKey).path("folders").path(folderId.toString()).queryParam("includeIssues", includeIssues).build();
         return getAndParse(uri, new FolderParser());
+    }
+
+    public Promise<FolderTreeModel> getTree(final String projectKey) {
+        return getTree(projectKey, -1, true);
+    }
+
+    public Promise<FolderTreeModel> getTree(final String projectKey, final Integer folderId) {
+        return getTree(projectKey, folderId, true);
+    }
+
+    public Promise<FolderTreeModel> getTree(final String projectKey, final Integer folderId, final Boolean includeIssues) {
+        final URI uri = UriBuilder.fromUri(this.baseUri).path("projects").path(projectKey).path("folders").path(folderId.toString()).queryParam("includeIssues", includeIssues).build();
+        return getAndParse(uri, new FolderTreeParser());
     }
 
     public Promise<Void> deleteFolder(final String projectKey, final Integer folderId) {
@@ -129,5 +149,9 @@ public class FolderRestClient extends AbstractAsynchronousRestClient implements 
         put(moveUri, input, new MoveFolderInputJsonGenerator()).claim();
 
         return get(projectKey, folderId);
+    }
+
+    public Promise<List<String>> getEnabledProjectKeys() {
+        return oldFolderRestClient.getEnabledProjectKeys();
     }
 }

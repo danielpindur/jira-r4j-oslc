@@ -4,22 +4,25 @@ import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.Project;
 import cz.vutbr.fit.danielpindur.oslc.r4j.ResourcesFactory;
-import cz.vutbr.fit.danielpindur.oslc.r4j.clients.JiraAdaptorClient;
+import cz.vutbr.fit.danielpindur.oslc.r4j.filters.FolderFilter;
+import cz.vutbr.fit.danielpindur.oslc.r4j.filters.FolderFilterInput;
 import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Folder;
-import cz.vutbr.fit.danielpindur.oslc.r4j.resources.Requirement;
-import cz.vutbr.fit.danielpindur.oslc.r4j.resources.RequirementCollection;
+import cz.vutbr.fit.danielpindur.oslc.r4j.translators.FolderTranslator;
+import cz.vutbr.fit.danielpindur.oslc.r4j.helpers.FolderHelper;
 import cz.vutbr.fit.danielpindur.oslc.shared.helpers.IssueHelper;
 import cz.vutbr.fit.danielpindur.oslc.shared.helpers.UriHelper;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.facades.BaseFacade;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.inputs.FolderInput;
 import cz.vutbr.fit.danielpindur.oslc.shared.services.models.FolderModel;
+import org.eclipse.lyo.core.query.QueryUtils;
+import org.eclipse.lyo.core.query.SimpleTerm;
+import org.eclipse.lyo.core.query.WhereClause;
 import org.eclipse.lyo.oslc4j.core.model.Link;
 
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class FolderFacade extends BaseFacade {
     @Inject ResourcesFactory resourcesFactory;
@@ -31,7 +34,7 @@ public class FolderFacade extends BaseFacade {
         result.setIdentifier(folderIdentifier);
         result.setAbout(resourcesFactory.constructURIForFolder(folderIdentifier));
 
-        var parentIdentifier = ConstructFolderIdentifier(projectKey, resource.ParentId);
+        var parentIdentifier = FolderHelper.ConstructFolderIdentifier(projectKey, resource.ParentId);
         result.setParent(parentIdentifier != null ? resourcesFactory.constructLinkForFolder(parentIdentifier) : null);
 
         var folderPath = getFolderClient().getFolderPath(GetFolderId(folderIdentifier), projectKey);
@@ -46,7 +49,7 @@ public class FolderFacade extends BaseFacade {
     private Set<Link> GetSubfolderLinks(final Set<Integer> subfolderIds, final String projectKey) {
         var subfolderLinks = new HashSet<Link>();
         for (var subfolderId : subfolderIds) {
-            var subfolderIdentifier = ConstructFolderIdentifier(projectKey, subfolderId);
+            var subfolderIdentifier = FolderHelper.ConstructFolderIdentifier(projectKey, subfolderId);
             if (subfolderIdentifier != null) {
                 subfolderLinks.add(resourcesFactory.constructLinkForFolder(subfolderIdentifier));
             }
@@ -118,21 +121,6 @@ public class FolderFacade extends BaseFacade {
         } catch (Exception e) {
             throw new WebApplicationException("Invalid folderId " + folderId, Response.Status.BAD_REQUEST);
         }
-    }
-
-    private String ConstructFolderIdentifier(final String projectKey, final Integer folderId) {
-        String secondPart = null;
-        if (folderId == 0) {
-            return null;
-        }
-        if (folderId == -1) {
-            secondPart = configuration.RootFolderId;
-        }
-        else {
-            secondPart = folderId.toString();
-        }
-
-        return projectKey + "-" + secondPart;
     }
 
     private void ValidateProject(final String projectKey) {
@@ -231,30 +219,9 @@ public class FolderFacade extends BaseFacade {
         }
     }
 
-    private String GetIssueKeyFromLink(final Link link) {
-        Requirement requirement = null;
-        RequirementCollection requirementCollection = null;
-
-        try {
-            requirement = JiraAdaptorClient.getRequirement(link.getValue().toString());
-        } catch (Exception ignored) { }
-
-        try {
-            requirementCollection = JiraAdaptorClient.getRequirementCollection(link.getValue().toString());
-        } catch (Exception ignored) { }
-
-        if (requirement != null) {
-            return requirement.getShortTitle();
-        } else if (requirementCollection != null) {
-            return requirementCollection.getShortTitle();
-        } else {
-            throw new WebApplicationException("Failed to find resource for " + link.getValue().toString(), Response.Status.NOT_FOUND);
-        }
-    }
-
     private void CreateContainsLinks(final Set<Link> links, final Integer folderId, final String projectKey) {
         for (var link : links) {
-            var issueKey = GetIssueKeyFromLink(link);
+            var issueKey = FolderHelper.GetIssueKeyFromLink(link);
             getFolderClient().createContainsLink(folderId, projectKey, issueKey).claim();
         }
     }
@@ -286,7 +253,7 @@ public class FolderFacade extends BaseFacade {
 
         CreateContainsLinks(resource.getContains(), createdFolder.Id, projectKey);
 
-        return get(ConstructFolderIdentifier(projectKey, createdFolder.Id));
+        return get(FolderHelper.ConstructFolderIdentifier(projectKey, createdFolder.Id));
     }
 
     public Folder updateFolder(final String id, final Folder resource) {
@@ -312,5 +279,70 @@ public class FolderFacade extends BaseFacade {
         CreateContainsLinks(resource.getContains(), GetFolderId(id), GetProjectKey(id));
 
         return get(id);
+    }
+
+    public List<Folder> selectFolders(final String terms) {
+        var filterInput = new FolderFilterInput();
+        var enabledProjectKeys = getFolderClient().getEnabledProjectKeys().claim();
+        var result = new LinkedList<Folder>();
+
+        for (var enabledProjectKey : enabledProjectKeys) {
+            var folderTree = getFolderClient().getTree(enabledProjectKey).claim();
+            var filteredFolderModels = new FolderFilter(filterInput, terms, enabledProjectKey).filter(folderTree);
+
+            for (var folderModel : filteredFolderModels) {
+                result.add(MapResourceToResult(FolderHelper.ConstructFolderIdentifier(enabledProjectKey, folderModel.Id), folderModel, enabledProjectKey));
+            }
+        }
+
+        return result;
+    }
+
+    // TODO: pagination
+    public List<Folder> queryFolder(final String where, final String terms, final String prefix, final boolean paging, final int page, final int limit) {
+        Map<String, String> parsedPrefix = null;
+        WhereClause parsedWhere = null;
+
+        try {
+            if (prefix != null) {
+                parsedPrefix = QueryUtils.parsePrefixes(prefix);
+            }
+        } catch (Exception e) {
+            throw new WebApplicationException("Failed to parse query prefixes!", Response.Status.BAD_REQUEST);
+        }
+
+        if (parsedPrefix == null && where != null) {
+            throw new WebApplicationException("oslc.where used without oslc.prefix", Response.Status.BAD_REQUEST);
+        }
+
+        try {
+            if (where != null) {
+                parsedWhere = QueryUtils.parseWhere(where, parsedPrefix);
+            }
+        } catch (Exception e) {
+            throw new WebApplicationException("Failed to parse where!", Response.Status.BAD_REQUEST);
+        }
+
+        var translator = new FolderTranslator();
+        if (parsedWhere != null) {
+            for (SimpleTerm term : parsedWhere.children()) {
+                translator.translate(term);
+            }
+        }
+
+        var filterInput = translator.filterInput;
+        var enabledProjectKeys = getFolderClient().getEnabledProjectKeys().claim();
+        var result = new LinkedList<Folder>();
+
+        for (var enabledProjectKey : enabledProjectKeys) {
+            var folderTree = getFolderClient().getTree(enabledProjectKey).claim();
+            var filteredFolderModels = new FolderFilter(filterInput, terms, enabledProjectKey).filter(folderTree);
+
+            for (var folderModel : filteredFolderModels) {
+                result.add(MapResourceToResult(FolderHelper.ConstructFolderIdentifier(enabledProjectKey, folderModel.Id), folderModel, enabledProjectKey));
+            }
+        }
+
+        return result;
     }
 }

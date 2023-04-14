@@ -377,6 +377,7 @@ public class IssueFacade extends BaseFacade {
 
         // TODO: add unauthorized catch
         // TODO: verify all endpoints responds correctly with 401
+        // TODO: pagination
         var search = getSearchClient().searchJql(queryBuilder.build()).claim();
         if (search.getTotal() == 0) {
             return null;
