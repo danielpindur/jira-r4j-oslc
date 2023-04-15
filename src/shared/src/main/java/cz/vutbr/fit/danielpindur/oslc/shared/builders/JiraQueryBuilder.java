@@ -39,7 +39,7 @@ public class JiraQueryBuilder {
 
     public JiraQueryBuilder Identifier(final String identifier) {
         if (configuration.SaveIdentifierInLabelsField) {
-            appendToQuery(configuration.LabelsFieldName + " = " + IssueHelper.GetFormattedLabelsIdentifier(identifier));
+            appendToQuery(configuration.LabelsFieldName + " = \"" + IssueHelper.GetFormattedLabelsIdentifier(identifier) + "\"");
         } else {
             appendToQuery(configuration.IdentifierFieldName + " ~ " + identifier);
         }
@@ -49,14 +49,14 @@ public class JiraQueryBuilder {
 
     public JiraQueryBuilder Terms(final String terms) {
         if (terms != null) {
-            appendToQuery("text ~ " + terms);
+            appendToQuery("text ~ \"" + terms + "\"");
         }
 
         return this;
     }
 
     public JiraQueryBuilder IssueType(final String issueTypeName) {
-        appendToQuery("issuetype = " + issueTypeName);
+        appendToQuery("issuetype = \"" + issueTypeName + "\"");
 
         return this;
     }

@@ -13,12 +13,20 @@ public final class UriHelper {
     }
 
     public static boolean IsRequirementUri(final URI uri) {
-        var exploded = uri.toString().split("/");
+        return IsRequirementUri(uri.toString());
+    }
+
+    public static boolean IsRequirementUri(final String uri) {
+        var exploded = uri.split("/");
         return exploded[exploded.length - 2].equalsIgnoreCase("Requirement");
     }
 
     public static boolean IsRequirementCollectionUri(final URI uri) {
-        var exploded = uri.toString().split("/");
+        return IsRequirementCollectionUri(uri.toString());
+    }
+
+    public static boolean IsRequirementCollectionUri(final String uri) {
+        var exploded = uri.split("/");
         return exploded[exploded.length - 2].equalsIgnoreCase("RequirementCollection");
     }
 }

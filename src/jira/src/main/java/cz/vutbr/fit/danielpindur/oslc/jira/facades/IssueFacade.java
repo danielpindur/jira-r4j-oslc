@@ -316,16 +316,22 @@ public class IssueFacade extends BaseFacade {
         }
     }
 
-    protected void ValidateIssueLinkType(final String issueLinkTypeName) {
+    protected IssuelinksType GetIssueLinksTypeByName(final String issueLinkTypeName) {
         var issueLinkTypes = getMetadataClient().getIssueLinkTypes().claim();
 
         for (IssuelinksType issueLinkType : issueLinkTypes) {
             if (issueLinkType.getName().equalsIgnoreCase(issueLinkTypeName)) {
-                return;
+                return issueLinkType;
             }
         }
 
-        throw new WebApplicationException("IssueLinkType with identifier (" + issueLinkTypeName +") not found!", Response.Status.CONFLICT);
+        return null;
+    }
+
+    protected void ValidateIssueLinkType(final String issueLinkTypeName) {
+        if (GetIssueLinksTypeByName(issueLinkTypeName) == null) {
+            throw new WebApplicationException("IssueLinkType with identifier (" + issueLinkTypeName +") not found!", Response.Status.CONFLICT);
+        }
     }
 
     protected Iterable<Issue> selectIssues(final String terms, final String issueTypeName) {
@@ -365,7 +371,8 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Failed to parse where!", Response.Status.BAD_REQUEST);
         }
 
-        var queryBuilder = new JiraQueryBuilder(new IssueTranslator())
+        var issueLinks = GetIssueLinksTypeByName(configuration.IssueLinkTypeName);
+        var queryBuilder = new JiraQueryBuilder(new IssueTranslator(issueLinks.getInward(), issueLinks.getOutward()))
                 .IssueType(issueTypeName)
                 .Terms(terms);
 

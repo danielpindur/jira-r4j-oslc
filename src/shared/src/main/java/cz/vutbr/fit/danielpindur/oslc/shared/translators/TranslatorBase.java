@@ -4,6 +4,7 @@ import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.models.Configuration;
 import cz.vutbr.fit.danielpindur.oslc.shared.helpers.IssueHelper;
 import cz.vutbr.fit.danielpindur.oslc.shared.helpers.UriHelper;
+import cz.vutbr.fit.danielpindur.oslc.shared.services.facades.BaseFacade;
 import org.apache.jena.atlas.lib.NotImplemented;
 import org.eclipse.lyo.core.query.SimpleTerm;
 
@@ -63,8 +64,25 @@ public class TranslatorBase {
         return String.join(",", exploded);
     }
 
-    protected String translateEmails(final String operands) {
+    protected String translateIssueUrisToKeys(final String operands) {
+        var cleaned = cleanUri(operands);
+        var exploded = cleaned.split(",");
+        var keys = new LinkedList<String>();
 
+        for (String uri : exploded) {
+            var identifier = UriHelper.GetIdFromUri(uri);
+            var issue = BaseFacade.getIssueClient().searchIssueByIdentifier(identifier);
+
+            if ((IssueHelper.IsRequirement(issue) && UriHelper.IsRequirementUri(uri)) ||
+                    IssueHelper.IsRequirementCollection(issue) && UriHelper.IsRequirementCollectionUri(uri)) {
+                keys.add(issue.getKey());
+            }
+        }
+
+        return String.join(",", keys);
+    }
+
+    protected String translateEmails(final String operands) {
         var exploded = operands.split(",");
 
         for (int i = 0; i < exploded.length; i++) {

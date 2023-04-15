@@ -21,12 +21,11 @@ import java.util.Objects;
 
 public class BaseFacade {
     protected static final Logger log = LoggerFactory.getLogger(BaseFacade.class);
-    private URI baseUri;
-    protected Configuration configuration = ConfigurationProvider.GetConfiguration();
+    protected static Configuration configuration = ConfigurationProvider.GetConfiguration();
 
     public BaseFacade() { }
 
-    private AuthenticationHandler getAuthenticationHandler() {
+    private static AuthenticationHandler getAuthenticationHandler() {
         var session = SessionProvider.GetSession();
 
         if (session == null) {
@@ -43,15 +42,11 @@ public class BaseFacade {
 
     }
 
-    private URI getJiraBaseUri() {
-        if (baseUri == null) {
-            baseUri = URI.create(configuration.JiraServer.Url + "/rest/api/latest");
-        }
-
-        return baseUri;
+    private static URI getJiraBaseUri() {
+        return URI.create(configuration.JiraServer.Url + "/rest/api/latest");
     }
 
-    private AuthenticationHandler getBasicAuthenticationHandler(final HttpSession session) {
+    private static AuthenticationHandler getBasicAuthenticationHandler(final HttpSession session) {
         var username = session.getAttribute(SessionProvider.BASIC_USERNAME);
         var password = session.getAttribute(SessionProvider.BASIC_PASSWORD);
 
@@ -62,25 +57,25 @@ public class BaseFacade {
         return new BasicHttpAuthenticationHandler(username.toString(), password.toString());
     }
 
-    private AuthenticationHandler getOAuthAuthenticationHandler(final String token) {
+    private static AuthenticationHandler getOAuthAuthenticationHandler(final String token) {
         return new OAuthHttpAuthenticationHandler(token);
     }
 
-    private DisposableHttpClient getHttpClient() {
+    private static DisposableHttpClient getHttpClient() {
         var client = new AsynchronousHttpClientFactory()
                 .createClient(URI.create(configuration.JiraServer.Url), getAuthenticationHandler());
         SessionProvider.AddClient(client);
         return client;
     }
 
-    private JiraRestClient getRestClient() {
+    private static JiraRestClient getRestClient() {
         var jiraClient = new AsynchronousJiraRestClientFactory()
                 .createWithAuthenticationHandler(URI.create(configuration.JiraServer.Url), getAuthenticationHandler());
         SessionProvider.AddJiraClient(jiraClient);
         return jiraClient;
     }
 
-    protected boolean containsTerms(final String target, final String terms) {
+    protected static boolean containsTerms(final String target, final String terms) {
         if (target == null || terms == null) {
             return false;
         }
@@ -91,30 +86,30 @@ public class BaseFacade {
         return capitalizedTarget.contains(capitalizedTerms);
     }
 
-    protected String SafeConvert(final Long number) {
+    protected static String SafeConvert(final Long number) {
         return Objects.requireNonNull(number).toString();
     }
 
-    protected ProjectRestClient getProjectClient() { return getRestClient().getProjectClient(); }
+    protected static ProjectRestClient getProjectClient() { return getRestClient().getProjectClient(); }
 
-    protected MetadataRestClient getMetadataClient() { return getRestClient().getMetadataClient(); }
+    protected static MetadataRestClient getMetadataClient() { return getRestClient().getMetadataClient(); }
 
-    protected SearchRestClient getSearchClient() { return new SearchRestClientExtended(getJiraBaseUri(), getHttpClient()); }
+    protected static SearchRestClient getSearchClient() { return new SearchRestClientExtended(getJiraBaseUri(), getHttpClient()); }
 
-    protected IssueLinkRestClient getIssueLinkRestClient() {
+    protected static IssueLinkRestClient getIssueLinkRestClient() {
         return new IssueLinkRestClient(getJiraBaseUri(), getHttpClient());
     }
 
-    protected UserRestClientExtended getUserClient() {
+    protected static UserRestClientExtended getUserClient() {
         return new UserRestClientExtended(getJiraBaseUri(), getHttpClient());
     }
 
-    protected IssueRestClientExtended getIssueClient() {
+    public static IssueRestClientExtended getIssueClient() {
         return new IssueRestClientExtended(getJiraBaseUri(),getHttpClient(), getRestClient().getSessionClient(), getMetadataClient(), getSearchClient());
     }
 
 
-    protected FolderRestClient getFolderClient() {
+    protected static FolderRestClient getFolderClient() {
         var oldFolderRestClient = new OldFolderRestClient(URI.create(configuration.JiraServer.Url + "/rest/com.easesolutions.jira.plugins.requirements/1.0"), getHttpClient());
         return new FolderRestClient(URI.create(configuration.JiraServer.Url + "/rest/com.easesolutions.jira.plugins.requirements/2.0"), getHttpClient(), oldFolderRestClient);
     }

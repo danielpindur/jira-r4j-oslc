@@ -1,21 +1,15 @@
 package cz.vutbr.fit.danielpindur.oslc.jira.translators;
 
 import cz.vutbr.fit.danielpindur.oslc.shared.helpers.IssueHelper;
-import cz.vutbr.fit.danielpindur.oslc.shared.helpers.UriHelper;
 import cz.vutbr.fit.danielpindur.oslc.shared.translators.TranslatorBase;
 import org.eclipse.lyo.core.query.SimpleTerm;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import java.net.URI;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
 
 public class IssueTranslator extends TranslatorBase {
 
-    public IssueTranslator() {
+    public IssueTranslator(final String decomposedByLinkName, final String decomposesLinkName) {
         super();
         propertiesMap.put("oslc:shortTitle", "key");
         propertiesMap.put("dcterms:subject", configuration.LabelsFieldName);
@@ -23,8 +17,26 @@ public class IssueTranslator extends TranslatorBase {
         propertiesMap.put("dcterms:creator", "creator");
         propertiesMap.put("dcterms:created", "created");
         propertiesMap.put("jira:jiraId", "id");
+        propertiesMap.put("oslc_rm:decomposedBy", decomposedByLinkName);
+        propertiesMap.put("oslc_rm:decomposes", decomposesLinkName);
         propertiesMap.put("jira:project", "project");
         propertiesMap.put("dcterms:identifier", configuration.IdentifierFieldName);
+    }
+
+    private String issueKeysToLinkedIssuesTranslator(final String operands) {
+        var query = "";
+        var exploded = operands.split(",");
+
+        for (var key : exploded) {
+            if (query.isEmpty()) {
+                query = "(issue in linkedIssues (\"" + key + "\")";
+            }
+            else {
+                query = query + " OR issue in linkedIssues (\"" + key + "\")";
+            }
+        }
+
+        return query + ")";
     }
 
     @Override
@@ -54,6 +66,20 @@ public class IssueTranslator extends TranslatorBase {
                 operand = translateDateTime(operand);
             }
 
+            if (property.equalsIgnoreCase("oslc_rm:decomposedBy") || property.equalsIgnoreCase("oslc_rm:decomposes")) {
+                var issueKey = translateIssueUrisToKeys(operand);
+
+                if (operator.equals("=")) {
+                    return "(issueLinkType" + " = \"" + propertiesMap.get(property) + "\" AND issue in linkedIssues (" + issueKey + "))";
+                }
+
+                if (operator.equals("!=")) {
+                    return "(issueLinkType" + " != \"" + propertiesMap.get(property) + "\" OR issue not in linkedIssues (" + issueKey + "))";
+                }
+
+                throw new WebApplicationException("Unexpected operator!", Response.Status.BAD_REQUEST);
+            }
+
             return propertiesMap.get(property) + " " + operator + " " + operand;
         }
         else if (type == SimpleTerm.Type.IN_TERM) {
@@ -72,6 +98,11 @@ public class IssueTranslator extends TranslatorBase {
 
             if (property.equalsIgnoreCase("dcterms:creator")) {
                 operands = translateEmails(translateUriToIds(operands));
+            }
+
+            if (property.equalsIgnoreCase("oslc_rm:decomposedBy") || property.equalsIgnoreCase("oslc_rm:decomposes")) {
+                var issueKeys = translateIssueUrisToKeys(operands);
+                return "(issueLinkType" + " = \"" + propertiesMap.get(property) + "\" AND " + issueKeysToLinkedIssuesTranslator(issueKeys) + ")";
             }
 
             return propertiesMap.get(property) + replaceTypeMap.get(type) + "(" + operands + ")";

@@ -6,7 +6,7 @@
     },
     "RequirementIssueTypeName" : "Bug",
     "RequirementCollectionIssueTypeName" : "Story",
-    "IssueLinkTypeName" : "Relates",
+    "IssueLinkTypeName" : "Blocks",
     "IdentifierFieldName" : "Labels",
     "LabelsFieldName" : "Labels",
     "LabelsIdentifierFormat" : "Identifier:{0}",
