@@ -11,5 +11,6 @@
     "LabelsFieldName" : "Labels",
     "LabelsIdentifierFormat" : "Identifier:{0}",
     "RootFolderId" : "ROOT",
-    "SaveIdentifierInLabelsField": false
+    "SaveIdentifierInLabelsField": false,
+    "JiraAdaptorUrl" : "http://localhost:8081"
 }

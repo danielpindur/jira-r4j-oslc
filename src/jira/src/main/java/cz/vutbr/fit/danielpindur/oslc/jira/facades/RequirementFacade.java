@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class RequirementFacade extends IssueFacade {
-    // TODO: same thing for folder
     private Requirement MapResourceToResult(final Issue resource) {
         var result = new Requirement();
         var jiraIssueId = resource.getId().intValue();

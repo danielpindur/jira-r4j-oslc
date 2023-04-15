@@ -152,7 +152,6 @@ public class RestDelegate {
         
         
         // Start of user code createRequirement
-        // TODO: validate all needed properties are present as well as aResource exists
         try {
             SessionProvider.SetSession(httpServletRequest.getSession());
             newResource = requirementFacade.create(aResource);
@@ -168,7 +167,6 @@ public class RestDelegate {
         
         
         // Start of user code createRequirementCollection
-        // TODO: validate all needed properties are present as well as aResource exists
         try {
             SessionProvider.SetSession(httpServletRequest.getSession());
             newResource = requirementCollectionFacade.create(aResource);
@@ -187,7 +185,6 @@ public class RestDelegate {
         // Start of user code createRequirementFromDialog
         try {
             SessionProvider.SetSession(httpServletRequest.getSession());
-            // TODO: validate all needed properties are present as well as aResource exists
             newResource = requirementFacade.create(aResource);
         } finally {
             SessionProvider.ClearSession();
@@ -203,7 +200,6 @@ public class RestDelegate {
         // Start of user code createRequirementCollectionFromDialog
         try {
             SessionProvider.SetSession(httpServletRequest.getSession());
-            // TODO: validate all needed properties are present as well as aResource exists
             newResource = requirementCollectionFacade.create(aResource);
         } finally {
             SessionProvider.ClearSession();
@@ -321,7 +317,6 @@ public class RestDelegate {
 
         try {
             SessionProvider.SetSession(httpServletRequest.getSession());
-            // TODO: verify if project is specified as read-only
             updatedResource = requirementFacade.update(aResource, id);
         } finally {
             SessionProvider.ClearSession();
@@ -375,7 +370,6 @@ public class RestDelegate {
 
         try {
             SessionProvider.SetSession(httpServletRequest.getSession());
-            // TODO: verify if project is specified as read-only
             updatedResource = requirementCollectionFacade.update(aResource, id);
         } finally {
             SessionProvider.ClearSession();

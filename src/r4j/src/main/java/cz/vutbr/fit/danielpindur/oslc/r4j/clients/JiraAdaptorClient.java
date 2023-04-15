@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 
 import com.atlassian.jira.rest.client.api.AuthenticationHandler;
 import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
+import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
 import cz.vutbr.fit.danielpindur.oslc.shared.session.SessionProvider;
 import org.eclipse.lyo.client.OSLCConstants;
 import org.eclipse.lyo.client.OslcClient;
@@ -32,6 +33,9 @@ import cz.vutbr.fit.danielpindur.oslc.r4j.resources.RequirementCollection;
 // Start of user code imports
 import javax.ws.rs.client.ClientBuilder;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+
+import java.util.HashMap;
+import java.util.Map;
 // End of user code
 
 
@@ -42,32 +46,38 @@ public class JiraAdaptorClient
 {
 
     // Start of user code class_attributes
+    static Map<String, String> requestHeaders = new HashMap<>();
     // End of user code
     
     // Start of user code class_methods
-    // TODO: should be based on serviceProviderCatalogURI
     public static String getServiceProviderURI() {
-        return "http://localhost:8081/jira/services";
+        return ConfigurationProvider.GetConfiguration().JiraAdaptorUrl + "/jira/services";
     }
-    // TODO: this needs to come from config file
-    static String serviceProviderCatalogURI = "http://localhost:8081/jira/services/catalog/singleton";
+    static String serviceProviderCatalogURI = getServiceProviderURI() + "/catalog/singleton";
 
-    // TODO: Handle oAuth
     private static HttpAuthenticationFeature getAuthenticationHandler() {
+        requestHeaders.clear();
         var session = SessionProvider.GetSession();
 
         if (session == null) {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
 
-        var username = session.getAttribute(SessionProvider.BASIC_USERNAME).toString();
-        var password = session.getAttribute(SessionProvider.BASIC_PASSWORD).toString();
-
-        if (username == null || password == null) {
-            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        var token = session.getAttribute(SessionProvider.OAUTH_TOKEN);
+        if (token != null) {
+            requestHeaders.put("Authorization", "Bearer " + token);
+            return null;
         }
+        else {
+            var username = session.getAttribute(SessionProvider.BASIC_USERNAME).toString();
+            var password = session.getAttribute(SessionProvider.BASIC_PASSWORD).toString();
 
-        return HttpAuthenticationFeature.basic(username, password.getBytes());
+            if (username == null || password == null) {
+                throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+            }
+
+            return HttpAuthenticationFeature.basic(username, password.getBytes());
+        }
     }
 
     // End of user code
@@ -79,11 +89,14 @@ public class JiraAdaptorClient
 
         // Start of user code getServiceProviderCatalog_init
         ClientBuilder builder = ClientBuilder.newBuilder();
-        builder.register(getAuthenticationHandler());
+        var authHandler = getAuthenticationHandler();
+        if (authHandler != null) {
+            builder.register(authHandler);
+        }
         client = new OslcClient(builder);
         // End of user code
 
-        response = client.getResource(serviceProviderCatalogURI,OSLCConstants.CT_RDF);
+        response = client.getResource(serviceProviderCatalogURI, requestHeaders, OSLCConstants.CT_RDF);
         if (response != null) {
             catalog = response.readEntity(ServiceProviderCatalog.class);
         }
@@ -99,11 +112,14 @@ public class JiraAdaptorClient
 
         // Start of user code getRequirement_init
         ClientBuilder builder = ClientBuilder.newBuilder();
-        builder.register(getAuthenticationHandler());
+        var authHandler = getAuthenticationHandler();
+        if (authHandler != null) {
+            builder.register(authHandler);
+        }
         client = new OslcClient(builder);
         // End of user code
 
-        response = client.getResource(resourceURI, OSLCConstants.CT_RDF);
+        response = client.getResource(resourceURI, requestHeaders, OSLCConstants.CT_RDF);
         if (response != null) {
             resource = response.readEntity(Requirement.class);
         }
@@ -119,11 +135,14 @@ public class JiraAdaptorClient
 
         // Start of user code getRequirementCollection_init
         ClientBuilder builder = ClientBuilder.newBuilder();
-        builder.register(getAuthenticationHandler());
+        var authHandler = getAuthenticationHandler();
+        if (authHandler != null) {
+            builder.register(authHandler);
+        }
         client = new OslcClient(builder);
         // End of user code
 
-        response = client.getResource(resourceURI, OSLCConstants.CT_RDF);
+        response = client.getResource(resourceURI, requestHeaders, OSLCConstants.CT_RDF);
         if (response != null) {
             resource = response.readEntity(RequirementCollection.class);
         }

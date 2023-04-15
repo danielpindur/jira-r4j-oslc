@@ -58,7 +58,6 @@ public class RootServicesService {
      * 
      * See https://jazz.net/wiki/bin/view/Main/RootServicesSpec
      */
-    //TODO: Fix
     @GET
     @Produces({ OslcMediaType.APPLICATION_RDF_XML, OslcMediaType.APPLICATION_XML })
     public Response getRootServices() {

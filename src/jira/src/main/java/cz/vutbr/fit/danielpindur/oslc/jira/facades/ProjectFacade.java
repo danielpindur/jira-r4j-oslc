@@ -15,7 +15,6 @@ public class ProjectFacade extends BaseFacade {
     @Inject ResourcesFactory resourcesFactory;
 
     // TODO: validate returned HTTP codes - align with OSLC standard
-    // TODO: should update return updated object?
     private Project MapResourceToResult(final com.atlassian.jira.rest.client.api.domain.Project resource) {
         var result = new Project();
         var projectIdString = Objects.requireNonNull(resource.getId()).toString();
@@ -52,7 +51,6 @@ public class ProjectFacade extends BaseFacade {
         return  containsTerms(project.getName(), terms) || containsTerms(project.getKey(), terms);
     }
 
-    // TODO: What exactly are terms? Can it be multiple words?
     public List<Project> search(final String terms) {
         var projectResources = getProjectClient().getAllProjects().claim();
         var results = new LinkedList<Project>();

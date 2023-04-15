@@ -172,7 +172,6 @@ public class ServiceProviderService1
         // Start of user code queryFolders
         // Here additional logic can be implemented that complements main action taken in RestDelegate
         // End of user code
-        // TODO: error handler
 
         List<Folder> resources = delegate.queryFolders(httpServletRequest, where, searchTerms, prefix, paging, page, pageSize);
         UriBuilder uriBuilder = UriBuilder.fromUri(uriInfo.getAbsolutePath())

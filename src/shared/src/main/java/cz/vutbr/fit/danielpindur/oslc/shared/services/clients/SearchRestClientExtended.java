@@ -64,6 +64,10 @@ public class SearchRestClientExtended extends AsynchronousSearchRestClient imple
         return this.searchJql(jql, (Integer)null, (Integer)null, (Set)null);
     }
 
+    public Promise<SearchResult> searchJql(@Nullable String jql, @Nullable Integer maxResults, @Nullable Integer startAt) {
+        return this.searchJql(jql, maxResults, startAt, (Set)null);
+    }
+
     private Promise<SearchResult> searchJqlImplGet(@Nullable Integer maxResults, @Nullable Integer startAt, Iterable<String> expandosValues, String jql, @Nullable Set<String> fields) {
         UriBuilder uriBuilder = UriBuilder.fromUri(this.searchUri).queryParam("jql", new Object[]{jql}).queryParam("expand", new Object[]{Joiner.on(",").join(expandosValues)});
         if (fields != null) {

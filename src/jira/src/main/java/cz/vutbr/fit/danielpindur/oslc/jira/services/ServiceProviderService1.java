@@ -174,7 +174,6 @@ public class ServiceProviderService1
         // Start of user code queryRequirements
         // Here additional logic can be implemented that complements main action taken in RestDelegate
         // End of user code
-        // TODO: error handler
 
         List<Requirement> resources = delegate.queryRequirements(httpServletRequest, where, terms, prefix, paging, page, pageSize);
         UriBuilder uriBuilder = UriBuilder.fromUri(uriInfo.getAbsolutePath())
@@ -309,7 +308,6 @@ public class ServiceProviderService1
         // Start of user code queryRequirementCollections
         // Here additional logic can be implemented that complements main action taken in RestDelegate
         // End of user code
-        // TODO: error handler
 
         List<RequirementCollection> resources = delegate.queryRequirementCollections(httpServletRequest, where, searchTerms, prefix, paging, page, pageSize);
         UriBuilder uriBuilder = UriBuilder.fromUri(uriInfo.getAbsolutePath())

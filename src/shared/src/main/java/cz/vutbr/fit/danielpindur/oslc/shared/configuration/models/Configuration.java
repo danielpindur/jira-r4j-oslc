@@ -29,4 +29,7 @@ public class Configuration {
 
     @JsonProperty("JiraServer")
     public JiraServer JiraServer;
+
+    @JsonProperty("JiraAdaptorUrl")
+    public String JiraAdaptorUrl;
 }

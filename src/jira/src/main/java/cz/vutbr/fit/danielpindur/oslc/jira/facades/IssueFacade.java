@@ -219,7 +219,6 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Field Identifier not found, failed to create issue!", Response.Status.CONFLICT);
         }
 
-        // TODO: check model for title length
         if (title == null || title.length() == 0) {
             throw new WebApplicationException("Title has to be specified, failed to create issue!", Response.Status.BAD_REQUEST);
         }
@@ -272,7 +271,6 @@ public class IssueFacade extends BaseFacade {
             throw new WebApplicationException("Field Labels not found, failed to create issue!", Response.Status.CONFLICT);
         }
 
-        // TODO: check model for title length
         if (title == null || title.length() == 0) {
             throw new WebApplicationException("Title has to be specified, failed to create issue!", Response.Status.BAD_REQUEST);
         }
@@ -384,9 +382,15 @@ public class IssueFacade extends BaseFacade {
 
         // TODO: add unauthorized catch
         // TODO: verify all endpoints responds correctly with 401
-        // TODO: pagination
-        var search = getSearchClient().searchJql(queryBuilder.build()).claim();
-        if (search.getTotal() == 0) {
+        SearchResult search = null;
+        if (paging && page >= 0 && limit > 0) {
+            search = getSearchClient().searchJql(queryBuilder.build(), limit, page).claim();
+        }
+        else {
+            search = getSearchClient().searchJql(queryBuilder.build()).claim();
+        }
+
+        if (search == null || search.getTotal() == 0) {
             return null;
         }
 

@@ -298,7 +298,6 @@ public class FolderFacade extends BaseFacade {
         return result;
     }
 
-    // TODO: pagination
     public List<Folder> queryFolder(final String where, final String terms, final String prefix, final boolean paging, final int page, final int limit) {
         Map<String, String> parsedPrefix = null;
         WhereClause parsedWhere = null;
@@ -340,6 +339,28 @@ public class FolderFacade extends BaseFacade {
 
             for (var folderModel : filteredFolderModels) {
                 result.add(MapResourceToResult(FolderHelper.ConstructFolderIdentifier(enabledProjectKey, folderModel.Id), folderModel, enabledProjectKey));
+            }
+        }
+
+        if (paging && limit > 0 && page >= 0) {
+            if (limit < result.size()) {
+                var currentPage = page;
+
+                while(!result.isEmpty() && currentPage > 0) {
+                    var toRemove = Math.min(result.size(), limit);
+                    for (int i = 0; i < toRemove; i++) {
+                        result.removeFirst();
+                    }
+                    currentPage--;
+                }
+
+                if (limit < result.size()) {
+                    var pageList = new LinkedList<Folder>();
+                    for (int i = 0; i < limit; i++) {
+                        pageList.add(result.removeFirst());
+                    }
+                    return pageList;
+                }
             }
         }
 

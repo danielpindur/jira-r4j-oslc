@@ -94,7 +94,7 @@ public class BaseFacade {
 
     protected static MetadataRestClient getMetadataClient() { return getRestClient().getMetadataClient(); }
 
-    protected static SearchRestClient getSearchClient() { return new SearchRestClientExtended(getJiraBaseUri(), getHttpClient()); }
+    protected static SearchRestClientExtended getSearchClient() { return new SearchRestClientExtended(getJiraBaseUri(), getHttpClient()); }
 
     protected static IssueLinkRestClient getIssueLinkRestClient() {
         return new IssueLinkRestClient(getJiraBaseUri(), getHttpClient());
