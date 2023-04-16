@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "-Tlocalhost:8081",
+                "-mupload",
+                "-s/home/danielpindur/Code/FIT/jira-r4j-oslc/test/reqif/small1.reqif",
+                "-P10203",
+                "-abasic",
+                "-utest_user",
+                "-pTester99",
+                "-c/home/danielpindur/Code/FIT/jira-r4j-oslc/test/reqif/config.json",
+                "-g",
+                "-v"
+            ]
+        }
+    ]
+}

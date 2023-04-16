@@ -384,7 +384,7 @@ public class IssueFacade extends BaseFacade {
         // TODO: verify all endpoints responds correctly with 401
         SearchResult search = null;
         if (paging && page >= 0 && limit > 0) {
-            search = getSearchClient().searchJql(queryBuilder.build(), limit, page).claim();
+            search = getSearchClient().searchJql(queryBuilder.build(), limit, page * limit).claim();
         }
         else {
             search = getSearchClient().searchJql(queryBuilder.build()).claim();

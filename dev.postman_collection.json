@@ -44,7 +44,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{jira_adaptor}}/services/service1/resources/queryRequirement?oslc.searchTerms=TextToFind&oslc.prefix=dcterms=<http://purl.org/dc/terms/>&oslc.select=dcterms:identifier",
+									"raw": "{{jira_adaptor}}/services/service1/resources/queryRequirement?oslc.pageSize=20&page=0&oslc.paging=true",
 									"host": [
 										"{{jira_adaptor}}"
 									],
@@ -58,7 +58,8 @@
 										{
 											"key": "oslc.searchTerms",
 											"value": "TextToFind",
-											"description": "Full text search in all properties"
+											"description": "Full text search in all properties",
+											"disabled": true
 										},
 										{
 											"key": "oslc.where",
@@ -69,29 +70,33 @@
 										{
 											"key": "oslc.prefix",
 											"value": "dcterms=<http://purl.org/dc/terms/>",
-											"description": "Define prefixes used in oslc.where"
+											"description": "Define prefixes used in oslc.where",
+											"disabled": true
 										},
 										{
-											"key": "limit",
+											"key": "oslc.pageSize",
 											"value": "20",
-											"description": "Number of resources per response",
-											"disabled": true
+											"description": "Number of resources per response"
 										},
 										{
 											"key": "page",
 											"value": "0",
-											"description": "Number of resources to skip (cycle through pages)",
-											"disabled": true
+											"description": "Number of resources to skip (cycle through pages)"
 										},
 										{
 											"key": "oslc.select",
 											"value": "dcterms:identifier",
-											"description": "Include the specified immediate and nested properties of the member resources."
+											"description": "Include the specified immediate and nested properties of the member resources.",
+											"disabled": true
 										},
 										{
 											"key": "oslc.properties",
 											"value": "dcterms:identifier",
 											"disabled": true
+										},
+										{
+											"key": "oslc.paging",
+											"value": "true"
 										}
 									]
 								}
@@ -111,7 +116,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rdf:RDF\n\txmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n\txmlns:dcterms=\"http://purl.org/dc/terms/\"\n\txmlns:oslc_data=\"http://open-services.net/ns/servicemanagement/1.0/\"\n\txmlns:oslc=\"http://open-services.net/ns/core#\"\n\txmlns:oslc_rm=\"http://open-services.net/ns/rm#\"\n\txmlns:jira=\"http://fit.vutbr.cz/group/verifit/oslc/ns/jira#\"\n\txmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\"\n\txmlns:foaf=\"http://xmlns.com/foaf/0.1/\">\n\t<oslc_rm:Requirement>\n\t\t<dcterms:title rdf:parseType=\"Literal\">First API requirement</dcterms:title>\n\t\t<dcterms:description rdf:parseType=\"Literal\">Test description</dcterms:description>\n\t\t<jira:project rdf:resource=\"http://localhost:8081/jira/services/project/Project/10000\"/>\n        <dcterms:identifier>84b1926d-d700-4206-9b50-fced46c74d19</dcterms:identifier>\n\t\t<dcterms:subject>test_label1</dcterms:subject>\n\t\t<dcterms:subject>test_label2</dcterms:subject>\n\t\t<oslc_rm:decomposedBy rdf:resource=\"http://localhost:8081/jira/services/requirementCollection/RequirementCollection/89c99088-f05a-42f8-a8fa-a22589215990\"/>\n\t\t<oslc_rm:decomposes rdf:resource=\"http://localhost:8081/jira/services/requirementCollection/RequirementCollection/e45c2d8b-aec5-49cc-afef-32ff466dba43\"/>\n\t</oslc_rm:Requirement>\n</rdf:RDF>",
+									"raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rdf:RDF\n\txmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n\txmlns:dcterms=\"http://purl.org/dc/terms/\"\n\txmlns:oslc_data=\"http://open-services.net/ns/servicemanagement/1.0/\"\n\txmlns:oslc=\"http://open-services.net/ns/core#\"\n\txmlns:oslc_rm=\"http://open-services.net/ns/rm#\"\n\txmlns:jira=\"http://fit.vutbr.cz/group/verifit/oslc/ns/jira#\"\n\txmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\"\n\txmlns:foaf=\"http://xmlns.com/foaf/0.1/\">\n\t<oslc_rm:Requirement>\n\t\t<dcterms:title rdf:parseType=\"Literal\">First API requirement</dcterms:title>\n\t\t<dcterms:description rdf:parseType=\"Literal\">Test description</dcterms:description>\n\t\t<jira:project rdf:resource=\"http://localhost:8081/jira/services/project/Project/10100\"/>\n        <dcterms:identifier>84b1926d-d700-4206-9b50-fced46c74d18</dcterms:identifier>\n\t\t<dcterms:subject>test_label1</dcterms:subject>\n\t\t<dcterms:subject>test_label2</dcterms:subject>\n\t\t<oslc_rm:decomposedBy rdf:resource=\"http://localhost:8081/jira/services/requirementCollection/RequirementCollection/89c99088-f05a-42f8-a8fa-a22589215990\"/>\n\t\t<oslc_rm:decomposes rdf:resource=\"http://localhost:8081/jira/services/requirementCollection/RequirementCollection/e45c2d8b-aec5-49cc-afef-32ff466dba43\"/>\n\t</oslc_rm:Requirement>\n</rdf:RDF>",
 									"options": {
 										"raw": {
 											"language": "xml"
@@ -180,7 +185,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{jira_adaptor}}/services/requirement/Requirement/84b1926d-d700-4206-9b50-fced46c74d19",
+									"raw": "{{jira_adaptor}}/services/requirement/Requirement/R001",
 									"host": [
 										"{{jira_adaptor}}"
 									],
@@ -188,7 +193,7 @@
 										"services",
 										"requirement",
 										"Requirement",
-										"84b1926d-d700-4206-9b50-fced46c74d19"
+										"R001"
 									]
 								}
 							},
@@ -237,7 +242,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{jira_adaptor}}/services/service1/resources/queryRequirementCollection?oslc.searchTerms=TextToFind&oslc.prefix=dcterms=<http://purl.org/dc/terms/>&oslc.select=dcterms:identifier",
+									"raw": "{{jira_adaptor}}/services/service1/resources/queryRequirementCollection?oslc.searchTerms=TextToFind&oslc.prefix=dcterms=<http://purl.org/dc/terms/>&oslc.select=dcterms:identifier&oslc.paging=true",
 									"host": [
 										"{{jira_adaptor}}"
 									],
@@ -265,7 +270,7 @@
 											"description": "Define prefixes used in oslc.where"
 										},
 										{
-											"key": "limit",
+											"key": "oslc.pageSize",
 											"value": "20",
 											"description": "Number of resources per response",
 											"disabled": true
@@ -285,6 +290,10 @@
 											"key": "oslc.properties",
 											"value": "dcterms:identifier",
 											"disabled": true
+										},
+										{
+											"key": "oslc.paging",
+											"value": "true"
 										}
 									]
 								}
@@ -558,7 +567,7 @@
 										},
 										{
 											"key": "code",
-											"value": "5123c7cdc59392fba8e8033f8191f546",
+											"value": "f009a114069d6fffbe070df4a61e35a0",
 											"description": "Authorization code.",
 											"type": "text"
 										},
@@ -786,7 +795,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{r4j_adaptor}}/services/folders/queryFolder?oslc.searchTerms=text",
+									"raw": "{{r4j_adaptor}}/services/folders/queryFolder?oslc.searchTerms=text&oslc.paging=true",
 									"host": [
 										"{{r4j_adaptor}}"
 									],
@@ -814,7 +823,7 @@
 											"disabled": true
 										},
 										{
-											"key": "limit",
+											"key": "oslc.pageSize",
 											"value": "20",
 											"description": "Number of resources per response",
 											"disabled": true
@@ -835,6 +844,10 @@
 											"key": "oslc.properties",
 											"value": "dcterms:identifier",
 											"disabled": true
+										},
+										{
+											"key": "oslc.paging",
+											"value": "true"
 										}
 									]
 								}

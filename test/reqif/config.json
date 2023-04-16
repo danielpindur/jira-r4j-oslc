@@ -1,0 +1,7 @@
+{
+    "requirementSpecType": "FUNC-REQ",
+    "requirementCollectionSpecType": "PERF-REQ",
+    "decomposedBySpecType": "decomposedBySpecType",
+    "decomposesSpecType": "deriveReq",
+    "descriptionAtributeType": "FUNC-REQ-TXT"
+}
