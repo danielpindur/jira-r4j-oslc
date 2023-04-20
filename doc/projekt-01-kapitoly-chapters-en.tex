@@ -7,50 +7,70 @@
 % \begin{document}
 
 \chapter{Introduction}
-\todo{Gramar check}
-\todo{Style document}
+%\todo{Gramar check}
+%\todo{Style document}
 This chapter summerizes the motivation and objectives of this thesis, the solution taken to achieve the objectives and the results of the thesis. In the last section the structure of the thesis is presented.
 
 \section{Motivation and Objectives}
-This work was instigaten by Honeywell International Inc. \cite{honeywell}. The company currently uses IBM Doors \cite{ibm_doors} as a solution for for requirement management. As IBM Doors has slowly become obsolete, the company is considering to switch to a new solution - Jira R4J. Honeywell currently provides its clients access to requirements stored in IBM Doors via the OSLC interface for Requirement Management Specification, which comes with IBM Doors. The company is interested in providing the same access to requirements stored in Jira R4J. The goal of this thesis is to explore and create a solution that will allow Honeywell to provide its clients access to requirements stored in Jira R4J via the OSLC interface for Requirement Management Specification.
+This work was instigaten by Honeywell International Inc. \cite{honeywell}. The company currently uses IBM Doors as a solution for for requirement management. As IBM Doors has slowly become obsolete, the company is considering to switch to a new solution - Jira R4J. Honeywell currently provides its clients access to requirements stored in IBM Doors via the OSLC interface for Requirement Management Specification, which comes with IBM Doors. The company is interested in providing the same access to requirements stored in Jira R4J. The goal of this thesis is to explore and create a solution that will allow Honeywell to provide its clients access to requirements stored in Jira R4J via the OSLC interface for Requirement Management Specification.
 
 \section{Solution}
 There are two ways to add OSLC support to a web application, either as a addon or standalone web application. After careful consideration a decision was made to create the adaptor as a standalone web application. The main reason for this decision was to reduce coupling between the web application and the OSLC interface. This allows for easier maintenance and development, as well as the possibility to use the OSLC adaptor with other web applications, beside Jira R4J, in the future. 
 
 During the initial design phase, it was also decided to split the adaptor into two separate adaptors, one for Jira, responsible for the main functionality specified by the Requirement Management Specification, and one for R4J, providing additional functionality, such as the ability to create folders and link requirements to folders. This decision was made in order explore the possibility of not needing to use the R4J pluggin at all, and instead use Jira directly. This also leads to the final solution being generic and less coupled to specific web application, allowing for easier enhancement or replacement of the underlying web application in the future.
 
-Both adaptors were created using Eclipse Lyo, a project containing SDKs and other utilities, used for easier development of OSLC applications. Lyo Designer was used to create the Domain models and Adaptor models\todo{Not sure if it should be called Toolchain model or what}, modeling the data and capabilities of both adaptors. These models were then fed to Code Generator to generate the code skeletos, compliant with the OSLC specification, for the adaptors. The generated skeletons were then filled with the actual code, implementing the functionality of the adaptors, and extended with additional functionality, such as OAuth2 authentication.
+Both adaptors were created using Eclipse Lyo, a project containing SDKs and other utilities, used for easier development of OSLC applications. Lyo Designer was used to create the Domain and Toolchain models, modeling the data and capabilities of both adaptors. These models were then fed to Code Generator to generate the code skeletos, compliant with the OSLC specification, for the adaptors. The generated skeletons were then filled with the actual code, implementing the functionality of the adaptors, and extended with additional functionality, such as OAuth2 authentication.
 
 \section{Results}
-\todo{Pravděpodobně dává smysl napsat až po dokončení implementace}
+Both adaptors were created as standalone REST based Java web applications, build on the Maven framework. During the developement, a collection of HTTP requests was created in Postman, detailing the example usage of created adaptors. The functionality of both adaptors was verified by end-to-end testing, utilising the Postman Test utility. For further verification of the base capability of Requirement Management Specification, implemented in Jira adaptor, a basic Python client was developed, providing the option to download and upload all of the requirements, in specified project, in the ReqIF format. 
+
+The mapping of the data provided by Jira and R4J API to the OSLC format, was done as genericly as possible to accomande all posible use cases, which differ a lot between different companies. During the developement some issues and missing functionality were discovered in the R4J API, resulting in non-optimal implementation of some of the functionality of R4J adaptor.
+
+The utilities and SDKs provided by Eclipse Lyo were very useful in the development and design stages of the adaptors, greatly reducting the time needed to adopt the OSLC standard. However, the documentation and examples provided by the Lyo project were outdated and not detailed enough, also lacking some deeper explanation of important concepts. The contents of the Requirement Management Specification were also not documented sufficently, compared to for example the Automation Domain Specification, resulting in difficulties in the comprehension of the specification.
 
 \section{Structure of the Thesis}
 \todo{Napsat až po konečném rozložení kapitol}
 
 %=========================================================================
 
-\chapter{Requirements Management}
-\todo{Gramar check}
-\todo{Style document}
-% something along the way of brief overview is needed for better understanding of the problems and requirements of the thesis
+\chapter{Background}
+%%\todo{Gramar check}
+%%\todo{Style document}
+This chapter briefly covers the basics of requirements management and its fundamental concepts, as well as basic overview of Jira software and Requirements for Jira plugin. Information provided in this overview are important for understanding the requirements and needs of the adaptor. 
 
-\todo{Do I want special chapter for this?}
-%Requirements are the basis for defining what the system stakeholders (users, customers, suppliers and so on) need from a system and also what the system must do in order to meet those needs, and how the surrounding processes must be orchestrated so that quality, scope and timescale objectives are satisfied. 
+\section{Requirements Management}
+The aim of requirement management is verify the acomplishment of the project's goals and objectives. The process is divided into several succesive stages, the most essectial being analysis, documentation, tracing and change control. The purpose of this process is to track the requiremnents and their status, identify inconsistencies and provide overview of the project progress to concerned stakeholders \cite{requirements_management}.
 
-%=========================================================================
+One of the most important parts of requirement management is traceability. It is the ability to track and assess the state of the requirement and its changes during the developement lifecycle, providing an audit trail, usualy used for reporting to stakeholders. Traceability can be achieved by linking requirements to other requirements, test cases or build stories.
 
-\chapter{Jira}
-Jira \cite{jira} is issue tracking and project management tool developed by Atlassian \cite{atlassian}.
-\todo{Gramar check}
-\todo{Style document}
-\todo{Jira + R4J}
-\todo{Co přesně přidává R4J do Jira}
+\subsection*{Requirements}
+Requirements are the foundation for determining the needs of system stakeholders and system itself. They represent a condition or capability
+that must be met by a system or product \cite{IEEE_24765-2017}.
+
+They can be divided into two main categories, functional and non-functional requirements. Functional requirements describe the system behavior or product features (eg. system will send email with forgotten password prompt when requested by user), while non-functional requirements usually specify the system's performace or product properties (eg. a taks has to be completed under 200 ms).
+
+\section{Requirements Interchange Format}
+%todo
+
+\section{Requirement Management Systems}
+Requirement Management System is a software tool, used for management of the project requirements during the developement lifecycle. Currently, there are several different requirement management systems, developed by competing companies, are available on the market. This section focuses on the high level overview of IBM Doors and Jira Software with Requirements for Jira plugin, which are relevant to the contents of this thesis.
+
+\subsection{IBM Doors}
+IBM Doors \cite{ibm_doors} 
+%todo
+
+\subsection{Jira Software}
+Jira Software \cite{jira} is issue tracking and project management tool developed by Atlassian \cite{atlassian}.
+%todo
+
+\subsection*{Requirements for Jira}
+Requirements for Jira (R4J) \cite{requirements_for_jira} is a native Jira plugin, extending the capabilities of Jira by adding support for requirements management by making use of Jira issues. It provides the ability to manage requirement by createing a folder structure, enabling importing and exporting in the reqIF format, enabling traceability, by utilizing the Jira link functionality, and adding the option to export these links into comperehensive traceability matrix. All of these features are available both from the Jira web user interface as well as from the R4J REST API \cite{r4j_api}.
 
 %=========================================================================
 
 \chapter{OSLC -- Open Services for Lifecycle Collaboration}
-\todo{Gramar check}
-\todo{Style document}
+%\todo{Gramar check}
+%\todo{Style document}
 This chapter provides a brief overview of the OSLC (Open Services for Lifecycle Collaboration) \cite{oslc}, its fundamental technologies, and the Core and Requirement Management specifications, which are used in this thesis.
 
 \section{Overview}
@@ -151,32 +171,33 @@ Lyo Designer also contains an utility called Code Generator, which is capable of
 
 %=========================================================================
 
+\label{chapter:authentication}
 \chapter{Authentication}
-\todo{Gramar check}
-\todo{Style document}
+%\todo{Gramar check}
+%\todo{Style document}
 \todo{Basic Auth}
 \todo{OAuth2}
 
 
 \chapter{Adaptor Design}
-\todo{Gramar check}
-\todo{Style document}
+%\todo{Gramar check}
+%\todo{Style document}
 \todo{Návrh v lyu}
 \todo{Rozdělení na Jira a R4J adaptory}
 \todo{Identifikátory Requirement a RequirementCollection}
 \todo{Mapping of properties}
 
 \chapter{Implementation}
-\todo{Gramar check}
-\todo{Style document}
+%\todo{Gramar check}
+%\todo{Style document}
 \todo{Authentizace Basic + OAuth, not sure if here nebo v Adaptor Design zmínit jak to generuje Lyo a jak to používáme/bylo změno}
 \todo{Popis toho jaké jdou dělat query}
 \todo{Konfigurační soubory pro Jiru a R4J}
 \todo{Možnost uložení identifikátorů v labels fieldu}
 
 \chapter{Evaluation and Testing}
-\todo{Gramar check}
-\todo{Style document}
+%\todo{Gramar check}
+%\todo{Style document}
 \todo{Testování v Postmanovi}
 \todo{Testování pomocí ReqIF souboru}
 \todo{Limitace + co dělat když nejde něco přidat do Jiry, permision needed for user to do CRUD operations}
@@ -185,8 +206,8 @@ Lyo Designer also contains an utility called Code Generator, which is capable of
 \todo{BUGv R4J API: 500 returned při updatu folderu s parent=ROOT}
 
 \chapter{Conclusion}
-\todo{Gramar check}
-\todo{Style document}
+%\todo{Gramar check}
+%\todo{Style document}
 
 
 %=========================================================================
