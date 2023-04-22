@@ -29,7 +29,7 @@ The mapping of the data provided by Jira and R4J API to the OSLC format, was don
 The utilities and SDKs provided by Eclipse Lyo were very useful in the development and design stages of the adaptors, greatly reducting the time needed to adopt the OSLC standard. However, the documentation and examples provided by the Lyo project were outdated and not detailed enough, also lacking some deeper explanation of important concepts. The contents of the Requirement Management Specification were also not documented sufficently, compared to for example the Automation Domain Specification, resulting in difficulties in the comprehension of the specification.
 
 \section{Structure of the Thesis}
-\todo{Napsat až po konečném rozložení kapitol}
+\todo{Write after thesis structure is finalized}
 
 %=========================================================================
 
@@ -79,13 +79,50 @@ The document is divided into two parts, THE-HEADER, containing metadata informat
 \label{chapter:authentication}
 %\todo{Gramar check}
 %\todo{Style document}
-Authentication is the process of verifying the identity of a person or user. This chapter gives a brief overview of BASIC and OAuth authentication, which are used in this thesis.
+Authentication is the process of verifying the identity of a person or user. It is used to restrict the server resources or functionality to only authorized users or specific groups of users. Several different authentication methods exists, each with its own advantages and disadvantages. This chapter gives a brief overview of BASIC and OAuth authentication methdos, which are used in this thesis.
 
 \section{Basic Access Authentication}
-BASIC (Basic Access Authentication) \cite{basic_auth_rfc}
+BASIC (Basic Access Authentication) was first defined as a part of HTTP 1.0 specification \cite{http1.0_w3}, but the standard has been since superceeded and redefined as part of its own RFC \cite{basic_auth_rfc}. As its name suggest, BASIC is the most fundamental method of verifying the identity of client against server. It utilisis the HTTP Authorization header and provides server with the credentials of the client in form of Authorization: Basic <credentials>. The credentials are provided as a string, encoded in base64 \cite{base64_rfc}, containing the username and password joined by a collon.
+
+Main advantage of using BASIC authentication is its ease of implementation. It is supported by most of available frameworks and does not require any cryptographic operations. However, it is also the most vurnerable one, as the credentials are sent in plain text, which makes it susceptible to interception by third party and potential creadentials theft. Most of this insecurities can be mitigated by using TLS to encrypt the communication between client and server, but it is still not a recomanded method for authentication in production environments.
 
 \section{Open Authorization}
-OAuth (Open Authorization)   \cite{oauth2_rfc}
+OAuth (Open Authorization) is a standard for delegated authentication and authorization, which stemmed from the need to enable the end users to be able to authenticate in the third party applications and services, using their creadentials from other service, which acts as the authorization server. Originaly, this was done by sharing the creadentials with the third party application, which then used them to authenticate the user. This method was vulnerable to the same security issues as BASIC authentication and on top of that it also allowed the third party application to access and read the users creadentials. OAuth was created to mitigate this problems and create a standardisated way for services to offer authentication and authorization to third party applications, without the need to share the users creadentials between them. The standard was first introduced as OAuth 1.0 \cite{oauth1_rfc}, which used asymmetric cryptography to encrypt and verify the creadentials, but was later superceeded by OAuth 2.0 \cite{oauth2_rfc}, which is easier to implement, as it leaves the encryption and verification of the creadentials origin to TLS protocol. The next section provides a brief overview of OAuth 2.0 and its authentication workflow.
+
+\subsection{OAuth 2.0}
+%what is oauth 2.0
+OAuth 2.0 is a standard published as a reaction to new use cases. It is now backwards compatible with OAuth 1.0. The standard enforces that all of the comunication between the client and the authorization server is done using HTTPS. 
+
+Several diferent roles are defined by the standard:
+\begin{itemize}
+  \item Resource owner -- entity capable of granting access to a protected resource
+  \item Resource server -- server containing the resources, capable of authorization using the access tokens
+  \item Client -- third party application, which is requesting access to resources on the resource server on behalf of the resource owner
+  \item Authorization server -- issues access tokens to resource owner after successful authentication and authorization
+\end{itemize}
+
+\subsection*{Authorization Code Grant}
+The standard also defines four authorization grants, ways for client to abtain the access token. For simplicity only the most common one, Authorization Code Grant, is described, as it is the one used in this thesis.
+
+Authorization Code Grant is a two step process to obtain the access token. The user is first rediced to the authorization server, with a request to obtain authorization code. The authorization server authenticates the user and asks him for approval to grant the client specified scope of access to resources on the resource server. After the approval, the user is redirected back to client, with the authorization code. The client the uses this to make a request to the authorization server to obtain th access token. The authorization server then verifies the authorization code and issues the access token.
+
+\todo{Add OAuth 2.0 Authorization Code Grant workflow diagram}
+
+\subsection*{Proof Key for Code Exchange}
+PKCE (Proof Key for Code Exchange) \cite{pkce_rfc} builds on top of Authorization Code Grant to further secure the process. It adds a secret called Code Verifier. Code Verifier is then to transformed into a value called Code Challage, which is send together with the authorization code request. Code Verifier is then send together with authorization code as a part of the access token request. The authorization server issues a new access token, only if the received Code Verifier matches the one used to generate the Code Challange. This removes the risk of the authorization code being intercepted and used to generate the access token, as the authorization server will not create the access token without the Code Verifier.
+
+\todo{Add OAuth 2.0 PKCE workflow diagram}
+
+\subsection*{Access and Refresh Tokens}
+After successful authorization against the authorization server, the client is issued an access token. The client then uses this token to access the resources available on resource server, by sending it with each HTTP request in the Authorization header. Access tokens can be either an opaque string, called bearer token, or sender-constrained token. Sender-constrained tokens can be used only to authorize request send by same client, who the token was issued to. This is usually achieved by asymmetric cryptography of the token. To comply with the standard, the token cannot convey user identity or any other information about the user.
+
+Together with the access token, the authorization server also issues a refresh token, which can be used to generate a new access token, without user interaction with the authorization server. This allows the authorization server to issue access tokens with shorter expiration time, reducting the impact of the token being intercepted and stolen.
+
+\subsection*{Scopes}
+Compared to OAuth 1.0, OAuth 2.0 also introduces the concept of OAuth Scopes, allowing the authorization server to issue access tokens with various limitations on access to resources. The scopes are defined by the resource server. The requested scope is part of the authorization request to authorization server and is bind to the access token generated as a result of the authorization.
+
+\subsection*{OpenID Connect}
+OIDC (OpenID Connect) \cite{oidc} is an extension of OAuth 2.0 allowing to authenticate the user against the authorization server as well as obtain basic user profile information, about the authenticated user.
 
 %=========================================================================
 
@@ -195,32 +232,36 @@ Lyo Designer also contains an utility called Code Generator, which is capable of
 \chapter{Adaptor Design}
 %\todo{Gramar check}
 %\todo{Style document}
-\todo{Návrh v lyu}
-\todo{Rozdělení na Jira a R4J adaptory}
-\todo{Identifikátory Requirement a RequirementCollection}
-\todo{Mapping of properties}
+
+%\todo{Návrh v lyu}
+%\todo{Rozdělení na Jira a R4J adaptory}
+%\todo{Identifikátory Requirement a RequirementCollection}
+%\todo{Mapping of properties}
 
 %=========================================================================
 
 \chapter{Implementation}
 %\todo{Gramar check}
 %\todo{Style document}
-\todo{Authentizace Basic + OAuth, not sure if here nebo v Adaptor Design zmínit jak to generuje Lyo a jak to používáme/bylo změno}
-\todo{Popis toho jaké jdou dělat query}
-\todo{Konfigurační soubory pro Jiru a R4J}
-\todo{Možnost uložení identifikátorů v labels fieldu}
+
+%\todo{Authentizace Basic + OAuth, not sure if here nebo v Adaptor Design zmínit jak to generuje Lyo a jak to používáme/bylo změno}
+%\todo{Popis toho jaké jdou dělat query}
+%\todo{Konfigurační soubory pro Jiru a R4J}
+%\todo{Možnost uložení identifikátorů v labels fieldu}
 
 %=========================================================================
 
 \chapter{Evaluation and Testing}
 %\todo{Gramar check}
 %\todo{Style document}
-\todo{Testování v Postmanovi}
-\todo{Testování pomocí ReqIF souboru}
-\todo{Limitace + co dělat když nejde něco přidat do Jiry, permision needed for user to do CRUD operations}
-\todo{Pokud požiju R4J hledám pomocí folder a získávám jenom Bugs/Reqs které jsou  nalinkované v R4J, pokud využitu JIRA adaptor získávám všechny issues daného typu (v configuraci) -> JIRA adaptor potřebuje speciální issues types aby rozlišoval mezi req a jinými issues}
-\todo{req a reqCollection type name nesmí být stejné}
-\todo{BUGv R4J API: 500 returned při updatu folderu s parent=ROOT}
+
+%\todo{Testování v Postmanovi}
+%\todo{Testování pomocí ReqIF souboru}
+%\todo{Limitace + co dělat když nejde něco přidat do Jiry, permision needed for user to do CRUD operations}
+%\todo{Pokud požiju R4J hledám pomocí folder a získávám jenom Bugs/Reqs které jsou  nalinkované v R4J, pokud využitu JIRA adaptor získávám všechny issues daného typu (v configuraci) -> JIRA adaptor potřebuje speciální issues types aby rozlišoval mezi req a jinými issues}
+%\todo{req a reqCollection type name nesmí být stejné}
+%\todo{BUGv R4J API: 500 returned při updatu folderu s parent=ROOT}
+%možnost přidat OIDC nebo OAuth PKCE do budoucna
 
 %=========================================================================
 
