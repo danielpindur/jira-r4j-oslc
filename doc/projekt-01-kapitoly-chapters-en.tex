@@ -12,7 +12,7 @@
 This chapter summerizes the motivation and objectives of this thesis, the solution taken to achieve the objectives and the results of the thesis. In the last section the structure of the thesis is presented.
 
 \section{Motivation and Objectives}
-This work was instigaten by Honeywell International Inc. \cite{honeywell}. The company currently uses IBM Doors as a solution for for requirement management. As IBM Doors has slowly become obsolete, the company is considering to switch to a new solution - Jira R4J. Honeywell currently provides its clients access to requirements stored in IBM Doors via the OSLC interface for Requirement Management Specification, which comes with IBM Doors. The company is interested in providing the same access to requirements stored in Jira R4J. The goal of this thesis is to explore and create a solution that will allow Honeywell to provide its clients access to requirements stored in Jira R4J via the OSLC interface for Requirement Management Specification.
+This work was instigaten by Honeywell International Inc. \cite{honeywell}. The company currently uses IBM Doors as a solution for for requirement management. The company is exploring the option and considering to switch to a new solution - Jira R4J. Honeywell currently provides its clients access to requirements stored in IBM Doors via the OSLC interface for Requirement Management Specification, which comes with IBM Doors. The company is interested in providing the same access to requirements stored in Jira R4J. The goal of this thesis is to explore and create a solution that will allow Honeywell to provide its clients access to requirements stored in Jira R4J via the OSLC interface for Requirement Management Specification.
 
 \section{Solution}
 There are two ways to add OSLC support to a web application, either as a addon or standalone web application. After careful consideration a decision was made to create the adaptor as a standalone web application. The main reason for this decision was to reduce coupling between the web application and the OSLC interface. This allows for easier maintenance and development, as well as the possibility to use the OSLC adaptor with other web applications, beside Jira R4J, in the future. 
@@ -49,22 +49,43 @@ that must be met by a system or product \cite{IEEE_24765-2017}.
 
 They can be divided into two main categories, functional and non-functional requirements. Functional requirements describe the system behavior or product features (eg. system will send email with forgotten password prompt when requested by user), while non-functional requirements usually specify the system's performace or product properties (eg. a taks has to be completed under 200 ms).
 
-\section{Requirements Interchange Format}
-%todo
-
 \section{Requirement Management Systems}
-Requirement Management System is a software tool, used for management of the project requirements during the developement lifecycle. Currently, there are several different requirement management systems, developed by competing companies, are available on the market. This section focuses on the high level overview of IBM Doors and Jira Software with Requirements for Jira plugin, which are relevant to the contents of this thesis.
+Requirement Management System is a software tool, used for management of the project requirements during the developement lifecycle. Currently, there are several different requirement management systems, developed by competing companies, available on the market. Some of the most popular ones are IBM Doors and Jira Software with Requirements for Jira plugin. A high level overview for these options is provided in the following sections, as they are important in the context of this thesis.
 
-\subsection{IBM Doors}
-IBM Doors \cite{ibm_doors} 
-%todo
+\subsection*{IBM Doors}
+IBM Doors \cite{ibm_doors} is requirement management system developed by IBM \cite{ibm}. It is a complex tool, designed to handle large projects, with many requirements and stakeholders. The tool is commonly used in aerospace, defense and automotive industries. It provides a wide set of features to aid in requirement management process, such as requirement traceability, collaboration and ease of integration with other IBM tools. It is also designed in a way to help companies comply with industry standards and regulations for requirement management and project developement. All of the previously mentioned features are available through web user interface, REST API as well as native OSLC interface.
 
-\subsection{Jira Software}
-Jira Software \cite{jira} is issue tracking and project management tool developed by Atlassian \cite{atlassian}.
-%todo
+\subsection*{Jira Software and Requirements for Jira}
+Jira Software \cite{jira} is issue tracking and project management tool developed by Atlassian \cite{atlassian}. Compared to IBM Doors, it provides more user friendly interface and is more flexible, as its functionality spans across many different areas, such as project management, test management and bug tracking. It also allows the end customers to extend the capabilities of their Jira instance by adding plugins, developed by Atlassian or third party developers, augmenting the original functionality or adding completely new features. The contents of Jira and its functionality are accessible through web user inteface or REST API \cite{jira_api} with BASIC or OAuth2 authentication, further described in chapter \ref{chapter:authentication}. It does not provide a native OSLC interface, but the support for OSLC can be added by installing a third party plugin (eg. OSLC Connector for Jira \cite{oslc_connector_for_jira} for Change Management Specification).
 
-\subsection*{Requirements for Jira}
-Requirements for Jira (R4J) \cite{requirements_for_jira} is a native Jira plugin, extending the capabilities of Jira by adding support for requirements management by making use of Jira issues. It provides the ability to manage requirement by createing a folder structure, enabling importing and exporting in the reqIF format, enabling traceability, by utilizing the Jira link functionality, and adding the option to export these links into comperehensive traceability matrix. All of these features are available both from the Jira web user interface as well as from the R4J REST API \cite{r4j_api}.
+Requirements for Jira (R4J) \cite{requirements_for_jira} is a native Jira plugin, extending the capabilities of Jira by adding support for requirements management by making use of Jira issues. It provides the ability to manage requirement by createing a folder structure, enabling importing and exporting in the reqIF format, enabling traceability, by utilizing the Jira link functionality, and adding the option to export these links into comperehensive traceability matrix. All of these features are available both from the Jira web user interface as well as from the R4J REST API \cite{r4j_api}. Because the requirement management system provided by R4J is a part of Jira, it allows for better traceability, as the requirements can not only be linked to other requirements, but also to other Jira issue types, such as bugs, stories, test cases and many more.
+
+\section{Requirements Interchange Format}
+Requirements Interchange Format (ReqIF) \cite{reqif_standard} is a XML based format used for transfering and sharing requirements between requirement managment systems or other tools. The format defines standardisated way to describe requirements, their attributes and properties, releations between requirements and hierarchical structure, in which the requirements are contained. Each object, type, attribute and releations contains an unique identifier, by which it can be referenced from other objects.
+
+The document is divided into two parts, THE-HEADER, containing metadata information about the requirement collection, and CORE-CONTENT, which is then further split into five sections, each containing different information about the requirements:
+
+\begin{itemize}
+  \item DATATYPES -- definitions of datatypes used in the document
+  \item SPEC-TYPES -- definitions of types of requirements, its attributes and releations, the datatype of the attribute is defined by a reference to a definition in DATATYPES
+  \item SPEC-OBJECTS -- collection of requirements and its properties, described in a format specified in SPEC-TYPES
+  \item SPEC-RELATIONS -- collection of releations between requirements, described in a format specified in SPEC-TYPES
+  \item SPECIFICATIONS -- requirements hierarchical tree structure
+\end{itemize}
+
+%=========================================================================
+
+\chapter{Authentication}
+\label{chapter:authentication}
+%\todo{Gramar check}
+%\todo{Style document}
+Authentication is the process of verifying the identity of a person or user. This chapter gives a brief overview of BASIC and OAuth authentication, which are used in this thesis.
+
+\section{Basic Access Authentication}
+BASIC (Basic Access Authentication) \cite{basic_auth_rfc}
+
+\section{Open Authorization}
+OAuth (Open Authorization)   \cite{oauth2_rfc}
 
 %=========================================================================
 
@@ -171,14 +192,6 @@ Lyo Designer also contains an utility called Code Generator, which is capable of
 
 %=========================================================================
 
-\label{chapter:authentication}
-\chapter{Authentication}
-%\todo{Gramar check}
-%\todo{Style document}
-\todo{Basic Auth}
-\todo{OAuth2}
-
-
 \chapter{Adaptor Design}
 %\todo{Gramar check}
 %\todo{Style document}
@@ -187,6 +200,8 @@ Lyo Designer also contains an utility called Code Generator, which is capable of
 \todo{Identifikátory Requirement a RequirementCollection}
 \todo{Mapping of properties}
 
+%=========================================================================
+
 \chapter{Implementation}
 %\todo{Gramar check}
 %\todo{Style document}
@@ -194,6 +209,8 @@ Lyo Designer also contains an utility called Code Generator, which is capable of
 \todo{Popis toho jaké jdou dělat query}
 \todo{Konfigurační soubory pro Jiru a R4J}
 \todo{Možnost uložení identifikátorů v labels fieldu}
+
+%=========================================================================
 
 \chapter{Evaluation and Testing}
 %\todo{Gramar check}
@@ -205,10 +222,11 @@ Lyo Designer also contains an utility called Code Generator, which is capable of
 \todo{req a reqCollection type name nesmí být stejné}
 \todo{BUGv R4J API: 500 returned při updatu folderu s parent=ROOT}
 
+%=========================================================================
+
 \chapter{Conclusion}
 %\todo{Gramar check}
 %\todo{Style document}
-
 
 %=========================================================================
 
