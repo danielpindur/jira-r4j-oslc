@@ -7,11 +7,10 @@
 % \begin{document}
 
 \chapter{Introduction}
-%\todo{Style document}
 This chapter summarizes the motivation and objectives of this thesis, the solution taken to achieve the objectives, and the results of the thesis. In the last section, the structure of the thesis is presented.
 
 \section{Motivation and Objectives}
-This work was initiated by Honeywell International Inc. \cite{honeywell}. The company currently uses IBM Doors as a solution for requirement management. The company is exploring the option and considering switching to a new solution - Jira R4J. Honeywell currently provides its clients access to requirements stored in IBM Doors via the OSLC interface for Requirement Management Specification, which comes with IBM Doors. The company is interested in providing the same access to requirements stored in Jira R4J. The goal of this thesis is to explore and create a solution that will allow Honeywell to provide its clients with access to requirements stored in Jira R4J via the OSLC interface for Requirement Management Specification.
+This work was initiated by Honeywell International Inc. \cite{honeywell}, which currently uses IBM Doors as a solution for requirement management. The company is exploring the option and considering switching to a new solution -- Jira R4J. Honeywell currently provides its clients access to requirements stored in IBM Doors via the OSLC interface for Requirement Management Specification, which comes with IBM Doors. The company is interested in providing the same access to requirements stored in Jira R4J. The goal of this thesis is to explore and create a solution that will allow Honeywell to provide its clients with access to requirements stored in Jira R4J via the OSLC interface for Requirement Management Specification.
 
 \section{Solution}
 There are two ways to add OSLC support to a web application, either as an add-on or a standalone web application. After careful consideration, a decision was made to create the adaptor as a standalone web application. The main reason for this decision was to reduce the coupling between the web application and the OSLC interface, which allows for easier maintenance and development, as well as the possibility of using the OSLC adaptor with other web applications, besides Jira R4J, in the future. 
@@ -35,20 +34,19 @@ The utilities and SDKs provided by Eclipse Lyo were very useful in the developme
 %=========================================================================
 
 \chapter{Background}
-%%\todo{Style document}
 This chapter briefly covers the basics of requirements management and its fundamental concepts, as well as a basic overview of Jira Software and Requirements for Jira plugin. Information provided in this overview is important for understanding the requirements and needs of the adaptor.
 
 \section{Requirements Management}
 The aim of requirement management is the verification of the accomplishment of the project's goals and objectives. The process is divided into several successive stages, the most essential being analysis, documentation, tracing, and change control. The purpose of this process is to track the requirements and their status, identify inconsistencies and provide an overview of the project progress to concerned stakeholders \cite{requirements_management}.
 
-One of the most important parts of requirement management is traceability. It is the ability to track and assess the state of the requirement and its changes during the development lifecycle, providing an audit trail, usually used for reporting to stakeholders. Traceability can be achieved by linking requirements to other requirements, test cases, or build stories.
+One of the most important parts of requirement management is \emph{traceability}. It is the ability to track and assess the state of the requirement and its changes during the development lifecycle, providing an audit trail, usually used for reporting to stakeholders. Traceability can be achieved by linking requirements to other requirements, test cases, or build stories.
 
 \subsection*{Requirements}
 \label{sec:requirements}
 Requirements are the foundation for determining the needs of system stakeholders and the system itself. They represent a condition or capability
 that must be met by a system or product \cite{IEEE_24765-2017}.
 
-They can be divided into two main categories, functional and non-functional requirements. Functional requirements describe the system behavior or product features (e.g., the system will send an email with a forgotten password prompt when requested by the user), while non-functional requirements usually specify the system's performance or product properties (e.g., a task has to be completed under 200 ms).
+They can be divided into two main categories, \emph{functional} and \emph{non-functional} requirements. Functional requirements describe the system behavior or product features (e.g., the system will send an email with a forgotten password prompt when requested by the user), while non-functional requirements usually specify the system's performance or product properties (e.g., a task has to be completed under 200 ms).
 
 \section{Requirement Management Systems}
 Requirement Management System is a software tool used for the management of project requirements during the development lifecycle. Currently, there are several different requirement management systems developed by competing companies available on the market. Some of the most popular ones are IBM Doors and Jira Software with Requirements for Jira plugin. A high-level overview of these options is provided in the following sections, as they are important in the context of this thesis.
@@ -57,32 +55,31 @@ Requirement Management System is a software tool used for the management of proj
 IBM Doors \cite{ibm_doors} is a requirement management system developed by IBM \cite{ibm}. It is a complex tool designed to handle large projects with many requirements and stakeholders. The tool is commonly used in the aerospace, defense, and automotive industries. It provides a wide set of features to aid in the requirement management processes, such as requirement traceability, collaboration, and ease of integration with other IBM tools. It is also designed in a way to help companies comply with industry standards and regulations for requirement management and project development. All of the previously mentioned features are available through the web user interface, REST API as well as native OSLC interface.
 
 \subsection*{Jira Software and Requirements for Jira}
-Jira Software \cite{jira} is an issue-tracking and project management tool developed by Atlassian \cite{atlassian}. Compared to IBM Doors, it provides a more user-friendly interface and is more flexible, as its functionality spans across many different areas, such as project management, test management, and bug tracking. It also allows the end customers to extend the capabilities of their Jira instance by adding plugins developed by Atlassian or third-party developers, augmenting the original functionality, or adding completely new features. The contents of Jira and its functionality are accessible through the web user interface or REST API \cite{jira_api} with BASIC or OAuth2 authentication, further described in chapter \ref{chapter:authentication}. It does not provide a native OSLC interface, but the support for OSLC can be added by installing a third-party plugin (e.g., OSLC Connector for Jira \cite{oslc_connector_for_jira} for Change Management Specification).
+\textbf{Jira Software} \cite{jira} is an issue-tracking and project management tool developed by Atlassian \cite{atlassian}. Compared to IBM Doors, it provides a more user-friendly interface and is more flexible, as its functionality spans across many different areas, such as project management, test management, and bug tracking. It also allows the end customers to extend the capabilities of their Jira instance by adding plugins developed by Atlassian or third-party developers, augmenting the original functionality, or adding completely new features. The contents of Jira and its functionality are accessible through the web user interface or REST API \cite{jira_api} with BASIC or OAuth2 authentication, further described in chapter \ref{chapter:authentication}. It does not provide a native OSLC interface, but the support for OSLC can be added by installing a third-party plugin (e.g., OSLC Connector for Jira \cite{oslc_connector_for_jira} for Change Management Specification).
 
-Requirements for Jira (R4J) \cite{requirements_for_jira} is a native Jira plugin extending the capabilities of Jira by adding support for requirements management by making use of Jira issues. It provides the ability to manage requirements by creating a folder structure, enabling importing and exporting in the reqIF format, enabling traceability, by utilizing the Jira link functionality, and adding the option to export these links into a comprehensive traceability matrix. All of these features are available both from the Jira web user interface as well as from the R4J REST API \cite{r4j_api}. Because the requirement management system provided by R4J is a part of Jira, it allows for better traceability, as the requirements can not only be linked to other requirements but also to other Jira issue types, such as bugs, stories, test cases, and many more.
+\textbf{Requirements for Jira} (R4J) \cite{requirements_for_jira} is a native Jira plugin extending the capabilities of Jira by adding support for requirements management by making use of Jira issues. It provides the ability to manage requirements by creating a folder structure, enabling importing and exporting in the reqIF format, enabling traceability, by utilizing the Jira link functionality, and adding the option to export these links into a comprehensive traceability matrix. All of these features are available both from the Jira web user interface as well as from the R4J REST API \cite{r4j_api}. Because the requirement management system provided by R4J is a part of Jira, it allows for better traceability, as the requirements can not only be linked to other requirements but also to other Jira issue types, such as bugs, stories, test cases, and many more.
 
 \section{Requirements Interchange Format}
 Requirements Interchange Format (ReqIF) \cite{reqif_standard} is an XML-based format used for transferring and sharing requirements between requirement management systems or other tools. The format defines a standardized way to describe requirements, their attributes and properties, relations between requirements, and a hierarchical structure, in which the requirements are contained. Each object, type, attribute, and relation contains a unique identifier by which it can be referenced from other objects.
 
-The document is divided into two parts, THE-HEADER, containing metadata information about the requirement collection, and CORE-CONTENT, which is then further split into five sections, each containing different information about the requirements:
+The document is divided into two parts, \texttt{THE-HEADER}, containing metadata information about the requirement collection, and \texttt{CORE-CONTENT}, which is then further split into five sections, each containing different information about the requirements:
 
 \begin{itemize}
-  \item DATATYPES -- definitions of datatypes used in the document
-  \item SPEC-TYPES -- definitions of types of requirements, its attributes and relations, the data type of the attribute is defined by a reference to a definition in DATATYPES
-  \item SPEC-OBJECTS -- a collection of requirements and its properties, described in a format specified in SPEC-TYPES
-  \item SPEC-RELATIONS -- a collection of relations between requirements, described in a format specified in SPEC-TYPES
-  \item SPECIFICATIONS -- requirements hierarchical tree structure
+  \item \texttt{DATATYPES} -- definitions of datatypes used in the document
+  \item \texttt{SPEC-TYPES} -- definitions of types of requirements, its attributes and relations, the data type of the attribute is defined by a reference to a definition in \texttt{DATATYPES}
+  \item \texttt{SPEC-OBJECTS} -- a collection of requirements and its properties, described in a format specified in \texttt{SPEC-TYPES}
+  \item \texttt{SPEC-RELATIONS} -- a collection of relations between requirements, described in a format specified in \texttt{SPEC-TYPES}
+  \item \texttt{SPECIFICATIONS} -- requirements hierarchical tree structure
 \end{itemize}
 
 %=========================================================================
 
 \chapter{Authentication}
 \label{chapter:authentication}
-%\todo{Style document}
 Authentication is the process of verifying the identity of a person or user. It is used to restrict the server resources or functionality to only authorized users or specific groups of users. Several different authentication methods exist, each with its own advantages and disadvantages. This chapter gives a brief overview of BASIC and OAuth authentication methods, which are used in this thesis.
 
 \section{Basic Access Authentication}
-BASIC (Basic Access Authentication) was first defined as a part of HTTP 1.0 specification \cite{http1.0_w3}, but the standard has been since superseded and redefined as part of its own RFC \cite{basic_auth_rfc}. As its name suggests, BASIC is the most fundamental method of verifying the identity of a client against a server. It utilizes the HTTP Authorization header and provides the server with the credentials of the client in the form of Authorization: Basic <credentials>. The credentials are provided as a string, encoded in base64 \cite{base64_rfc}, containing the username and password joined by a colon.
+BASIC (Basic Access Authentication) was first defined as a part of HTTP 1.0 specification \cite{http1.0_w3}, but the standard has been since superseded and redefined as part of its own RFC \cite{basic_auth_rfc}. As its name suggests, BASIC is the most fundamental method of verifying the identity of a client against a server. It utilizes the HTTP \texttt{Authorization} header and provides the server with the credentials of the client in the form of \texttt{Authorization: Basic <credentials>}. The credentials are provided as a string, encoded in base64 \cite{base64_rfc}, containing the username and password joined by a colon.
 
 The main advantage of using BASIC authentication is its ease of implementation. It is supported by most of the available frameworks and does not require any cryptographic operations. However, it is also the most vulnerable one, as the credentials are sent in plain text, which makes it susceptible to interception by a third-party and potential credentials theft. Most of these insecurities can be mitigated by using TLS to encrypt the communication between client and server, but it is still not a recommended method for authentication in production environments.
 
@@ -94,31 +91,41 @@ OAuth 2.0 is a standard published as a reaction to new use cases. It is not back
 
 Several different roles are defined by the standard:
 \begin{itemize}
-  \item Resource owner -- entity capable of granting access to a protected resource
-  \item Resource server -- server containing the resources, capable of authorization using the access tokens
-  \item Client -- third party application, which is requesting access to resources on the resource server on behalf of the resource owner
-  \item Authorization server -- issues access tokens to resource owner after successful authentication and authorization
+  \item \textbf{Resource owner} -- entity capable of granting access to a protected resource
+  \item \textbf{Resource server} -- server containing the resources, capable of authorization using the access tokens
+  \item \textbf{Client} -- third party application, which is requesting access to resources on the resource server on behalf of the resource owner
+  \item \textbf{Authorization server} -- issues access tokens to resource owner after successful authentication and authorization
 \end{itemize}
 
-\subsection*{Authorization Code Grant}
+\subsection*{Code Grants}
 The standard also defines four authorization grants, ways for a client to obtain the access token. For simplicity, only the most common one, Authorization Code Grant, is described, as it is the one used in this thesis.
 
-Authorization Code Grant is a two-step process to obtain the access token. The user is first redirected to the authorization server with a request to obtain an authorization code. The authorization server authenticates the user and asks him for approval to grant the client specified scope of access to resources on the resource server. After the approval, the user is redirected back to the client with the authorization code. The client then uses the code to make a request to the authorization server to obtain the access token. The authorization server then verifies the authorization code and issues the access token.
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=.8 \linewidth]{figures/auth-sequence-auth-code.pdf}
+  \caption{OAuth 2.0 Authorization Code Grant flow diagram}
+  \label{fig:oauth2_auth_code_grant}
+\end{figure}
 
-\todo{Add OAuth 2.0 Authorization Code Grant workflow diagram}
+\textbf{Authorization Code Grant} is a two-step process to obtain the access token. The user is first redirected to the authorization server with a request to obtain an authorization code. The authorization server authenticates the user and asks him for approval to grant the client specified scope of access to resources on the resource server. After the approval, the user is redirected back to the client with the authorization code. The client then uses the code together with client ID and client secret to make a request to the authorization server to obtain the access token. The authorization server then verifies the authorization code and issues the access token.
 
 \subsection*{Proof Key for Code Exchange}
-PKCE (Proof Key for Code Exchange) \cite{pkce_rfc} builds on top of Authorization Code Grant to further secure the process. It adds a secret called Code Verifier. Code Verifier is then to transformed into a value called Code Challenge, which is sent together with the authorization code request. Code Verifier is then sent together with the authorization code as a part of the access token request. The authorization server issues a new access token only if the received Code Verifier matches the one used to generate the Code challenge. This removes the risk of the authorization code being intercepted and used to generate the access token, as the authorization server will not create the access token without the Code Verifier, which is not part of the intercepted response.
+PKCE (Proof Key for Code Exchange) \cite{pkce_rfc} builds on top of Authorization Code Grant to further secure the process. It adds a secret called \emph{Code Verifier}. Code Verifier is then to transformed into a value called \emph{Code Challenge}, which is sent together with the authorization code request. Code Verifier is then sent together with the authorization code as a part of the access token request. The authorization server issues a new access token only if the received Code Verifier matches the one used to generate the Code challenge. This removes the risk of the authorization code being intercepted and used to generate the access token, as the authorization server will not create the access token without the Code Verifier, which is not part of the intercepted response.
 
-\todo{Add OAuth 2.0 PKCE workflow diagram}
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=.8 \linewidth]{figures/auth-sequence-pkce.pdf}
+  \caption{OAuth 2.0 Proof Key for Code Exchange flow diagram}
+  \label{fig:oauth2_pkce}
+\end{figure}
 
 \subsection*{Access and Refresh Tokens}
-After successful authorization against the authorization server, the client is issued an access token. The client then uses this token to access the resources available on the resource server by sending it with each HTTP request in the Authorization header. Access tokens can be either an opaque string, called a bearer token, or a sender-constrained token. Sender-constrained tokens can be used only to authorize requests sent by the same client to whom the token was issued. This is usually achieved by asymmetric cryptography of the token. To comply with the standard, the token cannot convey user identity or any other information about the user.
+After successful authorization against the authorization server, the client is issued an \textbf{access token}. The client then uses this token to access the resources available on the resource server by sending it with each HTTP request in the Authorization header. Access tokens can be either an opaque string, called a \emph{bearer token}, or a \emph{sender-constrained token}. Sender-constrained tokens can be used only to authorize requests sent by the same client to whom the token was issued. This is usually achieved by asymmetric cryptography of the token. To comply with the standard, the token cannot convey user identity or any other information about the user.
 
-Together with the access token, the authorization server also issues a refresh token, which can be used to generate a new access token without user interaction with the authorization server. This allows the authorization server to issue access tokens with a shorter expiration time, reducing the impact of the token being intercepted and stolen.
+Together with the access token, the authorization server also issues a \textbf{refresh token}, which can be used to generate a new access token without user interaction with the authorization server. This allows the authorization server to issue access tokens with a shorter expiration time, reducing the impact of the token being intercepted and stolen.
 
 \subsection*{Scopes}
-Compared to OAuth 1.0, OAuth 2.0 also introduces the concept of OAuth Scopes, allowing the authorization server to issue access tokens with various limitations on access to resources. The scopes are defined by the resource server. The requested scope is part of the authorization request to the authorization server and is bound to the access token generated as a result of the authorization.
+Compared to OAuth 1.0, OAuth 2.0 also introduces the concept of \emph{OAuth Scopes}, allowing the authorization server to issue access tokens with various limitations on access to resources. The scopes are defined by the resource server. The requested scope is part of the authorization request to the authorization server and is bound to the access token generated as a result of the authorization.
 
 \subsection*{OpenID Connect}
 OIDC (OpenID Connect) \cite{oidc} is an extension of OAuth 2.0, which allows the authentication of a user against the authorization server as well as obtaining basic user profile information about the authenticated user.
@@ -130,11 +137,11 @@ OIDC (OpenID Connect) \cite{oidc} is an extension of OAuth 2.0, which allows th
 This chapter provides a brief overview of the OSLC (Open Services for Lifecycle Collaboration) \cite{oslc}, its fundamental technologies, and the Core and Requirement Management specifications, which are used in this thesis.
 
 \section{Overview}
-OSLC \cite{oslc} is an OASIS Open Project \cite{oasis_open} responsible for developing a set of open specifications, which are used for easier integration of software tools. A more detailed overview of the OSLC project can be found in the OSLC Primer \cite{oslc_primer}.
+OSLC \cite{oslc} is an OASIS Open Project \cite{oasis_open} responsible for developing a set of open specifications, which are used for easier integration of software tools. A more detailed overview of the OSLC project can be found in the \emph{OSLC Primer} \cite{oslc_primer}.
 
 The initiation of the OSLC project was driven by the increasing number of software tools, which are used in the software development lifecycle. These tools are usually developed by different organizations, which leads to the problem of difficult tool integration. In the past, this was solved by developing specific translators and adaptors for each tool, which was a time-consuming and expensive process. OSLC was created to solve this problem, by creating a set of open specifications to integrate the resources managed by the software tools into the web of data.
 
-OSLC offers two different methods of data integration -- Linking data via HTTP and Linking Data via HTML User Interface \cite{oslc_primary_integration_techniques}.
+OSLC offers two different methods of data integration -- \emph{Linking data via HTTP} and \emph{Linking Data via HTML User Interface} \cite{oslc_primary_integration_techniques}.
 
 
 \subsection*{Linking data via HTTP}
@@ -149,12 +156,17 @@ OSLC protocol can be used to link data via HTML user interface as well, making u
 OSLC is built on top of several fundamental technologies. This section lists these technologies and introduces briefly each of them.
 
 \subsection*{REST}
-REST (REpresentational State Transfer) \cite{rest} is a web software architecture style, describing a set of constraints and properties, which should be followed in communication between computer systems, most commonly between client and server. In REST architecture, the server is responsible for exposing a common interface, which allows the client to access resources by using standard HTTP methods. Each resource the server provides has a unique identifier, that allows the resource to be identified unambiguously and completely. When requested, the server responds with a representation of the resource. The client can then use this resource to create new resources and update or delete existing resources. The communication between the server and the client is stateless, meaning every request the server receives can be fully understood in isolation, without the context of previous requests. The most common HTTP methods used in REST are POST, GET, PUT, and DELETE, which correspond to the CRUD operations (Create, Read, Update, and Delete).
+REST (REpresentational State Transfer) \cite{rest} is a web software architecture style, describing a set of constraints and properties, which should be followed in communication between computer systems, most commonly between client and server. In REST architecture, the server is responsible for exposing a common interface, which allows the client to access resources by using standard HTTP methods. Each resource the server provides has a unique identifier, that allows the resource to be identified unambiguously and completely. When requested, the server responds with a representation of the resource. The client can then use this resource to create new resources and update or delete existing resources. The communication between the server and the client is stateless, meaning every request the server receives can be fully understood in isolation, without the context of previous requests. The most common HTTP methods used in REST are \texttt{POST}, \texttt{GET}, \texttt{PUT}, and \texttt{DELETE}, which correspond to the CRUD operations (Create, Read, Update, and Delete).
 
 \subsection*{RDF}
 RDF (Resource Description Framework) \cite{rdf} is a W3C (World Wide Web Consortium) \cite{w3c} standard for representing data on the web. It describes resources in the form of a directed graph, where information about each element is represented as a triplet. Triplets are statements about the resource composed of subject, predicate, and object. The subject describes the resource, and the predicate specifies its properties and relationships, between the subject and the object. Most widely used RDF serialization formats are Turtle \cite{turtle}, RDF/XML, and RDF/JSON.
 
-\todo{This might use an image}
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=.6 \linewidth]{figures/rdf-graph.pdf}
+  \caption{RDF Graph Triplet (source: \cite{rdf_primer})}
+  \label{fig:rdf_graph_triplet}
+\end{figure}
 
 \subsection*{Linked Data}
 Linked Data \cite{linked_data} are structured data containing references to other data. This enables computers to query and interpret the data, allowing the internet to become one big database. The main principles of Linked Data are \cite{linked_data_design_issues}:
@@ -166,53 +178,99 @@ Linked Data \cite{linked_data} are structured data containing references to oth
 \end{enumerate}
 
 \section{OSLC Specifications}
-OSLC defines a set of open specifications for integrating software tools. OSLC consists of multiple working groups, which are each responsible for the development of a specific specification. There are two types of specifications -- Core and Domain. The Core specification provides a basis for the Domain specifications, which are then focused on a specific field, for example, Requirement Management, Change Management, Configuration Management, etc. This section provides a summary of the OSLC Core and Requirement Management specifications, which are used in this thesis.
+OSLC defines a set of open specifications for integrating software tools. OSLC consists of multiple working groups, which are each responsible for the development of a specific specification. There are two types of specifications -- \emph{Core} and \emph{Domain}. The Core specification provides a basis for the Domain specifications, which are then focused on a specific field, for example, Requirement Management, Change Management, Configuration Management, etc. This section provides a summary of the OSLC Core and Requirement Management specifications, which are used in this thesis.
 
 \subsection{OSLC Core Specification}
-\todo{https://docs.oasis-open-projects.org/oslc-op/core/v3.0/os/images/oslc-architecture.png}
-At the time of writing this thesis, the current version of OSLC Core Specification \cite{oslc_core_specification} is 3.0. The OSLC Core Specification defines a set of common principles, capabilities, and restrictions, which should be common across all OSLC Domain Specifications. Specific OSLC Domain Specification will then describe which of these capabilities are required or optional for conformance with the specification. It also introduces several resource types and properties with the namespace http://open-services.net/ns/core\# and prefix oslc. In the following sections, a basic overview of the core concepts is provided.
+At the time of writing this thesis, the current version of OSLC Core Specification \cite{oslc_core_specification} is 3.0. The OSLC Core Specification defines a set of common principles, capabilities, and restrictions, which should be common across all OSLC Domain Specifications. Specific OSLC Domain Specification will then describe which of these capabilities are required or optional for conformance with the specification. It also introduces several resource types and properties with the namespace \url{http://open-services.net/ns/core\#} and prefix \emph{oslc}. In the following sections, a basic overview of the core concepts is provided.
+
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width= \linewidth]{figures/OSLC-core.pdf}
+  \caption{OSLC Core 3.0 architecture (source: \cite{oslc_core_specification}, remade)}
+  \label{fig:oslc_core_architecture}
+\end{figure}
 
 \subsection*{Resource Shape}
-OSLC works with resources, which are uniquely identified by a URI \cite{uri_rfc}, and are represented by RDF triples. Resource Shape \cite{oslc_core_resource_shape} is a resource of type oslc:ResourceShape, that describes the contents and constraints of other resources.
+OSLC works with resources, which are uniquely identified by a URI \cite{uri_rfc}, and are represented by RDF triples. Resource Shape \cite{oslc_core_resource_shape} is a resource of type \texttt{oslc:ResourceShape}, that describes the contents and constraints of other resources.
 
-\todo{Possible image: https://docs.oasis-open-projects.org/oslc-op/core/v3.0/os/images/shapes-overview.png - probably remake without the blue boxes}
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=.8 \linewidth]{figures/resource-shape.pdf}
+  \caption{Resource Shape (source: \cite{oslc_core_resource_shape}, remade)}
+  \label{fig:resource_shape}
+\end{figure}
 
-Each Resource Shape has a defined set of Properties, of type oslc:Property, which specifies the value type and cardinality of the property. The value type of the property can be either a reference to another Resource Shape, or a basic data type. The cardinality of the Property specifies if the Property is required, optional, or can be present multiple times. OSLC Core Specification defines these basic data types: XMLLiteral, boolean, dateTime, decimal, double, float, integer, string, and langString.
+Each Resource Shape has a defined set of Properties, of type \texttt{oslc:Property}, which specifies the value type and cardinality of the property. The value type of the property can be either a reference to another Resource Shape, or a basic data type. The cardinality of the Property specifies if the Property is required, optional, or can be present multiple times. OSLC Core Specification defines these basic data types: \texttt{XMLLiteral}, \texttt{boolean}, \texttt{dateTime}, \texttt{decimal}, \texttt{double}, \texttt{float}, \texttt{integer}, \texttt{string}, and \texttt{langString}.
 
 \subsection*{Discovery}
 For the reasons of flexibility and to reduce coupling, the OSLC Core Specification does not specify unequivocally which capabilities the server has to provide. Instead, it offers a mechanism for the incremental discovery of services and capabilities the target server has implemented.
 
-\todo{This could also use some image/diagram (https://docs.oasis-open-projects.org/oslc-op/core/v3.0/os/images/CoreDiscoveryUML.png)}
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=.8 \linewidth]{figures/oslc-discovery.pdf}
+  \caption{OSLC Discovery diagram (source: \cite{oslc_core_discovery}, remade)}
+  \label{fig:oslc_discovery}
+\end{figure}
 
-The server always has to specify the starting point of discovery, which is the Service Provider Catalog. The Service Provider Catalog is a resource containing a list of available Service Providers, which then contains all of the available Services. From there, the client is able to find the URIs for Creation Factories, Dialogs, and Query services. For additional information about the Discovery mechanism can be found in the Discovery section of the OSLC Core Specification \cite{oslc_core_discovery}.
+The server always has to specify the starting point of discovery, which is the \emph{Service Provider Catalog}. The Service Provider Catalog is a resource containing a list of available \emph{Service Providers}, which then contains all of the available \emph{Services}. From there, the client is able to find the URIs for \emph{Creation Factories}, \emph{Dialogs}, and \emph{Query services}. For additional information about the Discovery mechanism can be found in the Discovery section of the OSLC Core Specification \cite{oslc_core_discovery}.
 
 
 \subsection*{Basic Capabilities}
-OSLC Core Specification defines basic CRUD (Create, Read, Update, Delete) operations for resources. However, the decision about which of these operations are required or optional for which resource is specified in each of the OSLC Domain Specifications. Read, Update, and Delete operations are performed by their respective HTTP request method to the URI of the target resource. Create operation is performed by a POST operation to the Creation Factory URI for a specific resource.
+OSLC Core Specification defines basic CRUD (Create, Read, Update, Delete) operations for resources. However, the decision about which of these operations are required or optional for which resource is specified in each of the OSLC Domain Specifications. Read, Update, and Delete operations are performed by their respective HTTP request method to the URI of the target resource. Create operation is performed by a \texttt{POST} operation to the Creation Factory URI for a specific resource.
 
 \subsection*{Delegated UI}
-OSLC Core Specification introduces Delegated UI \cite{oslc_core_delegated_ui} for resource creation -- Creation Dialog, and resource selection -- Selection Dialog. Both of these dialogs are examples of linking of the data via HTML mentioned in \ref{sec:oslc_linking_data_via_html_user_interface}. Dialogs are returned as a combination of HTML iframe and JavaScript code. The decision about which of these dialogs are required or optional is again left up to the OSLC Domain Specification.
+OSLC Core Specification introduces Delegated UI \cite{oslc_core_delegated_ui} for resource creation -- \emph{Creation Dialog}, and resource selection -- \emph{Selection Dialog}. Both of these dialogs are examples of linking of the data via HTML mentioned in \ref{sec:oslc_linking_data_via_html_user_interface}. Dialogs are returned as a combination of HTML \texttt{iframe} and JavaScript code. The decision about which of these dialogs are required or optional is again left up to the OSLC Domain Specification.
 
 \subsection*{Query Capability}
-As the OSLC server manages a large number of resources, it has to provide a way for clients to search and filter these resources. OSLC Core Specification specifies a mechanism for this, called OSLC Query \cite{oslc_core_query}. OSLC Query allows clients to look up a set of resources by performing a GET or POST request on an oslc:queryBase URI. It offers two separate capabilities, a full-text search, identified by the oslc.searchTerms parameter, and a query search for resources containing specific properties and values, identified by oslc.where parameter. Each query search must consist of at least one property, comparison operator, and value. The result of the search is returned as a resource of type oslc:QueryResult, which contains a list of references to the resources found.
+As the OSLC server manages a large number of resources, it has to provide a way for clients to search and filter these resources. OSLC Core Specification specifies a mechanism for this, called OSLC Query \cite{oslc_core_query}. OSLC Query allows clients to look up a set of resources by performing a \texttt{GET} or \texttt{POST} request on an \texttt{oslc:queryBase} URI. It offers two separate capabilities, a full-text search, identified by the \texttt{oslc.searchTerms} parameter, and a query search for resources containing specific properties and values, identified by \texttt{oslc.where} parameter. Each query search must consist of at least one property, comparison operator, and value. The result of the search is returned as a resource of type \texttt{oslc:QueryResult}, which contains a list of references to the resources found (example of \texttt{oslc:QueryResult} can be found seen in Listing \ref{lst:oslc_query_result}).
 
-\todo{Maybe some XML example here for query}
+\begin{lstlisting}[
+  language=XML, label={lst:oslc_query_result}, float=hbt,
+  caption={OSLC Query Result example}
+]
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:oslc_data="http://open-services.net/ns/servicemanagement/1.0/"
+  xmlns:oslc="http://open-services.net/ns/core#"
+  xmlns:oslc_rm="http://open-services.net/ns/rm#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:foaf="http://xmlns.com/foaf/0.1/">
+  <oslc:ResponseInfo rdf:about="...">
+    <oslc:totalCount rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+  >2</oslc:totalCount>
+  </oslc:ResponseInfo>
+  <rdf:Description rdf:about=".../queryRequirement">
+    <rdfs:member>
+      <oslc_rm:Requirement rdf:about="...">
+        ...
+      </oslc_rm:Requirement>
+    </rdfs:member>
+    <rdfs:member>
+      <oslc_rm:Requirement rdf:about="...">
+        ...
+      </oslc_rm:Requirement>
+    </rdfs:member>
+  </rdf:Description>
+</rdf:RDF>
+\end{lstlisting}
 
 \subsection*{Authentication and Error Responses}
-OSLC Core Specification provides guidance on how to handle authentication and error responses. Allowed authentication methods are Basic Authentication and OAuth. All error responses should be returned as a resource of type oslc:Error \cite{oslc_core_error}, which contains a human-readable message and a machine-readable error code. This enables clients to handle errors in a generic way.
+OSLC Core Specification provides guidance on how to handle authentication and error responses. Allowed authentication methods are Basic Authentication and OAuth. All error responses should be returned as a resource of type \texttt{oslc:Error} \cite{oslc_core_error}, which contains a human-readable message and a machine-readable error code. This enables clients to handle errors in a generic way.
 
 \subsection{OSLC Requirement Management Specification}
-At the time of writing this thesis, the current version of OSLC Requirement Management Specification \cite{oslc_requirement_management_specification} is 2.1. The specification builds on top of the OSLC Core Specification and specifies which of the capabilities are required or optional for conformance with the specification. The main goal is to provide an extensive, but not restrictive, interface for requirement management systems and support a wide range of integration scenarios. One of the main requirements for an OSLC RM Server is the ability to accept and return resources in RDF/XML, XML, and JSON. It also introduces new resource types in the namespace of http://open-services.net/ns/rm\# and with the prefix oslc\_rm. These resource types are described in the following sections.
+At the time of writing this thesis, the current version of OSLC Requirement Management Specification \cite{oslc_requirement_management_specification} is 2.1. The specification builds on top of the OSLC Core Specification and specifies which of the capabilities are required or optional for conformance with the specification. The main goal is to provide an extensive, but not restrictive, interface for requirement management systems and support a wide range of integration scenarios. One of the main requirements for an OSLC RM Server is the ability to accept and return resources in RDF/XML, XML, and JSON. It also introduces new resource types in the namespace of \url{http://open-services.net/ns/rm\#} and with the prefix \texttt{oslc\_rm}. These resource types are described in the following sections.
 
 \subsection*{Requirement}
-oslc\_rm:Requirement \cite{oslc_rm_requirement} is a resource shape used for describing a single requirement described in \ref{sec:requirements}. Requirement Management Specification defines an extensive set of properties and constraints \cite{oslc_rm_requirement_constraints} for the requirement shape, but there are few that are especially important in the context of this work.
+\texttt{oslc\_rm:Requirement} \cite{oslc_rm_requirement} is a resource shape used for describing a single requirement described in \ref{sec:requirements}. Requirement Management Specification defines an extensive set of properties and constraints \cite{oslc_rm_requirement_constraints} for the requirement shape, but there are few that are especially important in the context of this work.
 
-Each individual requirement should have a title, usually containing the name of the requirement, and a description, which consists of the actual statement of need. These two requisites are realized by the properties dcterms:title and dcterms:description.
+Each individual requirement should have a title, usually containing the name of the requirement, and a description, which consists of the actual statement of need. These two requisites are realized by the properties \texttt{dcterms:title} and \texttt{dcterms:description}.
 
-Requirements should also be able to reference other requirements or requirement collections that are related to them. This is done by the properties oslc\_rm:decomposedBy and oslc\_rm:decomposes, the difference being the direction of the relationship.
+Requirements should also be able to reference other requirements or requirement collections that are related to them. This is done by the properties \texttt{oslc\_rm:decomposedBy} and \texttt{oslc\_rm:decomposes}, the difference being the direction of the relationship.
 
 \subsection*{Requirement Collection}
-oslc\_rm:RequirementCollection \cite{oslc_rm_requirement_collection} is a resource shape used for describing a collection of requirements, which constitute some statement of need. Requirement Management Specification again defines the constraints and properties for this resource shape \cite{oslc_rm_requirement_collection_constraints}, but they are nearly the same as for oslc\_rm:Requirement resource shape.
+\texttt{oslc\_rm:RequirementCollection} \cite{oslc_rm_requirement_collection} is a resource shape used for describing a collection of requirements, which constitute some statement of need. Requirement Management Specification again defines the constraints and properties for this resource shape \cite{oslc_rm_requirement_collection_constraints}, but they are nearly the same as for \texttt{oslc\_rm:Requirement} resource shape.
 
 \section{Eclipse Lyo}
 Eclipse Lyo \cite{eclipse_lyo} is an open-source project hosted by the Eclipse Foundation \cite{eclipse} and developed by the OSLC community. It provides a Java SDK, as well as other utilities, to enable easier adoption of the OSLC technologies and better developer experience. The following sections give a concise summary of the key components of Eclipse Lyo.
@@ -224,12 +282,12 @@ OSLC4J Software Development Kit (available at Maven Repository \cite{maven_oslc
 Lyo Designer \cite{lyo_designer} is an Eclipse plugin used for the graphical design of OSLC adaptors. It offers the capability to model the OSLC resources, their properties, and constraints, as well as the OSLC services. For separation of concerns, Lyo Designer provides three views for modeling different parts of the final adaptor:
 
 \begin{itemize}
-  \item Domain Specification View - for modeling the OSLC resources, their properties, and relationships between them
-  \item Toolchain View - for modeling the relationships between separate adaptors and resources, they consume and produce
-  \item Adapter Interface View - for modeling the services and capabilities of a single adaptor
+  \item \textbf{Domain Specification View} -- for modeling the OSLC resources, their properties, and relationships between them
+  \item \textbf{Toolchain View} -- for modeling the relationships between separate adaptors and resources, they consume and produce
+  \item \textbf{Adapter Interface View} -- for modeling the services and capabilities of a single adaptor
 \end{itemize}
 
-Lyo Designer also contains a utility called Code Generator, which is capable of generating code skeletons, compliant with OSLC, from the graphical models of the adaptors designed in Lyo Designer. The generated code is based on the OSLC4J SDK and can be used as a starting point for the implementation of the adaptor. The generated code contains designated places where the developer should add code, which provides the functionality for the adaptor. This allows the code to be regenerated, upon the changes to the model, without breaking or losing any of the underlying implementation and custom code.
+Lyo Designer also contains a utility called \textbf{Code Generator}, which is capable of generating code skeletons, compliant with OSLC, from the graphical models of the adaptors designed in Lyo Designer. The generated code is based on the OSLC4J SDK and can be used as a starting point for the implementation of the adaptor. The generated code contains designated places where the developer should add code, which provides the functionality for the adaptor. This allows the code to be regenerated, upon the changes to the model, without breaking or losing any of the underlying implementation and custom code.
 
 %=========================================================================
 
