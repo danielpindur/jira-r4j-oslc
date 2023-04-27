@@ -74,66 +74,7 @@ The document is divided into two parts, \texttt{THE-HEADER}, containing metadata
 
 %=========================================================================
 
-\chapter{Authentication}
-\label{chapter:authentication}
-Authentication is the process of verifying the identity of a person or user. It is used to restrict the server resources or functionality to only authorized users or specific groups of users. Several different authentication methods exist, each with its own advantages and disadvantages. This chapter gives a brief overview of BASIC and OAuth authentication methods, which are used in this thesis.
-
-\section{Basic Access Authentication}
-BASIC (Basic Access Authentication) was first defined as a part of HTTP 1.0 specification \cite{http1.0_w3}, but the standard has been since superseded and redefined as part of its own RFC \cite{basic_auth_rfc}. As its name suggests, BASIC is the most fundamental method of verifying the identity of a client against a server. It utilizes the HTTP \texttt{Authorization} header and provides the server with the credentials of the client in the form of \texttt{Authorization: Basic <credentials>}. The credentials are provided as a string, encoded in base64 \cite{base64_rfc}, containing the username and password joined by a colon.
-
-The main advantage of using BASIC authentication is its ease of implementation. It is supported by most of the available frameworks and does not require any cryptographic operations. However, it is also the most vulnerable one, as the credentials are sent in plain text, which makes it susceptible to interception by a third-party and potential credentials theft. Most of these insecurities can be mitigated by using TLS to encrypt the communication between client and server, but it is still not a recommended method for authentication in production environments.
-
-\section{Open Authorization}
-OAuth (Open Authorization) is a standard for delegated authentication and authorization, which stemmed from the need to enable the end users to authenticate in third-party applications and services using their credentials from another service, which acts as the authorization server. Originally, this was done by sharing the credentials with the third-party application, which then used them to authenticate the user. This method was vulnerable to the same security issues as BASIC authentication, and on top of that, it also allowed the third-party application to access and read the user's credentials. OAuth was created to mitigate these problems and create a standardized way for services to offer authentication and authorization to third-party applications without the need to share the users' credentials between them. The standard was first introduced as OAuth 1.0 \cite{oauth1_rfc}, which used asymmetric cryptography to encrypt and verify the credentials, but was later superseded by OAuth 2.0 \cite{oauth2_rfc}, which is easier to implement, as it leaves the encryption and verification of the credentials origin to TLS protocol. The next section provides a brief overview of OAuth 2.0 and its authentication workflow.
-
-\subsection{OAuth 2.0}
-OAuth 2.0 is a standard published as a reaction to new use cases. It is not backward compatible with OAuth 1.0. The standard enforces that all of the communication between the client and the authorization server is done using HTTPS.
-
-Several different roles are defined by the standard:
-\begin{itemize}
-  \item \textbf{Resource owner} -- entity capable of granting access to a protected resource
-  \item \textbf{Resource server} -- server containing the resources, capable of authorization using the access tokens
-  \item \textbf{Client} -- third party application, which is requesting access to resources on the resource server on behalf of the resource owner
-  \item \textbf{Authorization server} -- issues access tokens to resource owner after successful authentication and authorization
-\end{itemize}
-
-\subsection*{Code Grants}
-The standard also defines four authorization grants, ways for a client to obtain the access token. For simplicity, only the most common one, Authorization Code Grant, is described, as it is the one used in this thesis.
-
-\begin{figure}[hbt]
-  \centering
-  \includegraphics[width=.8 \linewidth]{figures/auth-sequence-auth-code.pdf}
-  \caption{OAuth 2.0 Authorization Code Grant flow diagram}
-  \label{fig:oauth2_auth_code_grant}
-\end{figure}
-
-\textbf{Authorization Code Grant} is a two-step process to obtain the access token. The user is first redirected to the authorization server with a request to obtain an authorization code. The authorization server authenticates the user and asks him for approval to grant the client specified scope of access to resources on the resource server. After the approval, the user is redirected back to the client with the authorization code. The client then uses the code together with client ID and client secret to make a request to the authorization server to obtain the access token. The authorization server then verifies the authorization code and issues the access token.
-
-\subsection*{Proof Key for Code Exchange}
-PKCE (Proof Key for Code Exchange) \cite{pkce_rfc} builds on top of Authorization Code Grant to further secure the process. It adds a secret called \emph{Code Verifier}. Code Verifier is then to transformed into a value called \emph{Code Challenge}, which is sent together with the authorization code request. Code Verifier is then sent together with the authorization code as a part of the access token request. The authorization server issues a new access token only if the received Code Verifier matches the one used to generate the Code challenge. This removes the risk of the authorization code being intercepted and used to generate the access token, as the authorization server will not create the access token without the Code Verifier, which is not part of the intercepted response.
-
-\begin{figure}[hbt]
-  \centering
-  \includegraphics[width=.8 \linewidth]{figures/auth-sequence-pkce.pdf}
-  \caption{OAuth 2.0 Proof Key for Code Exchange flow diagram}
-  \label{fig:oauth2_pkce}
-\end{figure}
-
-\subsection*{Access and Refresh Tokens}
-After successful authorization against the authorization server, the client is issued an \textbf{access token}. The client then uses this token to access the resources available on the resource server by sending it with each HTTP request in the Authorization header. Access tokens can be either an opaque string, called a \emph{bearer token}, or a \emph{sender-constrained token}. Sender-constrained tokens can be used only to authorize requests sent by the same client to whom the token was issued. This is usually achieved by asymmetric cryptography of the token. To comply with the standard, the token cannot convey user identity or any other information about the user.
-
-Together with the access token, the authorization server also issues a \textbf{refresh token}, which can be used to generate a new access token without user interaction with the authorization server. This allows the authorization server to issue access tokens with a shorter expiration time, reducing the impact of the token being intercepted and stolen.
-
-\subsection*{Scopes}
-Compared to OAuth 1.0, OAuth 2.0 also introduces the concept of \emph{OAuth Scopes}, allowing the authorization server to issue access tokens with various limitations on access to resources. The scopes are defined by the resource server. The requested scope is part of the authorization request to the authorization server and is bound to the access token generated as a result of the authorization.
-
-\subsection*{OpenID Connect}
-OIDC (OpenID Connect) \cite{oidc} is an extension of OAuth 2.0, which allows the authentication of a user against the authorization server as well as obtaining basic user profile information about the authenticated user.
-
-%=========================================================================
-
 \chapter{OSLC -- Open Services for Lifecycle Collaboration}
-%\todo{Style document}
 This chapter provides a brief overview of the OSLC (Open Services for Lifecycle Collaboration) \cite{oslc}, its fundamental technologies, and the Core and Requirement Management specifications, which are used in this thesis.
 
 \section{Overview}
@@ -181,6 +122,7 @@ Linked Data \cite{linked_data} are structured data containing references to oth
 OSLC defines a set of open specifications for integrating software tools. OSLC consists of multiple working groups, which are each responsible for the development of a specific specification. There are two types of specifications -- \emph{Core} and \emph{Domain}. The Core specification provides a basis for the Domain specifications, which are then focused on a specific field, for example, Requirement Management, Change Management, Configuration Management, etc. This section provides a summary of the OSLC Core and Requirement Management specifications, which are used in this thesis.
 
 \subsection{OSLC Core Specification}
+\label{sec:oslc_core_specification}
 At the time of writing this thesis, the current version of OSLC Core Specification \cite{oslc_core_specification} is 3.0. The OSLC Core Specification defines a set of common principles, capabilities, and restrictions, which should be common across all OSLC Domain Specifications. Specific OSLC Domain Specification will then describe which of these capabilities are required or optional for conformance with the specification. It also introduces several resource types and properties with the namespace \url{http://open-services.net/ns/core\#} and prefix \emph{oslc}. In the following sections, a basic overview of the core concepts is provided.
 
 \begin{figure}[hbt]
@@ -260,6 +202,7 @@ As the OSLC server manages a large number of resources, it has to provide a way 
 OSLC Core Specification provides guidance on how to handle authentication and error responses. Allowed authentication methods are Basic Authentication and OAuth. All error responses should be returned as a resource of type \texttt{oslc:Error} \cite{oslc_core_error}, which contains a human-readable message and a machine-readable error code. This enables clients to handle errors in a generic way.
 
 \subsection{OSLC Requirement Management Specification}
+\label{sec:oslc_rm_specification}
 At the time of writing this thesis, the current version of OSLC Requirement Management Specification \cite{oslc_requirement_management_specification} is 2.1. The specification builds on top of the OSLC Core Specification and specifies which of the capabilities are required or optional for conformance with the specification. The main goal is to provide an extensive, but not restrictive, interface for requirement management systems and support a wide range of integration scenarios. One of the main requirements for an OSLC RM Server is the ability to accept and return resources in RDF/XML, XML, and JSON. It also introduces new resource types in the namespace of \url{http://open-services.net/ns/rm\#} and with the prefix \texttt{oslc\_rm}. These resource types are described in the following sections.
 
 \subsection*{Requirement}
@@ -291,14 +234,121 @@ Lyo Designer also contains a utility called \textbf{Code Generator}, which is ca
 
 %=========================================================================
 
+\chapter{Authentication}
+\label{chapter:authentication}
+Authentication is the process of verifying the identity of a person or user. It is used to restrict the server resources or functionality to only authorized users or specific groups of users. Several different authentication methods exist, each with its own advantages and disadvantages. This chapter gives a brief overview of BASIC and OAuth authentication methods, which are used in this thesis.
+
+\section{Basic Access Authentication}
+BASIC (Basic Access Authentication) was first defined as a part of HTTP 1.0 specification \cite{http1.0_w3}, but the standard has been since superseded and redefined as part of its own RFC \cite{basic_auth_rfc}. As its name suggests, BASIC is the most fundamental method of verifying the identity of a client against a server. It utilizes the HTTP \texttt{Authorization} header and provides the server with the credentials of the client in the form of \texttt{Authorization: Basic <credentials>}. The credentials are provided as a string, encoded in base64 \cite{base64_rfc}, containing the username and password joined by a colon.
+
+The main advantage of using BASIC authentication is its ease of implementation. It is supported by most of the available frameworks and does not require any cryptographic operations. However, it is also the most vulnerable one, as the credentials are sent in plain text, which makes it susceptible to interception by a third-party and potential credentials theft. Most of these insecurities can be mitigated by using TLS to encrypt the communication between client and server, but it is still not a recommended method for authentication in production environments.
+
+\section{Open Authorization}
+OAuth (Open Authorization) is a standard for delegated authentication and authorization, which stemmed from the need to enable the end users to authenticate in third-party applications and services using their credentials from another service, which acts as the authorization server. Originally, this was done by sharing the credentials with the third-party application, which then used them to authenticate the user. This method was vulnerable to the same security issues as BASIC authentication, and on top of that, it also allowed the third-party application to access and read the user's credentials. OAuth was created to mitigate these problems and create a standardized way for services to offer authentication and authorization to third-party applications without the need to share the users' credentials between them. The standard was first introduced as OAuth 1.0 \cite{oauth1_rfc}, which used asymmetric cryptography to encrypt and verify the credentials, but was later superseded by OAuth 2.0 \cite{oauth2_rfc}, which is easier to implement, as it leaves the encryption and verification of the credentials origin to TLS protocol. The next section provides a brief overview of OAuth 2.0 and its authentication workflow.
+
+\subsection{OAuth 2.0}
+OAuth 2.0 is a standard published as a reaction to new use cases. It is not backward compatible with OAuth 1.0. The standard enforces that all of the communication between the client and the authorization server is done using HTTPS.
+
+Several different roles are defined by the standard:
+\begin{itemize}
+  \item \textbf{Resource owner} -- entity capable of granting access to a protected resource
+  \item \textbf{Resource server} -- server containing the resources, capable of authorization using the access tokens
+  \item \textbf{Client} -- third party application, which is requesting access to resources on the resource server on behalf of the resource owner
+  \item \textbf{Authorization server} -- issues access tokens to resource owner after successful authentication and authorization
+\end{itemize}
+
+\subsection*{Code Grants}
+The standard also defines four authorization grants, ways for a client to obtain the access token. For simplicity, only the most common one, Authorization Code Grant, is described, as it is the one used in this thesis.
+
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=.8 \linewidth]{figures/auth-sequence-auth-code.pdf}
+  \caption{OAuth 2.0 Authorization Code Grant flow diagram}
+  \label{fig:oauth2_auth_code_grant}
+\end{figure}
+
+\textbf{Authorization Code Grant} is a two-step process to obtain the access token. The user is first redirected to the authorization server with a request to obtain an authorization code. The authorization server authenticates the user and asks him for approval to grant the client specified scope of access to resources on the resource server. After the approval, the user is redirected back to the client with the authorization code. The client then uses the code together with client ID and client secret to make a request to the authorization server to obtain the access token. The authorization server then verifies the authorization code and issues the access token.
+
+\subsection*{Proof Key for Code Exchange}
+PKCE (Proof Key for Code Exchange) \cite{pkce_rfc} builds on top of Authorization Code Grant to further secure the process. It adds a secret called \emph{Code Verifier}. Code Verifier is then to transformed into a value called \emph{Code Challenge}, which is sent together with the authorization code request. Code Verifier is then sent together with the authorization code as a part of the access token request. The authorization server issues a new access token only if the received Code Verifier matches the one used to generate the Code challenge. This removes the risk of the authorization code being intercepted and used to generate the access token, as the authorization server will not create the access token without the Code Verifier, which is not part of the intercepted response.
+
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=.8 \linewidth]{figures/auth-sequence-pkce.pdf}
+  \caption{OAuth 2.0 Proof Key for Code Exchange flow diagram}
+  \label{fig:oauth2_pkce}
+\end{figure}
+
+\subsection*{Access and Refresh Tokens}
+After successful authorization against the authorization server, the client is issued an \textbf{access token}. The client then uses this token to access the resources available on the resource server by sending it with each HTTP request in the Authorization header. Access tokens can be either an opaque string, called a \emph{bearer token}, or a \emph{sender-constrained token}. Sender-constrained tokens can be used only to authorize requests sent by the same client to whom the token was issued. This is usually achieved by asymmetric cryptography of the token. To comply with the standard, the token cannot convey user identity or any other information about the user.
+
+Together with the access token, the authorization server also issues a \textbf{refresh token}, which can be used to generate a new access token without user interaction with the authorization server. This allows the authorization server to issue access tokens with a shorter expiration time, reducing the impact of the token being intercepted and stolen.
+
+\subsection*{Scopes}
+Compared to OAuth 1.0, OAuth 2.0 also introduces the concept of \emph{OAuth Scopes}, allowing the authorization server to issue access tokens with various limitations on access to resources. The scopes are defined by the resource server. The requested scope is part of the authorization request to the authorization server and is bound to the access token generated as a result of the authorization.
+
+\subsection*{OpenID Connect}
+OIDC (OpenID Connect) \cite{oidc} is an extension of OAuth 2.0, which allows the authentication of a user against the authorization server as well as obtaining basic user profile information about the authenticated user.
+
+%=========================================================================
+
 \chapter{Adaptor Design}
+%\todo{Ref to OSLC spec}
 %\todo{Gramar check}
 %\todo{Style document}
 
-%\todo{Návrh v lyu}
-%\todo{Rozdělení na Jira a R4J adaptory}
+This chapter deteails the process of designing the Jira and R4J adaptors, as well as the decisions made during the process and the reasoning behind them. The chapter is divided into several sections, each detailing different steps of the design process.
+
+\section{Architecture Overview}
+There are two possible ways, how to add the OSLC capabilities to a third-party web application -- either by extending the application via a plugin or by creating a separate self-contained application, that acts as a middle-man between the third-party application and the user. Both of these approaches can be used to create the adaptor for Jira and R4J, as Jira allows the creation of third-party plugins and it exposes its data thourh the REST API. At the start of the design process a decesion was made, to keep the adaptor as generic as possible, to allow the option to turn it into a generic adaptor for requirement management specification in the future. This would allow its use with other third-party requirement management applications by utilizing the strategy design pattern \cite{strategy_design_pattern}, to switch the data-access layer of the adaptor. With this in mind, the second approach, to create a standalone web application, was chosen, as there is no way to create a plugin, that would be compatible with every possible third-party application.
+
+After careful consideration of the capabilities and data exposed by both Jira and R4J, it was determined, that the best option would be to split the adaptor into two separate adaptors, one for Jira and second for R4J. This is in line with the decesion to keep the adaptor as generic as possible. The Jira adaptor would be responsible for satisfying the requirements of the OSLC Core and Requirement Management Specification. The R4J adaptor would add some additional functionality provided by R4J, while not putting any restrictions, on what functionality has to be provided by any other third-party requirement management applications, in order to be compatible with the generic adaptor. These adaptors can then be used together to provide the full functionality, or users can opt to use only the Jira adaptor, if they do not need the additional functionality or if they do not have an active subscription to the R4J plugin, while still retaining the compliance with the OSLC Core and Requirement Management Specification.
+
+\section{Tools Selection}
+One of the initial steps of the desing process was the selection of the language, libraries and tooling, that would be used to implement the adaptors. At the time the design process started, there were only two real language options available for consideration, being \texttt{C\#} and Java. 
+
+The OSLC4Net \cite{oslc4net} library for \texttt{C\#}, developed by the OSLC team, was in an unusable state at the time, as it has been overlooked and not maintained for a long time. It has recently started getting some attencion, at the time of writing this thesss, so if the library is brought up to date and additional tooling is developed, it might become a viable option in the future.
+
+Because of the state of OSLC4Net, the only viable option left was to use Java with the well maintained OSLC4J SDK, together with the Eclipse Lyo tooling for developement of OSLC applications. The code generator included in Eclipse Lyo, generates the code skeletons for the adaptors as Eclipse Jetty servers \cite{jetty} equiped with Apache Maven \cite{maven} for dependency management and build automation.
+
+\section{Adaptor Modeling}
+After tooling selection, the next step in the design process, was to model the adaptors themself. The modeling was done using the Eclipse Lyo modeling tool, which also provides the ability to generate code skeletons from the created models. Most of the modeling process is based on the tutorials \cite{oslc_domain_workshop}\cite{oslc_toolchain_workshop}\cite{youtube_lyo_tutorial} and examples \cite{github_oslc_lyo-adaptor-sample-modelling}\cite{github_oslc_bugzilla} provided by the OSLC community, as well as adaptor models for Unite \cite{unite_gitlab}. The modeling of the adaptors can be separated into two steps, domain modeling -- modeling the resources accepted and exposed by the adaptor, and toolchain modeling -- modeling the functionality and capabilities of the adaptor, both of which are described in the following sections.
+
+\subsection{Domain Modeling}
+The domain models were created based on the OSLC Core and Requirement Management Specification, with the data exposed by Jira and R4J APIs taken into consideration. The main goal was to create models compliant with the standards, while taking into account their extensibility in the future and without creating any limitations by coupling them with Jira or R4J specific resources. This lead to the separation into \texttt{oslc}, \texttt{oslc\_rm}, \texttt{jira} and \texttt{jira\_r4j} namespaces. The \texttt{oslc} and \texttt{oslc\_rm} models were modelled using the models provided by Lyo project \cite{lyo_domains} as a base.
+
+%todo: zmínit MUST, SHOULD ...
+
+\subsection*{OSLC Core Domain}
+The OSLC Core domain model is specified by the OSLC Core specification described in \ref{sec:oslc_core_specification}. As every OSCL compliant adaptor has to implement the OSLC Core specification, the domain model provides the base resources of the OSLC Core vocabulary as well as other basic namespaces used for the definition of other resources -- namely RDF, RDFS, Dublin Core and FOAF. %TODO: add citations
+
+\todo{Add Core Domain diagram}
+
+\subsection*{OSLC Requirement Management Domain}
+The OSLC Requirement Management domain model defines the \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection} resources, based on the models from Lyo project. Properties, that are not required by the Requirement Management specification and are not needed in this thesis, have been removed and the representations have been extended by the properties defined in \texttt{jira} namespace.
+
+\todo{Add Requirement Management diagram}
+
+\subsection*{OSLC Jira and R4J Domains}
+The \texttt{jira} and \texttt{jira\_r4j} namespaces define properties and resources, that represent resources and properties native to Jira and R4J. The \texttt{jira\r4j:Folder} has been defined in a way, where it references \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection}, instead of the other way around, to allow the use of the Jira adaptor independently of the R4J adaptor.
+
+\todo{Add Jira and R4J Domain diagram}
+
+\subsection{Toolchain Modeling}
+% toolChain 
+% diag
+
+% Adaptor diags
+% remove the person and project query from the diagram
+
+\section{Mapping OSLC resources to Jira and R4J}
+%kecy plky o tom jak to musí být generické protože každý Jiru používá jinak nebo nemá práva na to přidávat další fieldy
+%GUID identifier - why + benefits
+%\todo{Možnost uložení identifikátorů v labels fieldu}
 %\todo{Identifikátory Requirement a RequirementCollection}
-%\todo{Mapping of properties}
+%\todo{req a reqCollection type name nesmí být stejné}
+%\todo{Limitace + co dělat když nejde něco přidat do Jiry}
+%problem with Epic as it requires EPIC name field as well - nevadí - zmínit že můžou existovat issue typy s jinými povinnými fields
 
 %=========================================================================
 
@@ -309,7 +359,17 @@ Lyo Designer also contains a utility called \textbf{Code Generator}, which is ca
 %\todo{Authentizace Basic + OAuth, not sure if here nebo v Adaptor Design zmínit jak to generuje Lyo a jak to používáme/bylo změno}
 %\todo{Popis toho jaké jdou dělat query}
 %\todo{Konfigurační soubory pro Jiru a R4J}
-%\todo{Možnost uložení identifikátorů v labels fieldu}
+%\todo{permision needed for user to do CRUD operations}
+%JIRA - JQL
+%R4J local filtration - navrhnout suggestion missing endpointu (teoreticky možná optimalizace s cache přes timestamp a checkem jestli existuje issue s modified > než time stamp -> get again, not ideal ale lepší než nic, za předpokladu že modifed lookup by byl rychlejší)
+
+%Popsat Oauth - OSLC není povínné řešit, přeposílání na Jira -> stará se o to ona
+
+%Query jenom základ, neexistuje knihovna co by to řešila
+
+%\todo{BUGv R4J API: 500 returned při updatu folderu s parent=ROOT}
+
+%Memory leak caused by not closing connections - fixed by closing all opened in SessionDestroy
 
 %=========================================================================
 
@@ -318,11 +378,22 @@ Lyo Designer also contains a utility called \textbf{Code Generator}, which is ca
 %\todo{Style document}
 
 %\todo{Testování v Postmanovi}
+
 %\todo{Testování pomocí ReqIF souboru}
-%\todo{Limitace + co dělat když nejde něco přidat do Jiry, permision needed for user to do CRUD operations}
+
+%eval OSLC 
+%zmínit složitost setupu Eclipse Lyo a zastaralé dokumentace k instalaci
+
+%eval Req Spec
+
+%eval JIRA + R4J API
+%Hard to tell when 401 as Jira returns 400/404 as Anonymous access exists
+
+%eval result
 %\todo{Pokud požiju R4J hledám pomocí folder a získávám jenom Bugs/Reqs které jsou  nalinkované v R4J, pokud využitu JIRA adaptor získávám všechny issues daného typu (v configuraci) -> JIRA adaptor potřebuje speciální issues types aby rozlišoval mezi req a jinými issues}
-%\todo{req a reqCollection type name nesmí být stejné}
-%\todo{BUGv R4J API: 500 returned při updatu folderu s parent=ROOT}
+%jira adaptor can function on its own
+
+%future work
 %možnost přidat OIDC nebo OAuth PKCE do budoucna
 
 %=========================================================================
@@ -330,6 +401,7 @@ Lyo Designer also contains a utility called \textbf{Code Generator}, which is ca
 \chapter{Conclusion}
 %\todo{Gramar check}
 %\todo{Style document}
+
 
 %=========================================================================
 
