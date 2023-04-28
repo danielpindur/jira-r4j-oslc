@@ -6,6 +6,9 @@
 % \documentclass[../projekt.tex]{subfiles}
 % \begin{document}
 
+%TODO: check figure H or hbt
+%TODO: check figure references
+
 \chapter{Introduction}
 This chapter summarizes the motivation and objectives of this thesis, the solution taken to achieve the objectives, and the results of the thesis. In the last section, the structure of the thesis is presented.
 
@@ -145,6 +148,7 @@ OSLC works with resources, which are uniquely identified by a URI \cite{uri_rfc
 Each Resource Shape has a defined set of Properties, of type \texttt{oslc:Property}, which specifies the value type and cardinality of the property. The value type of the property can be either a reference to another Resource Shape, or a basic data type. The cardinality of the Property specifies if the Property is required, optional, or can be present multiple times. OSLC Core Specification defines these basic data types: \texttt{XMLLiteral}, \texttt{boolean}, \texttt{dateTime}, \texttt{decimal}, \texttt{double}, \texttt{float}, \texttt{integer}, \texttt{string}, and \texttt{langString}.
 
 \subsection*{Discovery}
+\label{sec:oslc_discovery}
 For the reasons of flexibility and to reduce coupling, the OSLC Core Specification does not specify unequivocally which capabilities the server has to provide. Instead, it offers a mechanism for the incremental discovery of services and capabilities the target server has implemented.
 
 \begin{figure}[hbt]
@@ -158,6 +162,7 @@ The server always has to specify the starting point of discovery, which is the \
 
 
 \subsection*{Basic Capabilities}
+\label{sec:oslc_basic_capabilities}
 OSLC Core Specification defines basic CRUD (Create, Read, Update, Delete) operations for resources. However, the decision about which of these operations are required or optional for which resource is specified in each of the OSLC Domain Specifications. Read, Update, and Delete operations are performed by their respective HTTP request method to the URI of the target resource. Create operation is performed by a \texttt{POST} operation to the Creation Factory URI for a specific resource.
 
 \subsection*{Delegated UI}
@@ -315,40 +320,115 @@ Because of the state of OSLC4Net, the only viable option left was to use Java wi
 After tooling selection, the next step in the design process, was to model the adaptors themself. The modeling was done using the Eclipse Lyo modeling tool, which also provides the ability to generate code skeletons from the created models. Most of the modeling process is based on the tutorials \cite{oslc_domain_workshop}\cite{oslc_toolchain_workshop}\cite{youtube_lyo_tutorial} and examples \cite{github_oslc_lyo-adaptor-sample-modelling}\cite{github_oslc_bugzilla} provided by the OSLC community, as well as adaptor models for Unite \cite{unite_gitlab}. The modeling of the adaptors can be separated into two steps, domain modeling -- modeling the resources accepted and exposed by the adaptor, and toolchain modeling -- modeling the functionality and capabilities of the adaptor, both of which are described in the following sections.
 
 \subsection{Domain Modeling}
-The domain models were created based on the OSLC Core and Requirement Management Specification, with the data exposed by Jira and R4J APIs taken into consideration. The main goal was to create models compliant with the standards, while taking into account their extensibility in the future and without creating any limitations by coupling them with Jira or R4J specific resources. This lead to the separation into \texttt{oslc}, \texttt{oslc\_rm}, \texttt{jira} and \texttt{jira\_r4j} namespaces. The \texttt{oslc} and \texttt{oslc\_rm} models were modelled using the models provided by Lyo project \cite{lyo_domains} as a base.
-
-%todo: zmínit MUST, SHOULD ...
+The domain models were created based on the OSLC Core and Requirement Management specifications, with the data exposed by Jira and R4J APIs taken into consideration. The requirements and restrictions placed on the \texttt{oslc} and \texttt{oslc\_rm} are defined in the Requirement Management specification using the \texttt{MUST}, \texttt{MUST NOT}, \texttt{SHOULD}, \texttt{SHOULD NOT} and \texttt{MAY} keywords. The main goal was to create models compliant with the standards, while taking into account their extensibility in the future and without creating any limitations by coupling them with Jira or R4J specific resources. This lead to the separation into \texttt{oslc}, \texttt{oslc\_rm}, \texttt{jira} and \texttt{jira\_r4j} models. The \texttt{oslc} and \texttt{oslc\_rm} models were modelled using the models provided by Lyo project \cite{lyo_domains} as a base.
 
 \subsection*{OSLC Core Domain}
-The OSLC Core domain model is specified by the OSLC Core specification described in \ref{sec:oslc_core_specification}. As every OSCL compliant adaptor has to implement the OSLC Core specification, the domain model provides the base resources of the OSLC Core vocabulary as well as other basic namespaces used for the definition of other resources -- namely RDF, RDFS, Dublin Core and FOAF. %TODO: add citations
+The OSLC Core domain model is specified by the OSLC Core specification described in \ref{sec:oslc_core_specification}. As every OSCL compliant adaptor has to implement the OSLC Core specification, the domain model provides the base resources of the OSLC Core vocabulary as well as other basic namespaces used for the definition of other resources -- namely RDF \cite{rdf_namespace}, RDFS \cite{rdfs_namespace}, Dublin Core \cite{dcterms_namespace} and FOAF \cite{foaf_namespace}.
 
-\todo{Add Core Domain diagram}
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width= \linewidth]{figures/placeholder.pdf}
+  \caption{OSLC Core Domain Model Diagram}
+  \label{fig:oslc_core_domain_model_diagram}
+\end{figure}
 
 \subsection*{OSLC Requirement Management Domain}
 The OSLC Requirement Management domain model defines the \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection} resources, based on the models from Lyo project. Properties, that are not required by the Requirement Management specification and are not needed in this thesis, have been removed and the representations have been extended by the properties defined in \texttt{jira} namespace.
 
-\todo{Add Requirement Management diagram}
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width= \linewidth]{figures/placeholder.pdf}
+  \caption{OSLC Requirement Management Domain Model Diagram}
+  \label{fig:oslc_rm_domain_model_diagram}
+\end{figure}
 
 \subsection*{OSLC Jira and R4J Domains}
-The \texttt{jira} and \texttt{jira\_r4j} namespaces define properties and resources, that represent resources and properties native to Jira and R4J. The \texttt{jira\r4j:Folder} has been defined in a way, where it references \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection}, instead of the other way around, to allow the use of the Jira adaptor independently of the R4J adaptor.
+The \texttt{jira} and \texttt{jira\_r4j} namespaces define properties and resources, that represent resources and properties native to Jira and R4J. The \texttt{jira\_r4j:Folder} has been defined in a way, where it references \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection}, instead of the other way around, to allow the use of the Jira adaptor independently of the R4J adaptor.
 
-\todo{Add Jira and R4J Domain diagram}
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width= \linewidth]{figures/placeholder.pdf}
+  \caption{Jira and R4J Domain Model Diagram}
+  \label{fig:jira_r4j_domain_model_diagram}
+\end{figure}
 
 \subsection{Toolchain Modeling}
-% toolChain 
-% diag
+As disscussed before, the adaptor has been split into R4J and Jira adaptors. The adaptor interfaces can be seen in Figure \ref{fig:adaptor_interfaces_diagram}. The Jira adaptor manages the \texttt{oslc\_rm} and \texttt{jira} resources and properties, while the R4J adaptor is dependend on these resources and produces \texttt{jira\_r4j} resources. 
 
-% Adaptor diags
-% remove the person and project query from the diagram
+Both adaptors have been modeled according to the OSLC Core Discovery principles disscussed in Section \ref{sec:oslc_discovery} and thus contain \emph{Service Provider Catalogs}, \emph{Service Providers} and \emph{Services} for each managed resource. Eclipse Lyo also provides the option to add \emph{Authentication} to the adaptor models, which results in the generation of the authentication and authorization code skeletons for Basic and OAuth methods during the code generation process. This option has been added for both adaptors.
+
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width= .8\linewidth]{figures/adaptors_interface.jpg}
+  \caption{Adaptor Interfaces Diagram (\texttt{P} - \emph{produces}, \texttt{C} - \emph{consumes})}
+  \label{fig:adaptor_interfaces_diagram}
+\end{figure}
+
+\subsection*{Jira Adaptor}
+The Jira adaptor provides the \texttt{oslc\_rm:Requirement}, \texttt{oslc\_rm:RequirementCollection}, \texttt{foaf:Person} and \texttt{jira:Project} resources. 
+
+It exposes only a limited functionality for the \texttt{foaf:Person} and \texttt{jira:Project} resources, allowing only read-only access to the data through the \texttt{GET} endpoint and \emph{Selection Dialog}, as these resources are not meant to be created or updated using the adaptor.
+
+In accordance with the Requirement Management specification, the Jira adaptor provides full \emph{CRUD} functionality (as described in section \ref{sec:oslc_basic_capabilities}) for the \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection} resources, as well as \emph{Query capability}, \emph{Creation Dialog} and \emph{Selection Dialog}.
+
+A graphical representation of the Jira adaptor functionality and capabilities can be seen in Figure \ref{fig:jira_adaptor_functionality_diagram}.
+
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width= \linewidth]{figures/placeholder.pdf}
+  \caption{Jira Adaptor Functionality Diagram}
+  \label{fig:jira_adaptor_functionality_diagram}
+\end{figure}
+
+\subsection*{R4J Adaptor}
+The R4J adaptor manages the \texttt{jira\_r4j:Folder} resource, which represents a folder from the R4J tree folder structure. To enable users to use the R4J folder structure to its full extent, the adaptor provides full \emph{CRUD} functionality for the resource. To further enable users and enhance the usability of the adaptor, the \emph{Query Capability}, \emph{Creation Dialog} and \emph{Selection Dialog} have been added to the adaptor.
+
+A graphical overview of thee R4J adaptor functionality and capabilities can be seen in Figure \ref{fig:r4j_adaptor_functionality_diagram}.
+
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width= \linewidth]{figures/placeholder.pdf}
+  \caption{R4J Adaptor Functionality Diagram}
+  \label{fig:r4j_adaptor_functionality_diagram}
+\end{figure}
 
 \section{Mapping OSLC resources to Jira and R4J}
-%kecy plky o tom jak to musí být generické protože každý Jiru používá jinak nebo nemá práva na to přidávat další fieldy
-%GUID identifier - why + benefits
-%\todo{Možnost uložení identifikátorů v labels fieldu}
-%\todo{Identifikátory Requirement a RequirementCollection}
-%\todo{req a reqCollection type name nesmí být stejné}
-%\todo{Limitace + co dělat když nejde něco přidat do Jiry}
-%problem with Epic as it requires EPIC name field as well - nevadí - zmínit že můžou existovat issue typy s jinými povinnými fields
+Three important aspects have to be considered when designing the mapping of OSLC resources to their Jira and R4J counterparts. This section deteails these aspects and the design decisions made as a result.
+
+\subsection*{Generic nature of the adaptor}
+The first being the generic nature of the adaptor for Requirement Management specification, taking into consideration the fact that requirement management applications, different that Jira, might not have exactly the same data structure and thus the mapping has to be flexible enough to allow for the use of the adaptor with other applications in the future. This had the biggest impact on the design of the unique identifier of the \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection} resources. Jira provides two ways, to uniquely identify the issues:
+
+\begin{itemize}
+  \item \texttt{id} -- a unique imutable number assigned to each issue upon creation
+  \item \texttt{key} -- a unique imutable string identified assigned to each issue upon creation, consisting of a project key and a number, which identifies the issue within the project
+\end{itemize}
+
+Neither of these options are ideal, as the \texttt{id} would require all the other requirement management applications to identify resources strictly by a number and the \texttt{key} would require the existence of the concept of a project in every requirement management application, both of which limit the generic usability of the adaptor. Based on these observations a new unique string based indentifer has been added and mapped to the \texttt{dcterms:identifier} property of the \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection} resources. As the identifier is string based, it leaves the decesion of the format of the indentifer up to the user or underlying application. To enable the users to query the resources by the Jira native identifiers as well, they have been mapped to the \texttt{jira:jiraId} and \texttt{oslc:shortTitle} respectively. 
+
+\subsection*{Infrastucture limitations}
+The second aspect, that has been considered, are the limitations, that can be placed on the Jira instances by infrastructure teams. In bigger companies, this concerns Honeywell as well, the Jira is usually used by variaty of teams, each having different use cases. To ensure the needs of each of these teams are satisfied without introducing any issue schema breaking changes, the extent of the Jira instance configuration is limited and managed by a separate infrastructure team. The adaptor must be configurable to allow for the use with Jira instances with different configurations, while still providing the same functionality.
+
+The main configuration points of Jira, which are important in the context of this thesis, are:
+
+\begin{itemize}
+  \item \texttt{issue\_type} -- the type of the issue, which determines the fields available for the issue
+  \item \texttt{issue\_link} -- the type of the link between two issues
+  \item \texttt{field} -- the field representing a property of the issue
+\end{itemize}
+
+Idealy, two new \texttt{issue\_types} should be added to the Jira configuration to represent the \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:requirementCollection} resources, however it is possible to use any two of the existing \texttt{issue\_types} native to the Jira base confifugration as well. The same applies to the \texttt{oslc\_rm:decomposes} and \texttt{oslc\_rm:decomposedBy} properties, which are mapped to a singular \texttt{issue\_link}, with each representing different direction of the link. 
+
+The last problem point of the configuration is the newly added string based identifier \texttt{dcterms:identifier} property. The adaptor allows two ways to store the identifier in the Jira issue:
+
+\begin{enumerate}
+  \item \texttt{labels} -- the identifier is stored in the \texttt{labels} field together with the values of property \texttt{dcterms:subject}
+  \item \texttt{custom\_field} -- the identifier is stored in a custom \texttt{field}
+\end{enumerate}
+
+\subsection*{Limitations of the Jira and R4J}
+The last, but not least, aspect that impacted how the mapping of the resources was designed, is the limited modifiability of some of the Jira and R4J resources and how these resources are provided by the Jira and R4J APIs.
+
+There is no way to add a custom field to the representation of Jira project, resulting in the inability to use anything except the numeric project \texttt{id} as the project unique identifier. Similar issue was identified with the identified for the \texttt{jira\_r4j:Folder} resource, which is identifier uniquely by the numeric \texttt{id}, only in the context of the project it belongs to. To comply with the OSLC Core specification, each resource has to be uniquely identified within the context of the whole adaptor. As a solution to this problem, the \texttt{jira\_r4j:Folder} resource is uniquely identified by the combination of the folder \texttt{id} and the project \texttt{key} in the form of \texttt{<project\_key>-<folder\_id>}. This is still in line with the idea of the generic nature of the adaptor, as the project and folder identifiers are defined as part of the \texttt{jira} an \texttt{jira\_r4j} namespaces, and are not part of the generic \texttt{oslc\_rm} domain model.
 
 %=========================================================================
 
@@ -356,20 +436,36 @@ The \texttt{jira} and \texttt{jira\_r4j} namespaces define properties and resour
 %\todo{Gramar check}
 %\todo{Style document}
 
-%\todo{Authentizace Basic + OAuth, not sure if here nebo v Adaptor Design zmínit jak to generuje Lyo a jak to používáme/bylo změno}
-%\todo{Popis toho jaké jdou dělat query}
+%what is generated by the Lyo Code Generator
+%maybe seme overview of project structure, and technology stack generated
+%some kind of overview of the generated code?
+
+
+\section{Jira Java SDK}
+%zmínit a popsat použití/extension of jira java sdk
+
+\section{Configuration}
 %\todo{Konfigurační soubory pro Jiru a R4J}
-%\todo{permision needed for user to do CRUD operations}
+
+\section{Authentization}
+%\todo{Authentizace Basic + OAuth, not sure if here nebo v Adaptor Design zmínit jak to generuje Lyo a jak to používáme/bylo změno}
+% OSLC není povínné řešit, přeposílání na Jira -> stará se o to ona
+
+\section{Creation adn Update Capability}
+%issue validate, create resource, then update it with the links probably with flow diagram
+%folder validate, create resource, then update it with the links probably with flow diagram
+
+\section{Query Capability}
 %JIRA - JQL
 %R4J local filtration - navrhnout suggestion missing endpointu (teoreticky možná optimalizace s cache přes timestamp a checkem jestli existuje issue s modified > než time stamp -> get again, not ideal ale lepší než nic, za předpokladu že modifed lookup by byl rychlejší)
-
-%Popsat Oauth - OSLC není povínné řešit, přeposílání na Jira -> stará se o to ona
-
 %Query jenom základ, neexistuje knihovna co by to řešila
 
+\section{Bugs and Limitations} %weird section name tbh
 %\todo{BUGv R4J API: 500 returned při updatu folderu s parent=ROOT}
-
 %Memory leak caused by not closing connections - fixed by closing all opened in SessionDestroy
+%problem with Epic as it requires EPIC name field as well - nevadí - zmínit že můžou existovat issue typy s jinými povinnými fields
+%\todo{req a reqCollection type name nesmí být stejné}
+%contributors
 
 %=========================================================================
 
