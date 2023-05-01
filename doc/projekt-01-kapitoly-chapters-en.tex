@@ -6,9 +6,6 @@
 % \documentclass[../projekt.tex]{subfiles}
 % \begin{document}
 
-%TODO: check figure H or hbt
-%TODO: check figure references
-
 \chapter{Introduction}
 This chapter summarizes the motivation and objectives of this thesis, the solution taken to achieve the objectives, and the results of the thesis. In the last section, the structure of the thesis is presented.
 
@@ -30,13 +27,12 @@ The mapping of the data provided by Jira and R4J API to the OSLC format was done
 The utilities and SDKs provided by Eclipse Lyo were very useful in the development and design stages of the adaptors, greatly reducing the time needed to adopt the OSLC standard. However, the documentation and examples provided by the Lyo project were outdated and not detailed enough, also lacking some deeper explanation of important concepts. The contents of the Requirement Management Specification were also not documented sufficiently, compared to, for example, the Automation Domain Specification, resulting in difficulties in the comprehension of the specification.
 
 \section{Structure of the Thesis}
-%\todo{Gramar check}
-%\todo{Style document}
-\todo{Write after thesis structure is finalized}
+This section provides a brief overview of the structure of the thesis itself. Chapter \ref{chapter:background} covers the basics of requirements management and its fundamental concepts, as well as a basic overview of requirement management systems. Chapter \ref{chapter:oslc} provides a detailed description of the OSLC standard, its concepts, the Core and Requirement Management specification, and the tooling provided by the Lyo project. Chapter \ref{chapter:authentication} covers the overview of the BASIC and OAuth2 authentication methods. Chapter \ref{chapter:adaptor_design} describes the design of the adaptors, including the Domain and Toolchain models, as well as the resource mapping. Chapter \ref{chapter:implementation} gives a summary of the implementation approaches and challanges faced during the development of the adaptors. The testing and evaluation of the created adaptors are described in Chapter \ref{chapter:evaluation}. The installation and usage guide can be found in Appendix \ref{chapter:manual}.
 
 %=========================================================================
 
 \chapter{Background}
+\label{chapter:background}
 This chapter briefly covers the basics of requirements management and its fundamental concepts, as well as a basic overview of Jira Software and Requirements for Jira plugin. Information provided in this overview is important for understanding the requirements and needs of the adaptor.
 
 \section{Requirements Management}
@@ -78,6 +74,7 @@ The document is divided into two parts, \texttt{THE-HEADER}, containing metadata
 %=========================================================================
 
 \chapter{OSLC -- Open Services for Lifecycle Collaboration}
+\label{chapter:oslc}
 This chapter provides a brief overview of the OSLC (Open Services for Lifecycle Collaboration) \cite{oslc}, its fundamental technologies, and the Core and Requirement Management specifications, which are used in this thesis.
 
 \section{Overview}
@@ -299,6 +296,7 @@ OIDC (OpenID Connect) \cite{oidc} is an extension of OAuth 2.0, which allows th
 %=========================================================================
 
 \chapter{Adaptor Design}
+\label{chapter:adaptor_design}
 %\todo{Ref to OSLC spec}
 This chapter details the process of designing the Jira and R4J adaptors, as well as the decisions made during the process and the reasoning behind them. The chapter is divided into several sections, each detailing different steps of the design process.
 
@@ -323,7 +321,7 @@ After tooling selection, the next step in the design process was to model the ad
 The domain models were created based on the OSLC Core and Requirement Management specifications, with the data exposed by Jira and R4J APIs taken into consideration. The requirements and restrictions placed on the \texttt{oslc} and \texttt{oslc\_rm} are defined in the Requirement Management specification using the \texttt{MUST}, \texttt{MUST NOT}, \texttt{SHOULD}, \texttt{SHOULD NOT} and \texttt{MAY} keywords. The main goal was to create models compliant with the standards while taking into account their extensibility in the future and without creating any limitations by coupling them with Jira or R4J-specific resources. This lead to the separation into \texttt{oslc}, \texttt{oslc\_rm}, \texttt{jira} and \texttt{jira\_r4j} models. The \texttt{oslc} and \texttt{oslc\_rm} models were modeled using the models provided by Lyo project \cite{lyo_domains} as a base.
 
 \subsection*{OSLC Core Domain}
-The OSLC Core domain model is specified by the OSLC Core specification described in \ref{sec:oslc_core_specification}. As every OSCL-compliant adaptor has to implement the OSLC Core specification, the domain model provides the base resources of the OSLC Core vocabulary as well as other basic namespaces used for the definition of other resources -- namely RDF \cite{rdf_namespace}, RDFS \cite{rdfs_namespace}, Dublin Core \cite{dcterms_namespace} and FOAF \cite{foaf_namespace}. The OSLC Core domain model can be seen in Figures \ref{fig:oslc_core_domain_model_diagram} and \ref{fig:oslc_core_model_diagram}.
+The OSLC Core domain model is specified by the OSLC Core specification described in \ref{sec:oslc_core_specification}. As every OSLC-compliant adaptor has to implement the OSLC Core specification, the domain model provides the base resources of the OSLC Core vocabulary as well as other basic namespaces used for the definition of other resources -- namely RDF \cite{rdf_namespace}, RDFS \cite{rdfs_namespace}, Dublin Core \cite{dcterms_namespace} and FOAF \cite{foaf_namespace}. The OSLC Core domain model can be seen in Figures \ref{fig:oslc_core_domain_model_diagram} and \ref{fig:oslc_core_model_diagram}.
 
 \begin{figure}[H]
   \centering
@@ -443,6 +441,7 @@ There is no way to add a custom field to the representation of the Jira project,
 %=========================================================================
 
 \chapter{Implementation}
+\label{chapter:implementation}
 %\todo{Gramar check}
 %\todo{Style document}
 This chapter details the implementation of the adaptors, including the challanges and problems faced during the implementation and the solutions to these problems.
@@ -464,7 +463,7 @@ Atlassian provides developers with a Java SDK for the Jira API \cite{jira_java_
 
 The authorization of the requests sent by the clients is handled by the implementations of the \texttt{AuthenticationHandler} interface. The implementation for BASIC authentication is provided by the SDK, however an implementation for token based authorization had to be implemented to support OAuth2 authentication.
 
-\section{Authentization}
+\section{Authentication}
 The \emph{Code Generator} from the Lyo project generates the base implementation of the BASIC authentication and OAuth1.a authorization. However, this implementation is not usable in the context of the Jira and R4J adaptors, as the generated code treats the adaptors as \emph{authentication authorities}. This means it expects the adaptors to validate the users creadentials and provide the users with the authorization codes and access tokens. The authentication and authorization has to be handled by the Jira instance as it is the authentication authority in this case. 
 
 It was decided to use the OAuth2 authentication instead of OAuth1.a as it is a more modern and secure authentication method, while being easier to implement and use. A decision was made to use the \emph{OAuth2 Authorization Code Grant}, summarized in Section \ref{section:code_grants}, with the requests for authorization codes and access tokens being handled by the Jira instance. This is still in line with the OSLC Core specification, as it does not require the adaptors to support or handle the authentication. To support discoverability of the endpoints for the authorization and token, their URLs were added to the \texttt{ServiceProvider} resources of the adaptors.
@@ -472,32 +471,39 @@ It was decided to use the OAuth2 authentication instead of OAuth1.a as it is a m
 The authorization of the requests to the adaptors, either by BASIC creadentials or OAuth2 access tokens, is handled by forwarding the contents of \texttt{Authorization} header from the request to the Jira and R4J clients.
 
 \section{Creation and Update Capability}
-\todo{create and update capability}
+This section details, how the creation and update flows have been implemented for the \texttt{Requirement}, \texttt{RequirementCollection} and \texttt{Folder} resources. As both \texttt{Requirement} and \texttt{RequirementCollection} resources are saved as Jira issues with different \texttt{issueType}, they share the underlying generic implementation for Issue creation and update. 
 
 \subsection*{Issue Resource}
-\todo{issue creation}
+The creation of the Jira issues is implemented as a sequence of validation and creation steps. The order of these steps is as follows:
 
-%issue validate, create resource, then update it with the links probably with flow diagram
+\begin{enumerate}
+  \item Validate issue contains all required properties for creation
+  \item Validate all issues linked by \texttt{decomposedBy} exist
+  \item Validate all issues linked by \texttt{decomposes} exist
+  \item Validate specified \texttt{project} exists
+  \item Validate specified \texttt{issueType} exists in the context of the project (\texttt{issueType} to be used for \texttt{Requirement} and \texttt{RequirementCollection} resources is specified by the configuration)
+  \item Validate no issue with the same identifier exists
+  \item Validate fields for storing \texttt{subject} and \texttt{identifier} properties exists for the specified \texttt{issueType} (the fields for \texttt{subject} and \texttt{identifier} are specified by the configuration)
+  \item Create issue with the specified properties
+  \item Update the created issue with the \texttt{decomposedBy} and \texttt{decomposes} links
+\end{enumerate}
 
-\begin{figure}[hbt]
-  \centering
-  \includegraphics[width=.8 \linewidth]{figures/placeholder.pdf}
-  \caption{Issue creation flow diagram}
-  \label{fig:issue_creation_flow}
-\end{figure}
+The update functionality is implemented in a similar way to the create functionality, the main difference being that the update validates if the issue with the specified identifier exists and if it is of the correct \texttt{issueType}. To correctly update the links between the issues, the existing links created by the adaptor are removed before the new links from the updated resource are created.
 
 \subsection*{Folder Resource}
-\todo{folder creation}
+The creation of the R4J folder resources is implemented as a chain of validation and creation steps. The order of these steps is as follows:
 
-%folder validate, create resource, then update it with the links probably with flow diagram
+\begin{enumerate}
+  \item Validate folder contains all required properties for creation
+  \item Validate specified \texttt{project} exists
+  \item Validate specified \texttt{parentFolder} exists
+  \item Validate \texttt{parentFolder} does not contain a folder with the same name as the one being created
+  \item Validate all issues linked by \texttt{contains} exist while validating the \texttt{issueType} of the issues as well
+  \item Create folder
+  \item Update the created folder with the \texttt{contains} links
+\end{enumerate}
 
-\begin{figure}[hbt]
-  \centering
-  \includegraphics[width=.8 \linewidth]{figures/placeholder.pdf}
-  \caption{Folder creation flow diagram}
-  \label{fig:folder_creation_flow}
-\end{figure}
-
+The update is done in a similar way to the create functionality, except the update validates if the folder with the specified identifier exists. To assert the folder contains only the issues specified in the update, all of the issues currently linked to the folder are removed and then the new links are created.
 
 \section{Query Capability}
 The skeletons and endpoints for the query capability were generated by the Code Generator, however the generated implementation were missing \texttt{oslc.searchTerms} parameters, which are required by the Requirement Management Specification. The \texttt{oslc.searchTerms} parameter was added to each of the genenerated implementations, thus enabling fulltext search of the resources. 
@@ -512,48 +518,73 @@ For querying the \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementC
 To map the parsed query to the JQL an \texttt{IssueTranslator} was implemented utilizing the \texttt{JiraQueryBuilder} mapping each property of the OSLC resources to its counterpart in the Jira issue.
 
 \subsection*{R4J Resources}
+\label{sec:r4j_query}
 The R4J API does not support any query language resulting in the inability to retrieve only the data corresponding to the requested \texttt{jira\_r4j:Folder} resources. To overcome this limitation a non-ideal, but functional solution was implemented -- retrieve the whole folder tree structure and filter the results on the adaptor side. This solution is not ideal as it requires the adaptor to retrieve a big amount of data, which can result in performance issues. 
 
 To mitigate the performance issue, the adaptor could cache the retrieved folder tree structure and only retrieve it if the structure was modified since the last retrieval. The problematic part of this solution is how to determine if the structure was modified. The R4J API does not provide this metadata for the folder tree structure. A suitable solution might be to check if any issues from the project with the \texttt{modifed} timestamp greater than the timestamp of the cached tree structure exist, regardless if they belong to the tree structure. However this would require investigation if the performance of this solution would be better that the performance of the non-cached approach. Either way the extend of this solution is beyond the scope of this thesis.
 
-\section{Bugs and Limitations} %weird section name tbh
-%\todo{BUGv R4J API: 500 returned při updatu folderu s parent=ROOT}
-%Memory leak caused by not closing connections - fixed by closing all opened in SessionDestroy
-%problem with Epic as it requires EPIC name field as well - nevadí - zmínit že můžou existovat issue typy s jinými povinnými fields
-%\todo{req a reqCollection type name nesmí být stejné}
-%contributors
+\section{Bugs and Limitations}
+During the implementation several bugs, issues and limitations were discovered. This section goes over them and describes how they were resolved or mitigated.
+
+\subsection*{R4J API Bug}
+An issue was discovered during the implementation of the folder update functionality. The R4J API returns \texttt{500 -- Internal Server Error} when updating a folder with the \texttt{parentFolder} set to the \texttt{ROOT} of the directory structure, even though the folder is updated correctly. This issue was reported to the R4J API team and a temporal workaround was implemented in the adaptor. The temporary solution ignores the \texttt{500 -- Internal Server Error}, validates if the folder was updated correctly and if validation passes the update is considered successful.
+
+\subsection*{Clients memory leak}
+During the testing of the adaptor, a memory leak was discovered in the clients. The leak was caused by the clients not closing the HTTP connections after the request was completed. It is unknown if this bug is in the implementation provided by the Jira API SDK or if it was caused by the extensions build on top of it. The created solution caches references to all the connections opened by the clients during the processing of a single request to the adaptor and closes them after the request is completed.
+
+\subsection*{Contributors}
+Both the definitions \texttt{Requirement} and \texttt{RequirementCollection} contain the \texttt{contributors} property. The Jira API exposes a \texttt{changelog} property in the issue resource, which contains the information about changes done to the issue and who performed them. However, there is a limitation in the Jira API, which does not allow the retrieved changelog to exceed 500 entries. This can result in the \texttt{contributors} property not containing all the contributors for issues with a large amount of changes. Currently there is no solution for this issue.
+
+\subsection*{Issue types}
+Some \texttt{issueTypes} require additional fields to be set when creating the issue (e.g. \texttt{Epic} requires the \texttt{Epic Name} field to be set). The adaptor has no way to verify if the custom required fields are set, thus the create operation can fail and result in a \texttt{500 -- Internal Server Error}. 
+
+A problem arises when the \texttt{issueTypes} specified in the configuration file for both \texttt{Requirement} and \texttt{RequirementCollection} are the same. This results in the adaptor not being able to distinguish between the two resource types and thus returning the \texttt{Requirement} resources as \texttt{RequirementCollection} resources and vice versa.
+
+It is left up to the users of the adaptor to ensure a valid \texttt{issueTypes} are specified in the configuration file, which does not require any additional fields to be set.
 
 %=========================================================================
 
 \chapter{Evaluation and Testing}
+\label{chapter:evaluation}
 %\todo{Gramar check}
 %\todo{Style document}
+This chapter contains the evaluation of the implemented adaptors and used technologies as well as an overview of the testing of both adaptors.
 
-%\todo{Testování v Postmanovi}
+\section{Adaptors Testing}
+The created adaptors fully comply with the OSLC Core and Requirement Management specifications by providing all of the required resources, properties and functionality. The Jira adaptor can be used alone to fully manage requirements in Jira, however there is no way to diferenctiate between requirements and other issues as long as they have the same \texttt{issueType}. The R4J adaptor provides a solution for this by alowing the user to retrieve all of the requirements based on if they were added to the R4J folder tree structure.
 
-%\todo{Testování pomocí ReqIF souboru}
+The Jira and R4J adaptors have been end-to-end tested using the \emph{Postman} \cite{postman} tool. The testing was done by creating a collection of requests, which tests the basic and query functionality of the adaptors. The collection is comprised of 361 HTTP requests and 446 tests. The collection can be exported as a JSON file and used by a continuous integration tool to validate that the changes to adaptors did not introduce any functionality breaks. 
 
-%eval OSLC 
-%zmínit složitost setupu Eclipse Lyo a zastaralé dokumentace k instalaci
+To further validate the functionality of the Jira adaptor, a Python client for the adaptor has been created. This client provides a simple interface for importing and exporting requirements from Jira in the ReqIF format though the adaptor, by utilizing the \texttt{rdflib} \cite{python_rdflib} and \texttt{reqif} \cite{python_reqif} python libraries. The importing and exporting has been successfully tested by an example ReqIF file provided by Honeywell, testing the functionality of the adaptor on a real-world use case.
 
-%eval Req Spec
 
-%eval JIRA + R4J API
-%Hard to tell when 401 as Jira returns 400/404 as Anonymous access exists
+\section{OSLC Evaluation}
+The OSLC Core specification is well written and easy to follow, however the OSLC Requirement Management specification is not detailed enough, which greatly impacts the comprehensibility of it. The specification does not provide any examples of how the resources should look like nor any diagrams explaining the relations between the resources. Compared to the OSLC Automation Management specification, which provides both examples and diagrams, the OSLC Requirement Management specification could use some improvements.
 
-%eval result
-%\todo{Pokud požiju R4J hledám pomocí folder a získávám jenom Bugs/Reqs které jsou  nalinkované v R4J, pokud využitu JIRA adaptor získávám všechny issues daného typu (v configuraci) -> JIRA adaptor potřebuje speciální issues types aby rozlišoval mezi req a jinými issues}
-%jira adaptor can function on its own
+The Eclipse Lyo tooling greately reduces the complexity and time cost of creating an OSLC adaptor. However, the initial time investment in setting up the tooling is quite high as well as the learning curve of the tooling. The tools are also lacking a solid multi-platform support, being only usable on the Linux systems. The documentation for the tooling is outdated and does not reflect the current state of the tooling. As a result it is really hard to find any information about the tooling and how to use it. The learning curve of the tooling could be greatly reduced by providing a video or text-based tutorial, detailing the process of creating an adaptor from start to finish.
 
-%future work
-%možnost přidat OIDC nebo OAuth PKCE do budoucna
+\section{Jira and R4J Evaluation}
+The creation of the OSLC adaptors for Jira and R4J has been greatly impacted by the quality of the Jira and R4J API. The Jira API is well designed and well documented, providing a solid foundation for the creation of the Jira adaptor. The R4J API on the other hand is lacking documentation, is designed a bit insufficiently and is missing some important features, such as a query capability on the folder endpoint.
+
+The developement has been also greatly accelerated by the use of the Jira API SDK, which provides a great base for the creation of clients for the Jira API.
 
 %=========================================================================
 
 \chapter{Conclusion}
+\label{chapter:conclusion}
 %\todo{Gramar check}
 %\todo{Style document}
+This thesis described the OSLC Core and Requirement Management specifications in the context of the Jira and R4J tools and tools that can be utilized to aid with the OSLC adoption. It also provided an overview of the whole adaptor creation process.
 
+Two adaptors have been designed and implemented as a part of this thesis -- Jira adaptor, fully satisfying the OSLC Core and Requirement Management specifications, and R4J adaptor which provides further functionality for easier work with the requirement resources. The adaptors have been tested and evaluated, proving their functionality and usability. A Python command line client has been created for the Jira adaptor, providing a simple interface for importing and exporting requirements from Jira in the ReqIF format.
+
+The generic way of the adaptors implementation allows for the work to be continued and build upon in the future. Some of the possible upgrades and improvements for future work includes:
+
+\begin{itemize}
+  \item \textbf{Folder query optimalization} -- the optimalization of the \texttt{folder} query by using caching as discussed in Section \ref{sec:r4j_query}
+  \item \textbf{Generic Requirement Management adaptor} -- the creation of a generic adaptor, which would be able to work with any Requirement Management tool
+  \item \textbf{Full OSLC Query support} -- the addition of the full OSLC Query support to the adaptors by creating a parser for the full extend of the OSLC Query language
+\end{itemize}
 
 %=========================================================================
 
