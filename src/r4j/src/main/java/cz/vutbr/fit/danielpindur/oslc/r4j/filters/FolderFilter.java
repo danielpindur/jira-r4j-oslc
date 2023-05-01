@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2023 Daniel Pindur <pindurdan@gmail.com>, <xpindu01@stud.fit.vutbr.cz>
+ *
+ * This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
 package cz.vutbr.fit.danielpindur.oslc.r4j.filters;
 
 import cz.vutbr.fit.danielpindur.oslc.r4j.helpers.FolderHelper;
@@ -9,6 +19,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Folder resources filter.
+ */
 public class FolderFilter {
     private final FolderFilterInput folderFilterInput;
     private final String terms;
@@ -20,6 +33,13 @@ public class FolderFilter {
         this.projectKey = projectKey;
     }
 
+    /**
+     * Converts folder tree to lists of folders by depth traversal.
+     * 
+     * @param folderTreeModel Folder tree model.
+     * 
+     * @return List of folders.
+     */
     private List<FolderTreeModel> convertTreeToList(final FolderTreeModel folderTreeModel) {
         var list = new LinkedList<FolderTreeModel>();
         var copy = new FolderTreeModel();
@@ -33,6 +53,13 @@ public class FolderFilter {
         return list;
     }
 
+    /**
+     * Filter folders by full text.
+     * 
+     * @param folderTreeModel List of folders.
+     * 
+     * @return Filtered list of folders.
+     */
     private List<FolderTreeModel> filterTerms(List<FolderTreeModel> folderTreeModels) {
         if (terms == null || terms.isEmpty()) {
             return folderTreeModels;
@@ -47,6 +74,13 @@ public class FolderFilter {
                 x.Title.toUpperCase().contains(terms.toUpperCase())).collect(Collectors.toList());
     }
 
+    /**
+     * Filter folders by identifiers.
+     * 
+     * @param folderTreeModel List of folders.
+     * 
+     * @return Filtered list of folders.
+     */
     private List<FolderTreeModel> filterIdentifiers(List<FolderTreeModel> folderTreeModels) {
         if ((folderFilterInput.Identifiers == null || folderFilterInput.Identifiers.isEmpty()) &&
                 (folderFilterInput.NotIdentifiers == null || folderFilterInput.NotIdentifiers.isEmpty())) {
@@ -72,6 +106,13 @@ public class FolderFilter {
         return negative.collect(Collectors.toList());
     }
 
+    /**
+     * Filter folders by parent identifiers.
+     * 
+     * @param folderTreeModel List of folders.
+     * 
+     * @return Filtered list of folders.
+     */
     private List<FolderTreeModel> filterParentIds(List<FolderTreeModel> folderTreeModels) {
         if ((folderFilterInput.ParentFolderIds == null || folderFilterInput.ParentFolderIds.isEmpty()) &&
                 (folderFilterInput.NotParentFolderIds == null || folderFilterInput.NotParentFolderIds.isEmpty())) {
@@ -97,6 +138,13 @@ public class FolderFilter {
         return negative.collect(Collectors.toList());
     }
 
+    /**
+     * Filter folders by contains.
+     * 
+     * @param folderTreeModel List of folders.
+     * 
+     * @return Filtered list of folders.
+     */
     private List<FolderTreeModel> filterContains(List<FolderTreeModel> folderTreeModels) {
         if ((folderFilterInput.ContainUris == null || folderFilterInput.ContainUris.isEmpty()) &&
                 (folderFilterInput.NotContainUris == null || folderFilterInput.NotContainUris.isEmpty())) {
@@ -136,10 +184,24 @@ public class FolderFilter {
         return negative.collect(Collectors.toList());
     }
 
+    /**
+     * Map folder tree to folder model.
+     * 
+     * @param folderTreeModel Folder tree.
+     * 
+     * @return Folder model.
+     */
     private List<FolderModel> mapTreeToModel(List<FolderTreeModel> folderTreeModels) {
         return folderTreeModels.stream().map(FolderModel::new).collect(Collectors.toList());
     }
 
+    /**
+     * Filter folders.
+     * 
+     * @param folderTreeModel Folder tree.
+     * 
+     * @return Filtered folders.
+     */
     public List<FolderModel> filter(final FolderTreeModel folderTreeModel) {
         var converted = convertTreeToList(folderTreeModel);
 

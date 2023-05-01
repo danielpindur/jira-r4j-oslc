@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2023 Daniel Pindur <pindurdan@gmail.com>, <xpindu01@stud.fit.vutbr.cz>
+ *
+ * This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
 package cz.vutbr.fit.danielpindur.oslc.shared.services.clients;
 
 import com.atlassian.jira.rest.client.api.MetadataRestClient;
@@ -24,6 +34,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+/**
+ * Extended version of the AsynchronousIssueRestClient from Jira API SDK.
+ */
 public class IssueRestClientExtended extends AsynchronousIssueRestClient implements Closeable {
     private final URI baseUri;
     private final Configuration configuration;
@@ -48,6 +61,14 @@ public class IssueRestClientExtended extends AsynchronousIssueRestClient impleme
         } catch (Exception ignored) { }
     }
 
+    /**
+     * Get the id of the field with the given name by iterating over the given fields.
+     * 
+     * @param fieldName The name of the field to get the id for.
+     * @param fields The fields to iterate over.
+     * 
+     * @return The id of the field with the given name.
+     */
     public String GetFieldId(final String fieldName, Iterable<Field> fields) {
         for (var field : fields) {
             if (field.getName().equalsIgnoreCase(fieldName)) {
@@ -58,11 +79,26 @@ public class IssueRestClientExtended extends AsynchronousIssueRestClient impleme
         return null;
     }
 
+    /**
+     * Get the id of the field with the given name.
+     * 
+     * @param fieldName The name of the field to get the id for.
+     * 
+     * @return The id of the field with the given name.
+     */
     public String GetFieldId(final String fieldName) {
         var fields = metadataRestClient.getFields().claim();
         return GetFieldId(fieldName, fields);
     }
 
+    /**
+     * Get the value of the field with the given name from the given issue as a string.
+     * 
+     * @param fieldName The name of the field to get the value for.
+     * @param issue The issue to get the value from.
+     * 
+     * @return The string value of the field
+     */
     public String getFieldStringValue(final String fieldName, final Issue issue) {
         var fieldId = GetFieldId(fieldName);
         if (fieldId == null) {
@@ -81,6 +117,14 @@ public class IssueRestClientExtended extends AsynchronousIssueRestClient impleme
         return field.getValue() != null ? field.getValue().toString() : null;
     }
 
+    /**
+     * Get the value of the field with the given name from the given issue as a set of strings.
+     * 
+     * @param fieldName The name of the field to get the value for.
+     * @param issue The issue to get the value from.
+     * 
+     * @return The set of strings from the field
+     */
     private Set<String> getFieldStringSetValue(final String fieldName, final Issue issue) {
         var fieldId = GetFieldId(fieldName);
         if (fieldId == null) {
@@ -99,6 +143,14 @@ public class IssueRestClientExtended extends AsynchronousIssueRestClient impleme
         return field.getValue() != null ? (HashSet<String>) field.getValue() : new HashSet<String>();
     }
 
+    /**
+     * Get the value of the field with the given name from the given issue as a set of strings without the string that matches the issue identifier format.
+     * 
+     * @param fieldName The name of the field to get the value for.
+     * @param issue The issue to get the value from.
+     * 
+     * @return The set of strings from the field without the identifier string.
+     */
     public Set<String> getFieldStringSetValueWithoutIdentifier(final String fieldName, final Issue issue) {
         var values = getFieldStringSetValue(fieldName, issue);
         var filteredValues = new HashSet<String>();
@@ -116,6 +168,13 @@ public class IssueRestClientExtended extends AsynchronousIssueRestClient impleme
         return filteredValues;
     }
 
+    /**
+     * Get the GUID identifier from the given issue.
+     * 
+     * @param issue The issue to get the GUID identifier from.
+     * 
+     * @return The GUID identifier for the given issue.
+     */
     private String getIssueGUIDFromIdentifierField(final Issue issue) {
         var identifierFieldName = configuration.IdentifierFieldName;
         return getFieldStringValue(identifierFieldName, issue);
@@ -137,6 +196,13 @@ public class IssueRestClientExtended extends AsynchronousIssueRestClient impleme
         return null;
     }
 
+    /**
+     * Set the GUID identifier for the given issue in the identifier field.
+     * 
+     * @param issue The issue to set the GUID identifier for.
+     * @param identifier The GUID identifier to set.
+     * 
+     */
     private void setIssueGUIDInIdentifierField(final Issue issue, final String identifier) {
         var identifierFieldId = GetFieldId(configuration.IdentifierFieldName);
 
@@ -151,6 +217,13 @@ public class IssueRestClientExtended extends AsynchronousIssueRestClient impleme
                 .claim();
     }
 
+    /**
+     * Set the GUID identifier for the given issue in the labels field.
+     * 
+     * @param issue The issue to set the GUID identifier for.
+     * @param identifier The GUID identifier to set.
+     * 
+     */
     private void setIssueGUIDInLabelsField(final Issue issue, final String identifier) {
         var labelsFieldId = GetFieldId(configuration.LabelsFieldName);
 
@@ -168,6 +241,13 @@ public class IssueRestClientExtended extends AsynchronousIssueRestClient impleme
                 .claim();
     }
 
+    /**
+     * Set the GUID identifier for the given issue.
+     * 
+     * @param issue The issue to set the GUID identifier for.
+     * @param identifier The GUID identifier to set.
+     * 
+     */
     private void setIssueGUID(final Issue issue, final String identifier) {
         if (configuration.SaveIdentifierInLabelsField) {
             setIssueGUIDInLabelsField(issue, identifier);
@@ -176,6 +256,14 @@ public class IssueRestClientExtended extends AsynchronousIssueRestClient impleme
         }
     }
 
+    /**
+     * Get the GUID identifier for the given issue.
+     * 
+     * @param issue The issue to get the GUID identifier for.
+     * @param first Whether this is the first attempt to get the GUID identifier.
+     * 
+     * @return The GUID identifier for the given issue.
+     */
     public String getIssueGUID(final Issue issue, final boolean first) {
         if (issue == null) {
             return null;
@@ -204,6 +292,13 @@ public class IssueRestClientExtended extends AsynchronousIssueRestClient impleme
         return getIssueGUID(updated, false);
     }
 
+    /**
+     * Search for an issue with the given identifier.
+     * 
+     * @param identifier The identifier to search for.
+     * 
+     * @return The issue with the given identifier or null if no issue was found.
+     */
     public Issue searchIssueByIdentifier(final String identifier) {
         var searchString = new JiraQueryBuilder().Identifier(identifier).build();
 

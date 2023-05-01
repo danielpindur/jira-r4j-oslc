@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2023 Daniel Pindur <pindurdan@gmail.com>, <xpindu01@stud.fit.vutbr.cz>
+ *
+ * This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
 package cz.vutbr.fit.danielpindur.oslc.r4j.facades;
 
 import com.atlassian.jira.rest.client.api.RestClientException;
@@ -24,9 +34,21 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
+/**
+ * Folder facade.
+ */
 public class FolderFacade extends BaseFacade {
     @Inject ResourcesFactory resourcesFactory;
 
+    /**
+     * Map API folder resource to OSLC folder resource.
+     * 
+     * @param folderIdentifier Folder identifier.
+     * @param resource         API folder resource.
+     * @param projectKey       Project key.
+     * 
+     * @return OSLC folder resource.
+     */
     private Folder MapResourceToResult(final String folderIdentifier, final FolderModel resource, final String projectKey) {
         var result = new Folder();
         result.setTitle(resource.Title);
@@ -46,6 +68,14 @@ public class FolderFacade extends BaseFacade {
         return result;
     }
 
+    /**
+     * Get links of subfolders from subfolder IDs.
+     * 
+     * @param subfolderIds Subfolder IDs.
+     * @param projectKey   Project key.
+     * 
+     * @return Links of subfolders.
+     */
     private Set<Link> GetSubfolderLinks(final Set<Integer> subfolderIds, final String projectKey) {
         var subfolderLinks = new HashSet<Link>();
         for (var subfolderId : subfolderIds) {
@@ -57,15 +87,37 @@ public class FolderFacade extends BaseFacade {
         return subfolderLinks;
     }
 
+    /**
+     * Validate if identifier is identifier of root folder.
+     * 
+     * @param identifier Folder identifier.
+     * 
+     * @return True if identifier is identifier of root folder, false otherwise.
+     */
     private boolean IsRootFolder(final String identifier) {
         var folderId = GetFolderId(identifier);
         return folderId == -1;
     }
 
+    /**
+     * Validate if parent folder has been updated.
+     * 
+     * @param original Original folder.
+     * @param update   Updated folder.
+     * 
+     * @return True if parent folder has been updated, false otherwise.
+     */
     private boolean ParentChanged(final Folder original, final Folder update) {
         return !original.getParent().getValue().toString().equalsIgnoreCase(update.getParent().getValue().toString());
     }
 
+    /**
+     * Get links for issues contained in folder from issue keys.
+     * 
+     * @param issueKeys Issue keys.
+     * 
+     * @return Links for issues contained in folder.
+     */
     private Set<Link> GetContainsLinks(final Set<String> issueKeys) {
         var containsLinks = new HashSet<Link>();
 
@@ -97,6 +149,13 @@ public class FolderFacade extends BaseFacade {
         return containsLinks;
     }
 
+    /**
+     * Get project key from folder identifier.
+     * 
+     * @param folderId Folder identifier.
+     * 
+     * @return Project key.
+     */
     private String GetProjectKey(final String folderId) {
         var exploded = folderId.split("-");
         if (exploded.length != 2) {
@@ -106,6 +165,13 @@ public class FolderFacade extends BaseFacade {
         return exploded[0];
     }
 
+    /**
+     * Get folder ID from folder identifier.
+     * 
+     * @param folderId Folder identifier.
+     * 
+     * @return Folder ID.
+     */
     private Integer GetFolderId(final String folderId) {
         var exploded = folderId.split("-");
         if (exploded.length != 2) {
@@ -123,6 +189,11 @@ public class FolderFacade extends BaseFacade {
         }
     }
 
+    /**
+     * Validate if project exists.
+     * 
+     * @param projectKey Project key.
+     */
     private void ValidateProject(final String projectKey) {
         Project project = null;
 
@@ -139,6 +210,13 @@ public class FolderFacade extends BaseFacade {
         }
     }
 
+    /**
+     * Get folder by identifier.
+     * 
+     * @param id Folder identifier.
+     * 
+     * @return Folder.
+     */
     public Folder get(final String id) {
         var projectKey = GetProjectKey(id);
         ValidateProject(projectKey);
@@ -155,10 +233,24 @@ public class FolderFacade extends BaseFacade {
         return result != null ? MapResourceToResult(id, result, projectKey) : null;
     }
 
+    /**
+     * Validate if folder exists by identifier.
+     * 
+     * @param id Folder identifier.
+     * 
+     * @return True if folder exists, false otherwise.
+     */
     private boolean exists(final String id) {
         return get(id) != null;
     }
 
+    /**
+     * Delete folder by identifier.
+     * 
+     * @param id Folder identifier.
+     * 
+     * @return True if folder has been deleted, false otherwise.
+     */
     public boolean delete(final String id) {
         if (IsRootFolder(id)) {
             throw new WebApplicationException("Root folder of project cannot be edited", Response.Status.BAD_REQUEST);
@@ -176,6 +268,11 @@ public class FolderFacade extends BaseFacade {
         return deletedFolder == null;
     }
 
+    /**
+     * Validate if folder contains all of the required properties.
+     * 
+     * @param resource Folder.
+     */
     private void ValidateFolder(final Folder resource) {
         if (resource.getTitle() == null || resource.getTitle().isEmpty()) {
             throw new WebApplicationException("Title cannot be null", Response.Status.BAD_REQUEST);
@@ -186,6 +283,14 @@ public class FolderFacade extends BaseFacade {
         }
     }
 
+    /**
+     * Validate if the parent folder exists and does not contain folder with the same name.
+     * 
+     * @param parentFolderIdentifier Parent folder identifier.
+     * @param newTitle New folder title.
+     * 
+     * @return True if parent folder exists and does not contain folder with the same name, false otherwise.
+     */
     private void ValidateParentFolder(final String parentFolderIdentifier, final String newTitle) {
         if (!exists(parentFolderIdentifier)) {
             throw new WebApplicationException("Root folder of project cannot be edited", Response.Status.NOT_FOUND);
@@ -200,6 +305,11 @@ public class FolderFacade extends BaseFacade {
         }
     }
 
+    /**
+     * Validate if all of the contains links are valid.
+     * 
+     * @param contains Contains links.
+     */
     private void ValidateContains(final Set<Link> contains) {
         for (Link link : contains) {
             var identifier = UriHelper.GetIdFromUri(link.getValue());
@@ -219,6 +329,13 @@ public class FolderFacade extends BaseFacade {
         }
     }
 
+    /**
+     * Create all of the contains links.
+     * 
+     * @param links Contains links.
+     * @param folderId Folder identifier.
+     * @param projectKey Project key.
+     */
     private void CreateContainsLinks(final Set<Link> links, final Integer folderId, final String projectKey) {
         for (var link : links) {
             var issueKey = FolderHelper.GetIssueKeyFromLink(link);
@@ -226,12 +343,26 @@ public class FolderFacade extends BaseFacade {
         }
     }
 
+    /**
+     * Remove all of the contains links for specified folder.
+     * 
+     * @param links Contains links.
+     * @param folderId Folder identifier.
+     * @param projectKey Project key.
+     */
     private void RemoveAllContainsLinks(final Set<String> links, final Integer folderId, final String projectKey) {
         for (var link : links) {
             getFolderClient().removeContainsLink(folderId, projectKey, link).claim();
         }
     }
 
+    /**
+     * Create folder.
+     * 
+     * @param resource Folder.
+     * 
+     * @return Created folder.
+     */
     public Folder create(final Folder resource) {
         ValidateFolder(resource);
 
@@ -256,6 +387,14 @@ public class FolderFacade extends BaseFacade {
         return get(FolderHelper.ConstructFolderIdentifier(projectKey, createdFolder.Id));
     }
 
+    /**
+     * Update folder.
+     * 
+     * @param id Folder identifier.
+     * @param resource Folder.
+     * 
+     * @return Updated folder.
+     */
     public Folder updateFolder(final String id, final Folder resource) {
         if (IsRootFolder(id)) {
             throw new WebApplicationException("Root folder of project cannot be edited", Response.Status.BAD_REQUEST);
@@ -281,6 +420,13 @@ public class FolderFacade extends BaseFacade {
         return get(id);
     }
 
+    /**
+     * Select folders by terms.
+     * 
+     * @param terms Terms.
+     * 
+     * @return List of folders.
+     */
     public List<Folder> selectFolders(final String terms) {
         var filterInput = new FolderFilterInput();
         var enabledProjectKeys = getFolderClient().getEnabledProjectKeys().claim();
@@ -298,6 +444,18 @@ public class FolderFacade extends BaseFacade {
         return result;
     }
 
+    /** 
+     * Query folders.
+     * 
+     * @param where Where clause.
+     * @param terms Terms for full-text search.
+     * @param prefix Prefix of the used oslc properties.
+     * @param paging Enable paging.
+     * @param page Selected page.
+     * @param limit Amount of folders per page.
+     * 
+     * @return List of folders.
+     */
     public List<Folder> queryFolder(final String where, final String terms, final String prefix, final boolean paging, final int page, final int limit) {
         Map<String, String> parsedPrefix = null;
         WhereClause parsedWhere = null;

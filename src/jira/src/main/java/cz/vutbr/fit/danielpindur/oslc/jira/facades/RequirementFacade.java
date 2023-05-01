@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2023 Daniel Pindur <pindurdan@gmail.com>, <xpindu01@stud.fit.vutbr.cz>
+ *
+ * This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
 package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
 import com.atlassian.jira.rest.client.api.domain.Issue;
@@ -10,7 +20,17 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Facade for Requirement resource
+ */
 public class RequirementFacade extends IssueFacade {
+    /**
+     * Maps API issue resource to OSLC Requirement resource
+     * 
+     * @param resource API issue resource
+     * 
+     * @return OSLC Requirement resource
+     */
     private Requirement MapResourceToResult(final Issue resource) {
         var result = new Requirement();
         var jiraIssueId = resource.getId().intValue();
@@ -41,6 +61,13 @@ public class RequirementFacade extends IssueFacade {
         return result;
     }
 
+    /**
+     * Creates new Requirement resource
+     * 
+     * @param requirement Requirement resource to create
+     * 
+     * @return Created Requirement resource
+     */
     public Requirement create(final Requirement requirement) {
         var identifier = requirement.getIdentifier() != null
                         ? requirement.getIdentifier()
@@ -63,6 +90,13 @@ public class RequirementFacade extends IssueFacade {
         return get(identifier);
     }
 
+    /**
+     * Gets Requirement resource by identifier
+     * 
+     * @param id Requirement identifier
+     * 
+     * @return Requirement resource
+     */
     public Requirement get(final String id) {
         var issue = getIssueByIdentifier(id);
 
@@ -73,10 +107,25 @@ public class RequirementFacade extends IssueFacade {
         return MapResourceToResult(issue);
     }
 
+    /**
+     * Deletes Requirement resource by identifier
+     * 
+     * @param id Requirement identifier
+     * 
+     * @return True if deleted, false otherwise
+     */
     public boolean delete(final String id) {
         return deleteIssue(id);
     }
 
+    /**
+     * Updates Requirement resource
+     * 
+     * @param requirement Requirement resource to update
+     * @param identifier Requirement identifier
+     * 
+     * @return Updated Requirement resource
+     */
     public Requirement update(final Requirement requirement, final String identifier) {
         ValidateLinks(requirement.getDecomposedBy());
         ValidateLinks(requirement.getDecomposes());
@@ -90,6 +139,13 @@ public class RequirementFacade extends IssueFacade {
         return get(identifier);
     }
 
+    /**
+     * Maps API issue resources to OSLC Requirement resources
+     * 
+     * @param issues API issue resources
+     * 
+     * @return OSLC Requirement resources
+     */
     private List<Requirement> mapIssuesToRequirements(final Iterable<Issue> issues) {
         var requirements = new LinkedList<Requirement>();
 
@@ -105,11 +161,30 @@ public class RequirementFacade extends IssueFacade {
         return requirements;
     }
 
+    /**
+     * Selects Requirement resources by terms
+     * 
+     * @param terms Terms to search
+     * 
+     * @return Requirement resources
+     */
     public List<Requirement> selectRequirements(final String terms) {
         var issues = selectIssues(terms, configuration.RequirementIssueTypeName);
         return mapIssuesToRequirements(issues);
     }
 
+    /**
+     * Queries Requirement resources
+     * 
+     * @param where Where clause
+     * @param terms Terms for full-text search.
+     * @param prefix Prefix of the used oslc properties.
+     * @param paging Enable paging.
+     * @param page Selected page.
+     * @param limit Amount of issues per page.
+     * 
+     * @return Requirement resources
+     */
     public List<Requirement> queryRequirements(final String where, final String terms, final String prefix, final boolean paging, final int page, final int limit) {
         var issues = queryIssues(configuration.RequirementIssueTypeName, where, terms, prefix, paging, page, limit);
         return mapIssuesToRequirements(issues);
