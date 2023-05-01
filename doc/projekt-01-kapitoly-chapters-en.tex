@@ -315,7 +315,7 @@ Because of the state of OSLC4Net, the only viable option left was to use Java wi
 
 \section{Adaptors Modeling}
 \label{sec:adaptors_modeling}
-After tooling selection, the next step in the design process was to model the adaptors themself. The modeling was done using the Eclipse Lyo modeling tool, which also provides the ability to generate code skeletons from the created models. Most of the modeling process is based on the tutorials \cite{oslc_domain_workshop}\cite{oslc_toolchain_workshop}\cite{youtube_lyo_tutorial} and examples \cite{github_oslc_lyo-adaptor-sample-modelling}\cite{github_oslc_bugzilla} provided by the OSLC community, as well as adaptor models for Unite \cite{unite_gitlab}. The modeling of the adaptors can be separated into two steps, domain modeling -- modeling the resources accepted and exposed by the adaptor, and toolchain modeling -- modeling the functionality and capabilities of the adaptor, both of which are described in the following sections.
+After tooling selection, the next step in the design process was to model the adaptors themself. The modeling was done using the Eclipse Lyo modeling tool, which also provides the ability to generate code skeletons from the created models. Most of the modeling process is based on the tutorials \cite{oslc_domain_workshop} \cite{oslc_toolchain_workshop} \cite{youtube_lyo_tutorial} and examples \cite{github_oslc_lyo-adaptor-sample-modelling} \cite{github_oslc_bugzilla} provided by the OSLC community, as well as adaptor models for Unite \cite{unite_gitlab}. The modeling of the adaptors can be separated into two steps, domain modeling -- modeling the resources accepted and exposed by the adaptor, and toolchain modeling -- modeling the functionality and capabilities of the adaptor, both of which are described in the following sections.
 
 \subsection{Domain Modeling}
 The domain models were created based on the OSLC Core and Requirement Management specifications, with the data exposed by Jira and R4J APIs taken into consideration. The requirements and restrictions placed on the \texttt{oslc} and \texttt{oslc\_rm} are defined in the Requirement Management specification using the \texttt{MUST}, \texttt{MUST NOT}, \texttt{SHOULD}, \texttt{SHOULD NOT} and \texttt{MAY} keywords. The main goal was to create models compliant with the standards while taking into account their extensibility in the future and without creating any limitations by coupling them with Jira or R4J-specific resources. This lead to the separation into \texttt{oslc}, \texttt{oslc\_rm}, \texttt{jira} and \texttt{jira\_r4j} models. The \texttt{oslc} and \texttt{oslc\_rm} models were modeled using the models provided by Lyo project \cite{lyo_domains} as a base.
@@ -363,7 +363,7 @@ Both adaptors have been modeled according to the OSLC Core Discovery principles 
 \begin{figure}[h]
   \centering
   \includegraphics[width= .8\linewidth]{figures/adaptors_interface.jpg}
-  \caption{Adaptor Interfaces Diagram (\texttt{P} - \emph{produces}, \texttt{C} - \emph{consumes})}
+  \caption{Adaptor Interfaces Diagram (\texttt{P} -- \emph{produces}, \texttt{C} -- \emph{consumes})}
   \label{fig:adaptor_interfaces_diagram}
 \end{figure}
 
