@@ -19,9 +19,37 @@
 % For compilation piecewise (see projekt.tex), it is necessary to uncomment it
 %\end{document}
 
-\chapter{Setup and usage manual}
+\chapter{Setup and Usage manual}
 \label{chapter:manual}
+This chapter covers the installation and usage of the adaptors for Jira and R4J on the Linux operating system.
+
+\section{Jira Installation}
+The Jira Software Server can be donwloaded from the Atlassian website \cite{jira_download} as a tar.gz archive. The installation is done by extracting the archive to a directory of choice -- this directory will be referred to as \texttt{JIRA\_INSTALL\_DIR}. Before running Jira, it is necessary to configure the folder, in which the data will be stored. This is done by environment variables \texttt{JIRA\_HOME} -- the configured forlder will be referred to as \texttt{JIRA\_HOME\_DIR}. The Jira server can now be started by running the \texttt{JIRA\_INSTALL\_DIR/bin/start-jira.sh} script and will be available on \texttt{localhost:8080} after the startup is completed. The Jira server can be stopped by running the \texttt{JIRA\_INSTALL\_DIR/bin/stop-jira.sh} script.
+
+\section{R4J Installation}
+The Requirements for Jira plugin can be added to the Jira instance by any administrator account by installing it from the Atlassian Marketplace found in Administration $\rightarrow$ Manage apps.
+
+\section{SSL Configuration}
+The BASIC authentication method does not require communication over HTTPS and be therefore used without any additional configuration. However, one of the requirements presented by the OAuth2 standard is for the communication to be done over HTTPS, so if this method is to be used, it is necessary to configure the Jira server to use TLS.
+
+\subsection*{Jira SSL Configuration}
+The Jira server can be configured to use TLS by following the official Atlassian documentation \cite{jira_ssl_tutorial}. The configuration is done by creating a \texttt{KeyStore} in the \texttt{JIRA\_HOME\_DIR} directory, generating a certificate and configuring the Jira server to use specified \texttt{KeyStore} in \texttt{JIRA\_INSTALL\_DIR/conf/server.xml} file. After the configuration is done, the Jira server has to be restarted. In order for the OAuth redirect to work, it is necessary to change the \texttt{Base URL} in the Jira Administration $\rightarrow$ System $\rightarrow$ General Configuration to use HTTPS instead of HTTP.
+
+\subsection*{Adaptors SSL Configuration}
+The adaptors now have to be configured to use the same certificate as creted in the previous step. The easiest way to do this is to download the certificate from the browser and import it into the Java \texttt{KeyStore} used by the adaptors. The \texttt{KeyStore} is located in \texttt{JAVA\_HOME/lib/security/cacerts} with the default password \texttt{changeit}. The certificate can be added by running the following command: 
+
+\noindent\texttt{keytool -import -noprompt -alias localhost -file ~/Downloads/localhost.pem \\-keystore default-java/lib/security/cacerts -storepass changeit}
+
+\section{Adaptors Configuration}
+The adaptors have to be configured before they can be used. The configuration is done by providing a JSON file in the \texttt{config} folder with the name \texttt{configuration.json}. The structure and meaining of each of the configuration options is described in a \texttt{config/README.md} file.
+
+\section{Adaptors Usage}
+Build and execution scripts are provided with the adaptors. The adaptors can be started by running the \texttt{run\_jira.sh} to start only the Jira adaptor, or \texttt{run\_all.sh} to start both adaptors. Both of these scripts support the \texttt{-b} flag, which builds the adaptors before running them. Upon startup the presence of the configuration file is checked, the adaptors are started and validated for successful startup. The adaptors can be stopped by pressing \texttt{Ctrl+C} in the terminal window, in which they are running. By default he Jira adaptor is started on \texttt{localhost:8081} and the R4J adaptor on \texttt{localhost:8082}, but these ports can be changed in the \texttt{poml.xml} files of the adaptors.
 
 \chapter{Contents of the included storage media}
-
+\begin{itemize}
+    \item \texttt{code} -- source code of the adaptors, including the build and execution scripts, configuration files, {README.md} files and python ReqIF client
+    \item \texttt{doc} -- thesis text in PDF format and source \LaTeX files
+    \item \texttt{libs} -- libraries used by the adaptors and the ReqIF client
+\end{itemize}
 
