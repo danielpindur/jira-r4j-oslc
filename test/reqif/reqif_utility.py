@@ -10,6 +10,7 @@
 
 import argparse
 import os
+import html
 from utils import Log 
 from reqif.parser import ReqIFParser
 from reqif.unparser import ReqIFUnparser
@@ -254,7 +255,7 @@ class OSLCCLient:
 
         conection = HTTPConnection(self.serverUrl)
         headers = {'Authorization': self.getAuthHeader(), 'Content-Type': 'application/xml'}
-        conection.request('POST', url, data, headers=headers)
+        conection.request('POST', url, data.encode('utf-8'), headers=headers)
         response = conection.getresponse()
 
         if response.status != 200 and response.status != 201:
@@ -275,7 +276,7 @@ class OSLCCLient:
 
         conection = HTTPConnection(self.serverUrl)
         headers = {'Authorization': self.getAuthHeader(), 'Content-Type': 'application/xml'}
-        conection.request('PUT', url, data, headers=headers)
+        conection.request('PUT', url, data.encode('utf-8'), headers=headers)
         response = conection.getresponse()
 
         if response.status != 200 and response.status != 201:
@@ -529,7 +530,7 @@ class Server:
             if target is None:
                 Log.Error('Target not found: ' + link, 1)
             else:
-                if target.spec_object_type == self.config['requirementSpecType']:
+                if target.spec_object_type == self.config['requirementSpecType'] or self.ignore:
                     result.append(self.url + '/jira/services/requirement/Requirement/' + target.identifier)
                 elif target.spec_object_type == self.config['requirementCollectionSpecType']:
                     result.append(self.url + '/jira/services/requirementCollection/RequirementCollection/' + target.identifier)
@@ -539,6 +540,12 @@ class Server:
 
     def upload(self, requirement, links):
         """Uploads the specified requirement to the server."""
+        issueType = requirement.spec_object_type
+
+        if self.ignore and not issueType == self.config['requirementSpecType']:
+            requirement.spec_object_type = self.config['requirementSpecType']
+            return self.upload(requirement, links)
+        
         identifier = requirement.identifier
         title = requirement.long_name
         descriptionAtributeType = self.config['descriptionAtributeType']
@@ -550,24 +557,19 @@ class Server:
         decomposes = self.resolveLink(decomposes)
         
         if description:
-            description = description.value
+            description = html.escape(description.value)
         else:
             description = ""
             Log.Warning('Description not found for requirement: ' + identifier)
 
-        if self.ignore:
-            return self.upload(identifier, title, description, "Requirement", decomposedBy, decomposes)
+        if issueType == self.config['requirementSpecType']:
+            return self.uploadInternal(identifier, title, description, "Requirement", decomposedBy, decomposes)
+
+        elif issueType == self.config['requirementCollectionSpecType']:
+            return self.uploadInternal(identifier, title, description, "RequirementCollection", decomposedBy, decomposes)
+
         else:
-            issueType = requirement.spec_object_type
-
-            if issueType == self.config['requirementSpecType']:
-                return self.uploadInternal(identifier, title, description, "Requirement", decomposedBy, decomposes)
-
-            elif issueType == self.config['requirementCollectionSpecType']:
-                return self.uploadInternal(identifier, title, description, "RequirementCollection", decomposedBy, decomposes)
-
-            else:
-                Log.Warning('Unknown issue type: ' + issueType + ", skipping requirement: " + identifier)
+            Log.Warning('Unknown issue type: ' + issueType + ", skipping requirement: " + identifier)
 
     def update(self, requirement):
         """Updates created requirement with links."""
@@ -612,12 +614,43 @@ def generateUniqueIds(requirements, relations):
 
     return list(updatedRequirements.values()), updatedRelations
 
+def getOpositeLink(link, config):
+    """Returns the oposite link for the specified link."""
+    if link == config['decomposedBySpecType']:
+        return config['decomposesSpecType']
+    elif link == config['decomposesSpecType']:
+        return config['decomposedBySpecType']
+    else:
+        Log.Error('Unknown link: ' + link, 1)
+
+def containsLink(relations, target, source):
+    """Checks if the specified relations contains a link between the specified target and source."""
+    for relation in relations:
+        if relation.target == target and relation.source == source:
+            return True
+    return False
+
+def validateRelationsAreBothWay(relations, config):
+    """Validates that the specified relations are both way. If not, creates the missing relations."""
+    updatedRelations = []
+
+    for relation in relations:
+        if not containsLink(updatedRelations, relation.target, relation.source):
+            updatedRelations.append(relation)
+
+        if not containsLink(updatedRelations, relation.source, relation.target):
+            updatedRelations.append(ReqIFSpecRelation(str(uuid.uuid4()), getOpositeLink(relation.relation_type_ref, config), relation.target, relation.source))
+
+    return updatedRelations
+
 def upload(sourceFilePath, server):
     """Uploads the specified file to the server."""
     parsed = parseReqIF(sourceFilePath) 
     server.requirements = parsed.core_content.req_if_content.spec_objects
     relations = parsed.core_content.req_if_content.spec_relations
     created = []
+
+    relations = validateRelationsAreBothWay(relations, server.config)
 
     if server.generate:
         updatedRequirements, relations = generateUniqueIds(server.requirements, relations)
