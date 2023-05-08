@@ -146,17 +146,17 @@ Linking of the data via HTTP is based on OSLC-defined common tool protocol for a
 
 \subsection*{Linking Data via HTML User Interface}
 \label {sec:oslc_linking_data_via_html_user_interface}
-OSLC protocol can be used to link data via HTML user interface as well, making use of the REST code on demand constraint. This allows the client to access and display fragments of an existing user interface, provided by the tool, without the need to implement the user interface itself. This delegated user interface then enables the client to access the resources managed by the tool.
+OSLC protocol can be used to link data via HTML user interface as well, making use of the REST \emph{Code on demand} optional constraint. This allows the client to access and display fragments of an existing user interface, provided by the tool, without the need to implement the user interface itself. This delegated user interface then enables the client to access the resources managed by the tool.
 
 \section{Fundamental Technologies}
 \label {sec:oslc_fundamental_technologies}
-OSLC is built on top of several fundamental technologies. This section lists these technologies and introduces briefly each of them.
+OSLC is built on top of several fundamental technologies. This section lists these technologies and introduces briefly each of them. Figure \ref{fig:oslc_core_architecture} shows how these technologies are used together to create the base for the OSLC architecture.
 
 \subsection*{REST}
-REST (REpresentational State Transfer) \cite{rest} is a web software architecture style, describing a set of constraints and properties, which should be followed in communication between computer systems, most commonly between client and server. In REST architecture, the server is responsible for exposing a common interface, which allows the client to access resources by using standard HTTP methods. Each resource the server provides has a unique identifier, that allows the resource to be identified unambiguously and completely. When requested, the server responds with a representation of the resource. The client can then use this resource to create new resources and update or delete existing resources. The communication between the server and the client is stateless, meaning every request the server receives can be fully understood in isolation, without the context of previous requests. The most common HTTP methods used in REST are \texttt{POST}, \texttt{GET}, \texttt{PUT}, and \texttt{DELETE}, which correspond to the CRUD operations (Create, Read, Update, and Delete).
+REST (REpresentational State Transfer) \cite{rest} is a web software architecture style, describing a set of constraints and properties, which should be followed in communication between computer systems, most commonly between client and server. In REST architecture, the server is responsible for exposing a common interface, which allows the client to access resources by using standard HTTP methods. Each resource the server provides has a unique identifier, that allows the resource to be identified unambiguously and completely. When requested, the server responds with a representation of the resource. The client can then use this resource to create new resources and update or delete existing resources. The communication between the server and the client is stateless, meaning every request the server receives can be fully understood in isolation, without the context of previous requests. The most common HTTP methods used in REST are \texttt{POST}, \texttt{GET}, \texttt{PUT}, and \texttt{DELETE}, which correspond to the CRUD operations (Create, Read, Update, and Delete). REST also defines one optional constraint -- \emph{Code on demand}, which allows the server to send executable code to the client, extending the functionality of the client.
 
 \subsection*{RDF}
-RDF (Resource Description Framework) \cite{rdf} is a W3C (World Wide Web Consortium) \cite{w3c} standard for representing data on the web. It describes resources in the form of a directed graph, where information about each element is represented as a triplet. Triplets are statements about the resource composed of subject, predicate, and object. The subject describes the resource, and the predicate specifies its properties and relationships, between the subject and the object. Most widely used RDF serialization formats are Turtle \cite{turtle}, RDF/XML, and RDF/JSON.
+RDF (Resource Description Framework) \cite{rdf} is a W3C (World Wide Web Consortium) \cite{w3c} standard for representing data on the web. It describes resources in the form of a directed graph, where information about each element is represented as a triplet -- example of a single triplet can be seen in Figure \ref{fig:rdf_graph_triplet}. Triplets are statements about the resource composed of subject, predicate, and object. The subject describes the resource, and the predicate specifies its properties and relationships, between the subject and the object. Most widely used RDF serialization formats are Turtle \cite{turtle}, RDF/XML, and RDF/JSON.
 
 \begin{figure}[hbt]
   \centering
@@ -169,7 +169,7 @@ RDF (Resource Description Framework) \cite{rdf} is a W3C (World Wide Web Consor
 Linked Data \cite{linked_data} are structured data containing references to other data. This enables computers to query and interpret the data, allowing the internet to become one big database. The main principles of Linked Data are \cite{linked_data_design_issues}:
 \begin{enumerate}
   \item URIs \cite{uri_rfc} are used as names to identify things
-  \item People can lookup things using HTTTP URIs
+  \item People can lookup things using HTTP URIs
   \item Information returned as a result of the search are provided in an open standard format (for example RDF)
   \item Returned information contain more URIs, enabling discovery of other things
 \end{enumerate}
@@ -189,7 +189,7 @@ At the time of writing this thesis, the current version of OSLC Core Specificati
 \end{figure}
 
 \subsection*{Resource Shape}
-OSLC works with resources, which are uniquely identified by a URI \cite{uri_rfc}, and are represented by RDF triples. Resource Shape \cite{oslc_core_resource_shape} is a resource of type \texttt{oslc:ResourceShape}, that describes the contents and constraints of other resources.
+OSLC works with resources, which are uniquely identified by a URI \cite{uri_rfc}, and are represented by RDF triples. Resource Shape \cite{oslc_core_resource_shape} is a resource of type \texttt{oslc:ResourceShape}, that describes the contents and constraints of other resources. Figure \ref{fig:resource_shape} shows a simple oriented graph representing a Resource Shape.
 
 \begin{figure}[hbt]
   \centering
@@ -202,7 +202,7 @@ Each Resource Shape has a defined set of Properties, of type \texttt{oslc:Proper
 
 \subsection*{Discovery}
 \label{sec:oslc_discovery}
-For the reasons of flexibility and to reduce coupling, the OSLC Core Specification does not specify unequivocally which capabilities the server has to provide. Instead, it offers a mechanism for the incremental discovery of services and capabilities the target server has implemented.
+For the reasons of flexibility and to reduce coupling, the OSLC Core Specification does not specify unequivocally which capabilities the server has to provide. Instead, it offers a mechanism for the incremental discovery of services and capabilities the target server has implemented. Figure \ref{fig:oslc_discovery} shows a diagram of the OSLC Discovery mechanism.
 
 \begin{figure}[hbt]
   \centering
@@ -211,7 +211,7 @@ For the reasons of flexibility and to reduce coupling, the OSLC Core Specificati
   \label{fig:oslc_discovery}
 \end{figure}
 
-The server always has to specify the starting point of discovery, which is the \emph{Service Provider Catalog}. The Service Provider Catalog is a resource containing a list of available \emph{Service Providers}, which then contains all of the available \emph{Services}. From there, the client is able to find the URIs for \emph{Creation Factories}, \emph{Dialogs}, and \emph{Query services}. For additional information about the Discovery mechanism can be found in the Discovery section of the OSLC Core Specification \cite{oslc_core_discovery}.
+The server always has to specify the starting point of discovery, which is the \emph{Service Provider Catalog}. The Service Provider Catalog is a resource containing a list of available \emph{Service Providers}, which then contains all of the available \emph{Services}. From there, the client is able to find the URIs for \emph{Creation Factories}, \emph{Dialogs}, and \emph{Query services}. Additional information about the Discovery mechanism can be found in the Discovery section of the OSLC Core Specification \cite{oslc_core_discovery}.
 
 
 \subsection*{Basic Capabilities}
@@ -257,14 +257,16 @@ As the OSLC server manages a large number of resources, it has to provide a way 
 \end{lstlisting}
 
 \subsection*{Authentication and Error Responses}
-OSLC Core Specification provides guidance on how to handle authentication and error responses. Allowed authentication methods are Basic Authentication and OAuth. All error responses should be returned as a resource of type \texttt{oslc:Error} \cite{oslc_core_error}, which contains a human-readable message and a machine-readable error code. This enables clients to handle errors in a generic way.
+OSLC Core Specification provides guidance on how to handle authentication and error responses. Allowed authentication methods are Basic Authentication and OAuth. The details of the authentication process are further explained in Chapter \ref{chapter:authentication}.
+
+All error responses should be returned as a resource of type \texttt{oslc:Error} \cite{oslc_core_error}, which contains a human-readable message and a machine-readable error code. This enables clients to handle errors in a generic way.
 
 \subsection{OSLC Requirement Management Specification}
 \label{sec:oslc_rm_specification}
 At the time of writing this thesis, the current version of OSLC Requirement Management Specification \cite{oslc_requirement_management_specification} is 2.1. The specification builds on top of the OSLC Core Specification and specifies which of the capabilities are required or optional for conformance with the specification. The main goal is to provide an extensive, but not restrictive, interface for requirement management systems and support a wide range of integration scenarios. One of the main requirements for an OSLC RM Server is the ability to accept and return resources in RDF/XML, XML, and JSON. It also introduces new resource types in the namespace of \url{http://open-services.net/ns/rm\#} and with the prefix \texttt{oslc\_rm}. These resource types are described in the following sections.
 
 \subsection*{Requirement}
-\texttt{oslc\_rm:Requirement} \cite{oslc_rm_requirement} is a resource shape used for describing a single requirement described in \ref{sec:requirements}. Requirement Management Specification defines an extensive set of properties and constraints \cite{oslc_rm_requirement_constraints} for the requirement shape, but there are few that are especially important in the context of this work.
+\texttt{oslc\_rm:Requirement} \cite{oslc_rm_requirement} is a resource shape used for describing a single requirement described in Section \ref{sec:requirements}. Requirement Management Specification defines an extensive set of properties and constraints \cite{oslc_rm_requirement_constraints} for the requirement shape, but there are few that are especially important in the context of this work.
 
 Each individual requirement should have a title, usually containing the name of the requirement, and a description, which consists of the actual statement of need. These two requisites are realized by the properties \texttt{dcterms:title} and \texttt{dcterms:description}.
 
@@ -274,10 +276,10 @@ Requirements should also be able to reference other requirements or requirement 
 \texttt{oslc\_rm:RequirementCollection} \cite{oslc_rm_requirement_collection} is a resource shape used for describing a collection of requirements, which constitute some statement of need. Requirement Management Specification again defines the constraints and properties for this resource shape \cite{oslc_rm_requirement_collection_constraints}, but they are nearly the same as for \texttt{oslc\_rm:Requirement} resource shape.
 
 \section{Eclipse Lyo}
-Eclipse Lyo \cite{eclipse_lyo} is an open-source project hosted by the Eclipse Foundation \cite{eclipse} and developed by the OSLC community. It provides a Java SDK, as well as other utilities, to enable easier adoption of the OSLC technologies and better developer experience. The following sections give a concise summary of the key components of Eclipse Lyo.
+Eclipse Lyo \cite{eclipse_lyo} is an open-source project hosted by the Eclipse Foundation \cite{eclipse} and developed by the OSLC community. It provides a Java SDK, as well as other utilities, to enable easier adoption of the OSLC technologies and better developer experience. The following sections give a concise summary of the key components of Eclipse Lyo, which are used to implement the OSLC adaptor in this thesis.
 
 \subsection*{OSLC4J SDK}
-OSLC4J Software Development Kit (available at Maven Repository \cite{maven_oslc4j}) is a set of Java libraries used for building OSLC-compliant REST-based servers and clients. It includes support for common OSLC capabilities, resource shapes, service provider documents, and marshaling and unmarshaling of resources to Java objects. 
+OSLC4J Software Development Kit (available at Maven Repository \cite{maven_oslc4j}) is a set of Java libraries used for building OSLC-compliant REST-based servers and clients. It includes support for common OSLC capabilities, resource shapes, service provider documents, and marshaling and unmarshaling\footnote{\textbf{Marshaling} is the process of transforming the representation of data from memory into the format used for transmission. It is used for passing the data of an Object to a remote server, with the \emph{CodeBase} attached, specifying where the implementation of the object can be found.} of resources to Java objects. 
 
 \subsection*{Lyo Designer}
 Lyo Designer \cite{lyo_designer} is an Eclipse plugin used for the graphical design of OSLC adaptors. It offers the capability to model the OSLC resources, their properties, and constraints, as well as the OSLC services. For separation of concerns, Lyo Designer provides three views for modeling different parts of the final adaptor:
@@ -288,7 +290,7 @@ Lyo Designer \cite{lyo_designer} is an Eclipse plugin used for the graphical de
   \item \textbf{Adapter Interface View} -- for modeling the services and capabilities of a single adaptor
 \end{itemize}
 
-Lyo Designer also contains a utility called \textbf{Code Generator}, which is capable of generating code skeletons, compliant with OSLC, from the graphical models of the adaptors designed in Lyo Designer. The generated code is based on the OSLC4J SDK and can be used as a starting point for the implementation of the adaptor. The generated code contains designated places where the developer should add code, which provides the functionality for the adaptor. This allows the code to be regenerated, upon the changes to the model, without breaking or losing any of the underlying implementation and custom code.
+Lyo Designer also contains a utility called \textbf{Code Generator}, which is capable of generating code skeletons, compliant with OSLC, from the graphical models of the adaptors designed in Lyo Designer. The generated code is based on the OSLC4J SDK and can be used as a starting point for the implementation of the adaptor. Out of the box, the generated code contains the definitions of the OSLC resources, their properties and constraints, definitions of the OSLC services, and code for marshaling and unmarshaling of the resources. The program logic (how the resources should be handled after unmarshaling) and implementation of the services are left to be done by the developer. The generated code contains designated places where the developer should add code, which provides the functionality for the adaptor. This allows the code to be regenerated, upon the changes to the model, without breaking or losing any of the underlying implementation and custom code.
 
 %=========================================================================
 
