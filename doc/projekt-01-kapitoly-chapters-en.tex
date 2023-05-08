@@ -10,7 +10,7 @@
 Software development is a complex process that requires careful planning and management. Companies often use various software applications to support the development process, such as issue tracking, version control, or requirement management systems. However, this creates a new problem -- the integration of these applications. This thesis focuses on the integration of two such applications used for \emph{Requirement Management}, \emph{Jira Software} and \emph{Requirements for Jira} (R4J) plugin, using the Open Services for Lifecycle Collaboration (OSLC) standard.
 
 \section{Motivation and Objectives}
-Requirement Management is a crucial part of the software development process. As such, it is supported by various software applications called \emph{Requirement Management Systems}, out of which the most notable are IBM Doors and R4J. It is often necessary to integrate these systems with other applications used in the development process. \emph{IBM Doors NG} offers a built-in OSLC interface for this purpose, but no such support is provided in R4J. This significantly limits the possibility of migration from IBM Doors to the R4J solution, as the companies often use the OSLC interface for integration -- e.g., Honeywell International Inc. uses the OSLC interface to provide its clients with access to requirements. The goal of this thesis is to explore and create a solution that will allow access to requirements stored in Jira R4J via the OSLC interface for Requirement Management Specification.
+Requirements Engineering is a crucial part of the software development process. As such, the management of the requirements is supported by various software applications called \emph{Requirement Management Systems}, out of which the most notable are IBM Doors and R4J. It is often necessary to integrate these systems with other applications used in the development process. \emph{IBM Doors NG} offers a built-in OSLC interface for this purpose, but no such support is provided in R4J. This significantly limits the possibility of migration from IBM Doors to the R4J solution, as the companies often use the OSLC interface for integration -- e.g., Honeywell International Inc. uses the OSLC interface to provide its clients with access to requirements. The goal of this thesis is to explore and create a solution that will allow access to requirements stored in Jira R4J via the OSLC interface for Requirement Management Specification.
 
 \section{Solution}
 % TODO: change this or not?
@@ -28,31 +28,31 @@ The mapping of the data provided by Jira and R4J API to the OSLC format was done
 The utilities and SDKs provided by Eclipse Lyo were very useful in the development and design stages of the adaptors, greatly reducing the time needed to adopt the OSLC standard. However, the documentation and examples provided by the Lyo project were outdated and not detailed enough, also lacking some deeper explanation of important concepts. The contents of the Requirement Management Specification were also not documented sufficiently, compared to, for example, the Automation Domain Specification, resulting in difficulties in the comprehension of the specification.
 
 \section{Structure of the Thesis}
-This section provides a brief overview of the structure of the thesis itself. Chapter \ref{chapter:background} covers the basics of requirements management and its fundamental concepts, as well as a basic overview of requirement management systems. Chapter \ref{chapter:oslc} provides a detailed description of the OSLC standard, its concepts, the Core and Requirement Management specification, and the tooling provided by the Lyo project. In production environments, security is a crucial part of any application. The access to the OSLC interface has to be secured not to allow unauthorized access to the data. This is done by using the BASIC and OAuth2 authentication methods, which are described in Chapter \ref{chapter:authentication}. Chapter \ref{chapter:adaptor_design} describes the design of the adaptors, including the Domain and Toolchain models, as well as the resource mapping. Chapter \ref{chapter:implementation} gives a summary of the implementation approaches and challanges faced during the development of the adaptors. The testing and evaluation of the created adaptors are described in Chapter \ref{chapter:evaluation}. The installation and usage guide can be found in Appendix \ref{chapter:manual}.
+This section provides a brief overview of the structure of the thesis itself. Chapter \ref{chapter:background} covers the basics of requirements management and its fundamental concepts, as well as a basic overview of requirement management systems. Chapter \ref{chapter:oslc} provides a detailed description of the OSLC standard, its concepts, the Core and Requirement Management specification, and the tooling provided by the Lyo project. In production environments, security is a crucial part of any application. The OSLC interface has to be secured not to allow unauthorized access to the data. This is done by using the BASIC and OAuth2 authentication methods, which are described in Chapter \ref{chapter:authentication}. Chapter \ref{chapter:adaptor_design} describes the design of the adaptors, including the Domain and Toolchain models, as well as the resource mapping. Chapter \ref{chapter:implementation} gives a summary of the implementation approaches and challanges faced during the development of the adaptors. The testing and evaluation of the created adaptors are described in Chapter \ref{chapter:evaluation}. The installation and usage guide can be found in Appendix \ref{chapter:manual}.
 
 %=========================================================================
 
-\chapter{Background}
+\chapter{Requirements Engineering}
 \label{chapter:background}
-This chapter briefly covers the basics of requirements management and its fundamental concepts, as well as a basic overview of Jira Software and Requirements for Jira plugin. Information provided in this overview is important for understanding the requirements and needs of the adaptor.
+This chapter briefly covers one of the main parts of requirement engineering, which is requirements management, its fundamental concepts, and a basic overview of Jira Software and Requirements for Jira plugin. Information provided in this overview is important for understanding the requirements and needs of the adaptor.
 
 \section{Requirements Management}
-The aim of requirement management is the verification of the accomplishment of the project's goals and objectives. The process is divided into several successive stages, the most essential being analysis, documentation, tracing, and change control. The purpose of this process is to track the requirements and their status, identify inconsistencies and provide an overview of the project progress to concerned stakeholders \cite{requirements_management}.
+The aim of requirement engineering is the verification of the accomplishment of the project's goals and objectives. The process is divided into several successive stages, the most essential being analysis, documentation, tracing, and change control. The purpose of this process is to track the requirements and their status, identify inconsistencies and provide an overview of the project progress to concerned stakeholders \cite{requirements_management}.
 
-One of the most important parts of requirement management is \emph{traceability}. It is the ability to track and assess the state of the requirement and its changes during the development lifecycle, providing an audit trail, usually used for reporting to stakeholders. Traceability can be achieved by linking requirements to other requirements, test cases, or build stories.
+One of the most important parts of requirement management is \emph{traceability}. It is the ability to track and assess the state of the requirement and its changes during the development lifecycle, providing an audit trail, usually used for reporting to stakeholders. Traceability can be achieved by linking requirements to other artifacts -- e.g., requirements, test cases, or build stories.
 
 \subsection*{Requirements}
 \label{sec:requirements}
 Requirements are the foundation for determining the needs of system stakeholders and the system itself. They represent a condition or capability
 that must be met by a system or product \cite{IEEE_24765-2017}.
 
-They can be divided into two main categories, \emph{functional} and \emph{non-functional} requirements. Functional requirements describe the system behavior or product features (e.g., the system will send an email with a forgotten password prompt when requested by the user), while non-functional requirements usually specify the system's performance or product properties (e.g., a task has to be completed under 200 ms).
+They can be divided into three main categories, \emph{functional}, \emph{non-functional} and \emph{safety} requirements. Functional requirements describe the system behavior or product features (e.g., the system will send an email with a forgotten password prompt when requested by the user), while non-functional requirements usually specify the system's performance or product properties (e.g., a task has to be completed under 200 ms). Safety requirements are defined for the purpose of risk reduction and are usually specified by the industry standards and regulations (e.g., the autonomous vehicle should not accelerate if the distance to the object in front of it is less than 1 m).
 
 \section{Requirement Management Systems}
 Requirement Management System is a software tool used for the management of project requirements during the development lifecycle. Currently, there are several different requirement management systems developed by competing companies available on the market. Some of the most popular ones are IBM Doors and Jira Software with Requirements for Jira plugin. A high-level overview of these options is provided in the following sections, as they are important in the context of this thesis.
 
 \subsection*{IBM Doors}
-IBM Doors \cite{ibm_doors} is a requirement management system developed by IBM \cite{ibm}. It is a complex tool designed to handle large projects with many requirements and stakeholders. The tool is commonly used in the aerospace, defense, and automotive industries. It provides a wide set of features to aid in the requirement management processes, such as requirement traceability, collaboration, and ease of integration with other IBM tools. It is also designed in a way to help companies comply with industry standards and regulations for requirement management and project development. All of the previously mentioned features are available through the web user interface, REST API as well as native OSLC interface.
+IBM Doors \cite{ibm_doors} is a requirement management system developed by IBM \cite{ibm}. It is a complex tool designed to handle large projects with many requirements and stakeholders. The tool is commonly used in the aerospace, defense, and automotive industries. It provides a wide set of features to aid in the requirement management processes, such as requirement traceability, collaboration, and ease of integration with other IBM tools. It is also designed in a way to help companies comply with industry standards and regulations for requirement management and project development. The most recent version called \emph{IBM Doors NG} also provides all of the previously mentioned features through the web user interface, REST API as well as native OSLC interface.
 
 \subsection*{Jira Software and Requirements for Jira}
 \textbf{Jira Software} \cite{jira} is an issue-tracking and project management tool developed by Atlassian \cite{atlassian}. Compared to IBM Doors, it provides a more user-friendly interface and is more flexible, as its functionality spans across many different areas, such as project management, test management, and bug tracking. It also allows the end customers to extend the capabilities of their Jira instance by adding plugins developed by Atlassian or third-party developers, augmenting the original functionality, or adding completely new features. The contents of Jira and its functionality are accessible through the web user interface or REST API \cite{jira_api} with BASIC or OAuth2 authentication, further described in chapter \ref{chapter:authentication}. It does not provide a native OSLC interface, but the support for OSLC can be added by installing a third-party plugin (e.g., OSLC Connector for Jira \cite{oslc_connector_for_jira} for Change Management Specification).
@@ -71,6 +71,61 @@ The document is divided into two parts, \texttt{THE-HEADER}, containing metadata
   \item \texttt{SPEC-RELATIONS} -- a collection of relations between requirements, described in a format specified in \texttt{SPEC-TYPES}
   \item \texttt{SPECIFICATIONS} -- requirements hierarchical tree structure
 \end{itemize}
+
+An extract of a small sample file to illustrate the structure of a ReqIF document can be seen in Listing \ref{lst:simple_reqif_sile}.
+
+\begin{lstlisting}[
+  language=XML, label={lst:simple_reqif_sile}, float=hbt,
+  caption={A simple ReqIF file containing one requirement.}
+]
+<?xml version="1.0" encoding="UTF-8"?>
+<REQ-IF xmlns="http://www.omg.org/spec/ReqIF/20110401/reqif.xsd">
+  <THE-HEADER>
+    <REQ-IF-HEADER IDENTIFIER="654d6119-6d4f-4ab9-b43f-39e4360353ff">
+      <CREATION-TIME>2023-04-16T17:15:41.445316</CREATION-TIME>
+      <TITLE>Sample title</TITLE>
+    </REQ-IF-HEADER>
+  </THE-HEADER>
+  <CORE-CONTENT>
+    <REQ-IF-CONTENT>
+      <DATATYPES>
+        <DATATYPE-DEFINITION-STRING IDENTIFIER="Text"/>
+      </DATATYPES>
+      <SPEC-TYPES>
+        <SPEC-OBJECT-TYPE IDENTIFIER="FUNC-REQ" LONG-NAME="Requirement">
+          <SPEC-ATTRIBUTES>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="FUNC-REQ-TXT"
+             LONG-NAME="Description">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>
+                  Text
+                </DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+          </SPEC-ATTRIBUTES>
+        </SPEC-OBJECT-TYPE>
+      </SPEC-TYPES>
+      <SPEC-OBJECTS>
+        <SPEC-OBJECT IDENTIFIER="TEST-ID-1" LONG-NAME="Test REQ 1">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Test REQ description">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>
+                  FUNC-REQ-TXT
+                </ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>FUNC-REQ</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+      </SPEC-OBJECTS>
+      <SPEC-RELATIONS />
+    </REQ-IF-CONTENT>
+  </CORE-CONTENT>
+</REQ-IF>
+\end{lstlisting}
 
 %=========================================================================
 
