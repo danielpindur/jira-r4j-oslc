@@ -13,7 +13,6 @@ Software development is a complex process that requires careful planning and man
 Requirements Engineering is a crucial part of the software development process. As such, the management of the requirements is supported by various software applications called \emph{Requirement Management Systems}, out of which the most notable are IBM Doors and R4J. It is often necessary to integrate these systems with other applications used in the development process. \emph{IBM Doors NG} offers a built-in OSLC interface for this purpose, but no such support is provided in R4J. This significantly limits the possibility of migration from IBM Doors to the R4J solution, as the companies often use the OSLC interface for integration -- e.g., Honeywell International Inc. uses the OSLC interface to provide its clients with access to requirements. The goal of this thesis is to explore and create a solution that will allow access to requirements stored in Jira R4J via the OSLC interface for Requirement Management Specification.
 
 \section{Solution}
-% TODO: change this or not?
 There are two ways to add OSLC support to a web application, either as an add-on or a standalone web application. After careful consideration, a decision was made to create the adaptor as a standalone web application. The main reason for this decision was to reduce the coupling between the web application and the OSLC interface, which allows for easier maintenance and development, as well as the possibility of using the OSLC adaptor with other web applications, besides Jira R4J, in the future. 
 
 During the initial design phase, it was also decided to split the adaptor into two separate adaptors. One for Jira, responsible for the main functionality specified by the Requirement Management Specification, and one for R4J, providing additional functionality, such as the ability to create folders and link requirements to folders. This decision was made in order to explore the possibility of not needing to use the R4J plugin at all and instead using Jira directly. It also leads to the final solution being generic and less coupled to a specific web application, allowing for easier enhancement or replacement of the underlying web application in the future.
@@ -341,7 +340,6 @@ PKCE (Proof Key for Code Exchange) \cite{pkce_rfc} builds on top of Authorizatio
 \end{figure}
 
 \subsection*{Access and Refresh Tokens}
-%TODO: change???
 After successful authorization against the authorization server, the client is issued an \textbf{access token}. The client then uses this token to access the resources available on the resource server by sending it with each HTTP request in the Authorization header. Access tokens can be either an opaque string, called a \emph{bearer token}, or a \emph{sender-constrained token}. Sender-constrained tokens can be used only to authorize requests sent by the same client to whom the token was issued. This is usually achieved by asymmetric cryptography of the token. To comply with the standard, the token cannot convey user identity or any other information about the user.
 
 Together with the access token, the authorization server also issues a \textbf{refresh token}, which can be used to generate a new access token without user interaction with the authorization server. This allows the authorization server to issue access tokens with a shorter expiration time, reducing the impact of the token being intercepted and stolen.
@@ -353,7 +351,6 @@ Compared to OAuth 1.0, OAuth 2.0 also introduces the concept of \emph{OAuth Scop
 
 \chapter{Adaptor Design}
 \label{chapter:adaptor_design}
-%\todo{Ref to OSLC spec}
 This chapter details the process of designing the Jira and R4J adaptors, as well as the decisions made during the process and the reasoning behind them. The chapter is divided into several sections, each detailing different steps of the design process.
 
 \section{Architecture Overview}
@@ -569,8 +566,14 @@ The following sections describe how the parsed query was translated for the Jira
 \subsection*{Jira Resources}
 For querying the \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection} resources, which are saved as Jira issues, the JQL (Jira Query Language) \cite{jql} was used. The JQL is SQL-like query language, which can be passed as a parameter to the search issues endpoint of the Jira API in the \texttt{jql} parameter.
 
-To map the parsed query to the JQL, an \texttt{IssueTranslator} was implemented utilizing the \texttt{JiraQueryBuilder} mapping each property of the OSLC resources to its counterpart in the Jira issue.
-%TODO: add example of the mapping
+To map the parsed query to the JQL, an \texttt{IssueTranslator} was implemented utilizing the \texttt{JiraQueryBuilder} mapping each property of the OSLC resources to its counterpart in the Jira issue. Example of the mapping can be seen in Figure \ref{fig:jql_visual}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/jql-visual.pdf}
+  \caption{Visualisation of a simple \texttt{oslc.where} query mapping to JQL (\texttt{oslc.prefix} is omitted for brevity)}
+  \label{fig:jql_visual}
+\end{figure}
 
 \subsection*{R4J Resources}
 \label{sec:r4j_query}
@@ -582,6 +585,7 @@ To mitigate the performance issue, the adaptor could cache the retrieved folder 
 During the implementation, several bugs, issues, and limitations were discovered. This section goes over them and describes how they were resolved or mitigated.
 
 \subsection*{R4J API Bug}
+\label{sec:r4j_api_bug}
 An issue was discovered during the implementation of the folder update functionality. The R4J API returns \texttt{500 -- Internal Server Error} when updating a folder with the \texttt{parentFolder} set to the \texttt{ROOT} of the directory structure, even though the folder is updated correctly. This issue was reported to the R4J API team, and a temporal workaround was implemented in the adaptor. The temporary solution ignores the \texttt{500 -- Internal Server Error}, validates if the folder was updated correctly, and if validation passes, the update is considered successful.
 
 \subsection*{Clients memory leak}
@@ -606,15 +610,21 @@ This chapter contains the evaluation of the implemented adaptors and used techno
 \section{Adaptors Testing}
 The created adaptors fully comply with the OSLC Core and Requirement Management specifications by providing all of the required resources, properties, and functionality. The Jira adaptor can be used alone to fully manage requirements in Jira. However, there is no way to differentiate between requirements and other issues as long as they have the same \texttt{issueType}. The R4J adaptor provides a solution for this by allowing the user to retrieve all of the requirements based on if they were added to the R4J folder tree structure.
 
-The Jira and R4J adaptors have been end-to-end tested using the \emph{Postman} \cite{postman} tool. The testing was done by creating a collection of requests, which tests the basic and query functionality of the adaptors. The collection is comprised of 361 HTTP requests and 446 tests. The collection can be exported as a JSON file and used by a continuous integration tool to validate that the changes to adaptors did not introduce any functionality breaks.
+The Jira and R4J adaptors have been end-to-end tested using the \emph{Postman} \cite{postman} tool. The testing was done by creating a collection of requests, which tests the basic and query functionality of the adaptors. The collection is comprised of 361 HTTP requests and 446 tests. The collection can be exported as a JSON file and used by a continuous integration tool to validate that the changes to adaptors did not introduce any functionality breaks. An example of the flow of the test validating the problematic update functionality for folders with \texttt{parentFolder} set to \texttt{ROOT} discussed in Section \ref{sec:r4j_api_bug} can be seen in Figure \ref{fig:test_flow}. The full collection of tests can be found in the \texttt{test/postman} directory in the source code.
 
 To further validate the functionality of the Jira adaptor, a Python client for the adaptor has been created. This client provides a simple interface for importing and exporting requirements from Jira in the ReqIF format through the adaptor by utilizing the \texttt{rdflib} \cite{python_rdflib} and \texttt{reqif} \cite{python_reqif} python libraries. The importing and exporting have been successfully tested by an example ReqIF file provided by Honeywell, testing the functionality of the adaptor in a real-world use case.
-
 
 \section{OSLC Evaluation}
 The OSLC Core specification is well-written and easy to follow. However, the OSLC Requirement Management specification is not detailed enough, which significantly impacts its comprehensibility. The specification does not provide any examples of how the resources should look nor any diagrams explaining the relations between the resources. Compared to the OSLC Automation Management specification, which provides both examples and diagrams, the OSLC Requirement Management specification could use some improvements.
 
 The Eclipse Lyo tooling greatly reduces the complexity and time cost of creating an OSLC adaptor. However, the initial time investment in setting up the tooling is quite high, as well as the learning curve of the tooling. The documentation for the tooling is outdated and does not reflect the current state of the tooling. As a result, it is really hard to find any information about the tooling and how to use it. The learning curve of the tooling could be greatly reduced by providing a video or text-based tutorial detailing the process of creating an adaptor from start to finish.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{figures/test-flow.pdf}
+  \caption{Example of the test flow for the Folder Update (\emph{Red -- test assertions})}
+  \label{fig:test_flow}
+\end{figure}
 
 \section{Jira and R4J Evaluation}
 The creation of the OSLC adaptors for Jira and R4J has been greatly impacted by the quality of the Jira and R4J API. The Jira API is well-designed and well-documented, providing a solid foundation for the creation of the Jira adaptor. The R4J API, on the other hand, lacks documentation, is designed a bit insufficiently, and is missing some important features, such as a query capability on the folder endpoint.
