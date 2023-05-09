@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2023 Daniel Pindur <pindurdan@gmail.com>, <xpindu01@stud.fit.vutbr.cz>
+ *
+ * This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
 package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
 import com.atlassian.jira.rest.client.api.RestClientException;
@@ -12,9 +22,19 @@ import javax.inject.Inject;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Facade for Person resource
+ */
 public class PersonFacade extends BaseFacade {
     @Inject ResourcesFactory resourcesFactory;
 
+    /**
+     * Maps API user resource to OSLC person resource
+     * 
+     * @param resource API user resource
+     * 
+     * @return OSLC person resource
+     */
     private Person MapResourceToResult(final User resource) {
         var result = new Person();
         result.setIdentifier(resource.getName());
@@ -25,6 +45,13 @@ public class PersonFacade extends BaseFacade {
         return result;
     }
 
+    /**
+     * Gets user by email
+     * 
+     * @param email Email to search by
+     * 
+     * @return User resource
+     */
     protected User GetUserByEmail(final String email) {
         var userResources = getUserClient().searchUsersByEmail(email).claim();
         User result = null;
@@ -37,6 +64,13 @@ public class PersonFacade extends BaseFacade {
         return result;
     }
 
+    /**
+     * Gets user by username
+     * 
+     * @param username Username to search by
+     * 
+     * @return User resource
+     */
     public Person get(final String id) {
         User userResource = null;
 
@@ -56,7 +90,13 @@ public class PersonFacade extends BaseFacade {
         return userResource != null ? MapResourceToResult(userResource) : null;
     }
 
-    // TODO: add email search support
+    /**
+     * Search for users by terms
+     * 
+     * @param terms Terms to search by
+     * 
+     * @return List of users
+     */    
     public List<Person> search(final String terms) {
         var userResources = getUserClient().findUsers(terms).claim();
         var results = new LinkedList<Person>();

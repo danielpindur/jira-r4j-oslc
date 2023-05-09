@@ -7,187 +7,645 @@
 % \begin{document}
 
 \chapter{Introduction}
-\todo{Gramar check}
-\todo{Style document}
-This chapter summerizes the motivation and objectives of this thesis, the solution taken to achieve the objectives and the results of the thesis. In the last section the structure of the thesis is presented.
+Software development is a complex process that requires careful planning and management. Companies often use various software applications to support the development process, such as issue tracking, version control, or requirement management systems. However, this creates a new problem -- the integration of these applications. This thesis focuses on the integration of two such applications used for \emph{Requirement Management}, \emph{Jira Software} and \emph{Requirements for Jira} (R4J) plugin, using the Open Services for Lifecycle Collaboration (OSLC) standard.
 
 \section{Motivation and Objectives}
-This work was instigaten by Honeywell International Inc. \cite{honeywell}. The company currently uses IBM Doors \cite{ibm_doors} as a solution for for requirement management. As IBM Doors has slowly become obsolete, the company is considering to switch to a new solution - Jira R4J. Honeywell currently provides its clients access to requirements stored in IBM Doors via the OSLC interface for Requirement Management Specification, which comes with IBM Doors. The company is interested in providing the same access to requirements stored in Jira R4J. The goal of this thesis is to explore and create a solution that will allow Honeywell to provide its clients access to requirements stored in Jira R4J via the OSLC interface for Requirement Management Specification.
+Requirements Engineering is a crucial part of the software development process. As such, the management of the requirements is supported by various software applications called \emph{Requirement Management Systems}, out of which the most notable are IBM Doors and R4J. It is often necessary to integrate these systems with other applications used in the development process. \emph{IBM Doors NG} offers a built-in OSLC interface for this purpose, but no such support is provided in R4J. This significantly limits the possibility of migration from IBM Doors to the R4J solution, as the companies often use the OSLC interface for integration -- e.g., Honeywell International Inc. uses the OSLC interface to provide its clients with access to requirements. The goal of this thesis is to explore and create a solution that will allow access to requirements stored in Jira R4J via the OSLC interface for Requirement Management Specification.
 
 \section{Solution}
-There are two ways to add OSLC support to a web application, either as a addon or standalone web application. After careful consideration a decision was made to create the adaptor as a standalone web application. The main reason for this decision was to reduce coupling between the web application and the OSLC interface. This allows for easier maintenance and development, as well as the possibility to use the OSLC adaptor with other web applications, beside Jira R4J, in the future. 
+There are two ways to add OSLC support to a web application, either as an add-on or a standalone web application. After careful consideration, a decision was made to create the adaptor as a standalone web application. The main reason for this decision was to reduce the coupling between the web application and the OSLC interface, which allows for easier maintenance and development, as well as the possibility of using the OSLC adaptor with other web applications, besides Jira R4J, in the future. 
 
-During the initial design phase, it was also decided to split the adaptor into two separate adaptors, one for Jira, responsible for the main functionality specified by the Requirement Management Specification, and one for R4J, providing additional functionality, such as the ability to create folders and link requirements to folders. This decision was made in order explore the possibility of not needing to use the R4J pluggin at all, and instead use Jira directly. This also leads to the final solution being generic and less coupled to specific web application, allowing for easier enhancement or replacement of the underlying web application in the future.
+During the initial design phase, it was also decided to split the adaptor into two separate adaptors. One for Jira, responsible for the main functionality specified by the Requirement Management Specification, and one for R4J, providing additional functionality, such as the ability to create folders and link requirements to folders. This decision was made in order to explore the possibility of not needing to use the R4J plugin at all and instead using Jira directly. It also leads to the final solution being generic and less coupled to a specific web application, allowing for easier enhancement or replacement of the underlying web application in the future.
 
-Both adaptors were created using Eclipse Lyo, a project containing SDKs and other utilities, used for easier development of OSLC applications. Lyo Designer was used to create the Domain models and Adaptor models\todo{Not sure if it should be called Toolchain model or what}, modeling the data and capabilities of both adaptors. These models were then fed to Code Generator to generate the code skeletos, compliant with the OSLC specification, for the adaptors. The generated skeletons were then filled with the actual code, implementing the functionality of the adaptors, and extended with additional functionality, such as OAuth2 authentication.
+Both adaptors were created using Eclipse Lyo, a project containing SDKs and other utilities used for easier development of OSLC applications. Lyo Designer was used to create the Domain and Toolchain models, which represent the data and capabilities of both adaptors. These models were then fed to Code Generator to generate the code skeletons, compliant with the OSLC specification, for the adaptors. The generated skeletons were then filled with the actual code, implementing the functionality of the adaptors and extended with additional functionality, such as OAuth2 authentication.
 
 \section{Results}
-\todo{Pravděpodobně dává smysl napsat až po dokončení implementace}
+Both adaptors were created as standalone REST-based Java web applications built on the Maven framework. During the development, a collection of HTTP requests was created in Postman, detailing the example usage of created adaptors. The functionality of both adaptors was verified by end-to-end testing, utilizing the Postman Test utility. For further verification of the base capability of Requirement Management Specification, implemented in Jira adaptor, a basic Python client was developed, providing the option to download and upload all of the requirements, in the specified project, in the ReqIF format.
+
+The mapping of the data provided by Jira and R4J API to the OSLC format was done as generically as possible to accommodate all possible use cases, which differ significantly between different companies. During the development, some issues and missing functionality were discovered in the R4J API, resulting in the non-optimal implementation of some of the functionality of the R4J adaptor.
+
+The utilities and SDKs provided by Eclipse Lyo were very useful in the development and design stages of the adaptors, greatly reducing the time needed to adopt the OSLC standard. However, the documentation and examples provided by the Lyo project were outdated and not detailed enough, also lacking some deeper explanation of important concepts. The contents of the Requirement Management Specification were also not documented sufficiently, compared to, for example, the Automation Domain Specification, resulting in difficulties in the comprehension of the specification.
 
 \section{Structure of the Thesis}
-\todo{Napsat až po konečném rozložení kapitol}
+This section provides a brief overview of the structure of the thesis itself. Chapter \ref{chapter:background} covers the basics of requirements management and its fundamental concepts, as well as a basic overview of requirement management systems. Chapter \ref{chapter:oslc} provides a detailed description of the OSLC standard, its concepts, the Core and Requirement Management specification, and the tooling provided by the Lyo project. In production environments, security is a crucial part of any application. The OSLC interface has to be secured not to allow unauthorized access to the data. This is done by using the BASIC and OAuth2 authentication methods, which are described in Chapter \ref{chapter:authentication}. Chapter \ref{chapter:adaptor_design} describes the design of the adaptors, including the Domain and Toolchain models, as well as the resource mapping. Chapter \ref{chapter:implementation} gives a summary of the implementation approaches and challanges faced during the development of the adaptors. The testing and evaluation of the created adaptors are described in Chapter \ref{chapter:evaluation}. The installation and usage guide can be found in Appendix \ref{chapter:manual}.
 
 %=========================================================================
 
-\chapter{Requirements Management}
-\todo{Gramar check}
-\todo{Style document}
-% something along the way of brief overview is needed for better understanding of the problems and requirements of the thesis
+\chapter{Requirements Engineering}
+\label{chapter:background}
+This chapter briefly covers one of the main parts of requirement engineering, which is requirements management, its fundamental concepts, and a basic overview of Jira Software and Requirements for Jira plugin. Information provided in this overview is important for understanding the requirements and needs of the adaptor.
 
-\todo{Do I want special chapter for this?}
-%Requirements are the basis for defining what the system stakeholders (users, customers, suppliers and so on) need from a system and also what the system must do in order to meet those needs, and how the surrounding processes must be orchestrated so that quality, scope and timescale objectives are satisfied. 
+\section{Requirements Management}
+The aim of requirement engineering is the verification of the accomplishment of the project's goals and objectives. The process is divided into several successive stages, the most essential being analysis, documentation, tracing, and change control. The purpose of this process is to track the requirements and their status, identify inconsistencies and provide an overview of the project progress to concerned stakeholders \cite{requirements_management}.
 
-%=========================================================================
+One of the most important parts of requirement management is \emph{traceability}. It is the ability to track and assess the state of the requirement and its changes during the development lifecycle, providing an audit trail, usually used for reporting to stakeholders. Traceability can be achieved by linking requirements to other artifacts -- e.g., requirements, test cases, or build stories.
 
-\chapter{Jira}
-Jira \cite{jira} is issue tracking and project management tool developed by Atlassian \cite{atlassian}.
-\todo{Gramar check}
-\todo{Style document}
-\todo{Jira + R4J}
-\todo{Co přesně přidává R4J do Jira}
+\subsection*{Requirements}
+\label{sec:requirements}
+Requirements are the foundation for determining the needs of system stakeholders and the system itself. They represent a condition or capability
+that must be met by a system or product \cite{IEEE_24765-2017}.
+
+They can be divided into three main categories, \emph{functional}, \emph{non-functional} and \emph{safety} requirements. Functional requirements describe the system behavior or product features (e.g., the system will send an email with a forgotten password prompt when requested by the user), while non-functional requirements usually specify the system's performance or product properties (e.g., a task has to be completed under 200 ms). Safety requirements are defined for the purpose of risk reduction and are usually specified by the industry standards and regulations (e.g., the autonomous vehicle should not accelerate if the distance to the object in front of it is less than 1 m).
+
+\section{Requirement Management Systems}
+Requirement Management System is a software tool used for the management of project requirements during the development lifecycle. Currently, there are several different requirement management systems developed by competing companies available on the market. Some of the most popular ones are IBM Doors and Jira Software with Requirements for Jira plugin. A high-level overview of these options is provided in the following sections, as they are important in the context of this thesis.
+
+\subsection*{IBM Doors}
+IBM Doors \cite{ibm_doors} is a requirement management system developed by IBM \cite{ibm}. It is a complex tool designed to handle large projects with many requirements and stakeholders. The tool is commonly used in the aerospace, defense, and automotive industries. It provides a wide set of features to aid in the requirement management processes, such as requirement traceability, collaboration, and ease of integration with other IBM tools. It is also designed in a way to help companies comply with industry standards and regulations for requirement management and project development. The most recent version called \emph{IBM Doors NG} also provides all of the previously mentioned features through the web user interface, REST API as well as native OSLC interface.
+
+\subsection*{Jira Software and Requirements for Jira}
+\textbf{Jira Software} \cite{jira} is an issue-tracking and project management tool developed by Atlassian \cite{atlassian}. Compared to IBM Doors, it provides a more user-friendly interface and is more flexible, as its functionality spans across many different areas, such as project management, test management, and bug tracking. It also allows the end customers to extend the capabilities of their Jira instance by adding plugins developed by Atlassian or third-party developers, augmenting the original functionality, or adding completely new features. The contents of Jira and its functionality are accessible through the web user interface or REST API \cite{jira_api} with BASIC or OAuth2 authentication, further described in chapter \ref{chapter:authentication}. It does not provide a native OSLC interface, but the support for OSLC can be added by installing a third-party plugin (e.g., OSLC Connector for Jira \cite{oslc_connector_for_jira} for Change Management Specification).
+
+\textbf{Requirements for Jira} (R4J) \cite{requirements_for_jira} is a native Jira plugin extending the capabilities of Jira by adding support for requirements management by making use of Jira issues. It provides the ability to manage requirements by creating a folder structure, enabling importing and exporting in the reqIF format, enabling traceability, by utilizing the Jira link functionality, and adding the option to export these links into a comprehensive traceability matrix. All of these features are available both from the Jira web user interface as well as from the R4J REST API \cite{r4j_api}. Because the requirement management system provided by R4J is a part of Jira, it allows for better traceability, as the requirements can not only be linked to other requirements but also to other Jira issue types, such as bugs, stories, test cases, and many more.
+
+\section{Requirements Interchange Format}
+Requirements Interchange Format (ReqIF) \cite{reqif_standard} is an XML-based format used for transferring and sharing requirements between requirement management systems or other tools. The format defines a standardized way to describe requirements, their attributes and properties, relations between requirements, and a hierarchical structure, in which the requirements are contained. Each object, type, attribute, and relation contains a unique identifier by which it can be referenced from other objects.
+
+The document is divided into two parts, \texttt{THE-HEADER}, containing metadata information about the requirement collection, and \texttt{CORE-CONTENT}, which is then further split into five sections, each containing different information about the requirements:
+
+\begin{itemize}
+  \item \texttt{DATATYPES} -- definitions of datatypes used in the document
+  \item \texttt{SPEC-TYPES} -- definitions of types of requirements, its attributes and relations, the data type of the attribute is defined by a reference to a definition in \texttt{DATATYPES}
+  \item \texttt{SPEC-OBJECTS} -- a collection of requirements and its properties, described in a format specified in \texttt{SPEC-TYPES}
+  \item \texttt{SPEC-RELATIONS} -- a collection of relations between requirements, described in a format specified in \texttt{SPEC-TYPES}
+  \item \texttt{SPECIFICATIONS} -- requirements hierarchical tree structure
+\end{itemize}
+
+An extract of a small sample file to illustrate the structure of a ReqIF document can be seen in Listing \ref{lst:simple_reqif_sile}.
+
+\begin{lstlisting}[
+  language=XML, label={lst:simple_reqif_sile}, float=hbt,
+  caption={A simple ReqIF file containing one requirement.}
+]
+<?xml version="1.0" encoding="UTF-8"?>
+<REQ-IF xmlns="http://www.omg.org/spec/ReqIF/20110401/reqif.xsd">
+  <THE-HEADER>
+    <REQ-IF-HEADER IDENTIFIER="654d6119-6d4f-4ab9-b43f-39e4360353ff">
+      <CREATION-TIME>2023-04-16T17:15:41.445316</CREATION-TIME>
+      <TITLE>Sample title</TITLE>
+    </REQ-IF-HEADER>
+  </THE-HEADER>
+  <CORE-CONTENT>
+    <REQ-IF-CONTENT>
+      <DATATYPES>
+        <DATATYPE-DEFINITION-STRING IDENTIFIER="Text"/>
+      </DATATYPES>
+      <SPEC-TYPES>
+        <SPEC-OBJECT-TYPE IDENTIFIER="FUNC-REQ" LONG-NAME="Requirement">
+          <SPEC-ATTRIBUTES>
+            <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="FUNC-REQ-TXT"
+             LONG-NAME="Description">
+              <TYPE>
+                <DATATYPE-DEFINITION-STRING-REF>
+                  Text
+                </DATATYPE-DEFINITION-STRING-REF>
+              </TYPE>
+            </ATTRIBUTE-DEFINITION-STRING>
+          </SPEC-ATTRIBUTES>
+        </SPEC-OBJECT-TYPE>
+      </SPEC-TYPES>
+      <SPEC-OBJECTS>
+        <SPEC-OBJECT IDENTIFIER="TEST-ID-1" LONG-NAME="Test REQ 1">
+          <VALUES>
+            <ATTRIBUTE-VALUE-STRING THE-VALUE="Test REQ description">
+              <DEFINITION>
+                <ATTRIBUTE-DEFINITION-STRING-REF>
+                  FUNC-REQ-TXT
+                </ATTRIBUTE-DEFINITION-STRING-REF>
+              </DEFINITION>
+            </ATTRIBUTE-VALUE-STRING>
+          </VALUES>
+          <TYPE>
+            <SPEC-OBJECT-TYPE-REF>FUNC-REQ</SPEC-OBJECT-TYPE-REF>
+          </TYPE>
+        </SPEC-OBJECT>
+      </SPEC-OBJECTS>
+      <SPEC-RELATIONS />
+    </REQ-IF-CONTENT>
+  </CORE-CONTENT>
+</REQ-IF>
+\end{lstlisting}
 
 %=========================================================================
 
 \chapter{OSLC -- Open Services for Lifecycle Collaboration}
-\todo{Gramar check}
-\todo{Style document}
+\label{chapter:oslc}
 This chapter provides a brief overview of the OSLC (Open Services for Lifecycle Collaboration) \cite{oslc}, its fundamental technologies, and the Core and Requirement Management specifications, which are used in this thesis.
 
 \section{Overview}
-OSLC \cite{oslc} is an OASIS Open Project \cite{oasis_open} responsible for developing a set of open specifications, which are used for easier integration of software tools. More detailed overview of the OSLC project can be found in the OSLC Primer \cite{oslc_primer}.
+OSLC \cite{oslc} is an OASIS Open Project \cite{oasis_open} responsible for developing a set of open specifications, which are used for easier integration of software tools. A more detailed overview of the OSLC project can be found in the \emph{OSLC Primer} \cite{oslc_primer}.
 
-The initiation of the OSLC project was driven by increasing number of software tools, which are used in software development lifecycle. These tools are usually developed by different organizations, which leads to the problem of difficult tool integration. In the past, this was solved by developing specific translators and adaptors for each tool, which was a time consuming and expensive process. OSLC was created to solve this problem, by creating a set of open specifications to integrate the resources managed by the software tools into the web of data.
+The initiation of the OSLC project was driven by the increasing number of software tools, which are used in the software development lifecycle. These tools are usually developed by different organizations, which leads to the problem of difficult tool integration. In the past, this was solved by developing specific translators and adaptors for each tool, which was a time-consuming and expensive process. OSLC was created to solve this problem, by creating a set of open specifications to integrate the resources managed by the software tools into the web of data.
 
-OSLC offers two different methods of data integration - Linking data via HTTP and Linking Data via HTML User Interface \cite{oslc_primary_integration_techniques}.
+OSLC offers two different methods of data integration -- \emph{Linking data via HTTP} and \emph{Linking Data via HTML User Interface} \cite{oslc_primary_integration_techniques}.
+
 
 \subsection*{Linking data via HTTP}
-Linking of the data via HTTP is based on OSLC definied common tool protocol for accessing, creating, updating and deleting resources. The protocol is based on internet technologies and standards, such as REST, RDF and Linked Data, described in section \ref{sec:oslc_fundamental_technologies}. It allows any other tool, that implements the same specification, to access any of the managed resources. Linking of the data is done by referencing resources by HTTP URIs in the representations of other data.
+Linking of the data via HTTP is based on OSLC-defined common tool protocol for accessing, creating, updating, and deleting resources. The protocol is based on internet technologies and standards, such as REST, RDF, and Linked Data, described in section \ref{sec:oslc_fundamental_technologies}. It allows any other tool, that implements the same specification, to access any of the managed resources. Linking of the data is done by referencing resources by HTTP URIs in the representations of other data.
 
 \subsection*{Linking Data via HTML User Interface}
 \label {sec:oslc_linking_data_via_html_user_interface}
-OSLC protocol can be used to link data via HTML user interface as well, making use of the REST code on demand contstraint. This allows the client to access and display fragments of a existing user interface, provided by the tool, without the need to implement the user interface itself. This delegated user interface then enables the client to access the resources managed by the tool.
+OSLC protocol can be used to link data via HTML user interface as well, making use of the REST \emph{Code on demand} optional constraint. This allows the client to access and display fragments of an existing user interface, provided by the tool, without the need to implement the user interface itself. This delegated user interface then enables the client to access the resources managed by the tool.
 
 \section{Fundamental Technologies}
 \label {sec:oslc_fundamental_technologies}
-OSLC is build on top of several fundamental technologies. This section list these technologies and introduces briefly each of them.
+OSLC is built on top of several fundamental technologies. This section lists these technologies and introduces briefly each of them. Figure \ref{fig:oslc_core_architecture} shows how these technologies are used together to create the base for the OSLC architecture.
 
 \subsection*{REST}
-REST (REpresentational State Transfer) \cite{rest} is a web software architecture style, describing set of contstraints and properties, which should be followed in comunication between computer systems, most commonly between client and server. In REST architecture the server is responsible for exposing a common interface, which allows the client to access resources by using standard HTTP methods. Each resource, the server is providing, has an unique identifier, that allows the resource to be identified unambiguously and completely. When requested, the server responds with a representation of the resource. The client can then use this resource to create new resources and update or delete existing resources. The comunication between the server and the client is stateless, meaning every request the server receives can be fully understood in isolation, without the context of previous requests. Most common HTTP methods used in REST are POST, GET, PUT and DELETE, which corresponds to the CRUD operations (Create, Read, Update and Delete).
+REST (REpresentational State Transfer) \cite{rest} is a web software architecture style, describing a set of constraints and properties, which should be followed in communication between computer systems, most commonly between client and server. In REST architecture, the server is responsible for exposing a common interface, which allows the client to access resources by using standard HTTP methods. Each resource the server provides has a unique identifier, that allows the resource to be identified unambiguously and completely. When requested, the server responds with a representation of the resource. The client can then use this resource to create new resources and update or delete existing resources. The communication between the server and the client is stateless, meaning every request the server receives can be fully understood in isolation, without the context of previous requests. The most common HTTP methods used in REST are \texttt{POST}, \texttt{GET}, \texttt{PUT}, and \texttt{DELETE}, which correspond to the CRUD operations (Create, Read, Update, and Delete). REST also defines one optional constraint -- \emph{Code on demand}, which allows the server to send executable code to the client, extending the functionality of the client.
 
 \subsection*{RDF}
-RDF (Resource Description Framework) \cite{rdf} is a W3C (World Wide Web Consortium) \cite{w3c} standard for representing data on web. It describes resources in the form of a directed graph, where information about each element are represented as a triplets. Tripletes are statements about the resource composed of subject, predicate and object. The subject describes the the resource, and the predicate specifies its properties and relationships, between the subject and the object. Most widely used RDF serialization formats are Turtle \cite{turtle}, RDF/XML and RDF/JSON.
-\todo{This might use an image}
+RDF (Resource Description Framework) \cite{rdf} is a W3C (World Wide Web Consortium) \cite{w3c} standard for representing data on the web. It describes resources in the form of a directed graph, where information about each element is represented as a triplet -- example of a single triplet can be seen in Figure \ref{fig:rdf_graph_triplet}. Triplets are statements about the resource composed of subject, predicate, and object. The subject describes the resource, and the predicate specifies its properties and relationships, between the subject and the object. Most widely used RDF serialization formats are Turtle \cite{turtle}, RDF/XML, and RDF/JSON.
+
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=.6 \linewidth]{figures/rdf-graph.pdf}
+  \caption{RDF Graph Triplet (source: \cite{rdf_primer})}
+  \label{fig:rdf_graph_triplet}
+\end{figure}
 
 \subsection*{Linked Data}
 Linked Data \cite{linked_data} are structured data containing references to other data. This enables computers to query and interpret the data, allowing the internet to become one big database. The main principles of Linked Data are \cite{linked_data_design_issues}:
 \begin{enumerate}
   \item URIs \cite{uri_rfc} are used as names to identify things
-  \item People can lookup things using HTTTP URIs
+  \item People can lookup things using HTTP URIs
   \item Information returned as a result of the search are provided in an open standard format (for example RDF)
   \item Returned information contain more URIs, enabling discovery of other things
 \end{enumerate}
 
 \section{OSLC Specifications}
-OSLC defines a set of open specifications for integrating software tools. OSLC consists of multiple working groups, which are each responsible for development of a specific specification. There are two types of specifications - Core and Domain. The Core specification provides a basis for the Domain specifications, which are then focused on a specific field, for example Requirement Management, Change Management, Configuration Management, etc. This section provides a summary of the OSLC Core and Requirement Management specifications, which are used in this thesis.
+OSLC defines a set of open specifications for integrating software tools. OSLC consists of multiple working groups, which are each responsible for the development of a specific specification. There are two types of specifications -- \emph{Core} and \emph{Domain}. The Core specification provides a basis for the Domain specifications, which are then focused on a specific field, for example, Requirement Management, Change Management, Configuration Management, etc. This section provides a summary of the OSLC Core and Requirement Management specifications, which are used in this thesis.
 
 \subsection{OSLC Core Specification}
-\todo{https://docs.oasis-open-projects.org/oslc-op/core/v3.0/os/images/oslc-architecture.png}
-At the time of writing this thesis, the current version of OSLC Core Specification \cite{oslc_core_specification} is 3.0. The OSLC Core Specification defines set of common principles, capabilities and restrictions, which should be common accross all OSLC Domain Specifications. Specific OSLC Domain Specification will then describe, which of these capabilities are required or optional for conformance with the specification. It also introduces several resource types and properties with the namespace http://open-services.net/ns/core\# and prefix oslc. In the follwoing sections a basic overview of the core concepts is provided.
+\label{sec:oslc_core_specification}
+At the time of writing this thesis, the current version of OSLC Core Specification \cite{oslc_core_specification} is 3.0. The OSLC Core Specification defines a set of common principles, capabilities, and restrictions, which should be common across all OSLC Domain Specifications. Specific OSLC Domain Specification will then describe which of these capabilities are required or optional for conformance with the specification. It also introduces several resource types and properties with the namespace \url{http://open-services.net/ns/core\#} and prefix \emph{oslc}. In the following sections, a basic overview of the core concepts is provided.
+
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width= \linewidth]{figures/OSLC-core.pdf}
+  \caption{OSLC Core 3.0 architecture (source: \cite{oslc_core_specification}, remade)}
+  \label{fig:oslc_core_architecture}
+\end{figure}
 
 \subsection*{Resource Shape}
-OSLC works with resources, which are uniquequly identified by an URI \cite{uri_rfc}, and are represented by RDF triples. Resource Shape \cite{oslc_core_resource_shape} is a resource of type oslc:ResourceShape, that describes the contents and contstraints of other resources.
+OSLC works with resources, which are uniquely identified by a URI \cite{uri_rfc}, and are represented by RDF triples. Resource Shape \cite{oslc_core_resource_shape} is a resource of type \texttt{oslc:ResourceShape}, that describes the contents and constraints of other resources. Figure \ref{fig:resource_shape} shows a simple oriented graph representing a Resource Shape.
 
-\todo{Possible image: https://docs.oasis-open-projects.org/oslc-op/core/v3.0/os/images/shapes-overview.png - probably remake without the blue boxes}
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=.8 \linewidth]{figures/resource-shape.pdf}
+  \caption{Resource Shape (source: \cite{oslc_core_resource_shape}, remade)}
+  \label{fig:resource_shape}
+\end{figure}
 
-Each Resource Shape has a defined set of Properties, of type oslc:Property, which specify the value type and cardinality of the property. The value type of the property can be either a reference to another Resource Shape, or a basic data type. Cardinality of the Property specifies if the Property is required, optional or can be present multiple times. OSLC Core Specification defines these basic data types: XMLLiteral, boolean, dateTime, decimal, double, float, integer, string and langString.
+Each Resource Shape has a defined set of Properties, of type \texttt{oslc:Property}, which specifies the value type and cardinality of the property. The value type of the property can be either a reference to another Resource Shape, or a basic data type. The cardinality of the Property specifies if the Property is required, optional, or can be present multiple times. OSLC Core Specification defines these basic data types: \texttt{XMLLiteral}, \texttt{boolean}, \texttt{dateTime}, \texttt{decimal}, \texttt{double}, \texttt{float}, \texttt{integer}, \texttt{string}, and \texttt{langString}.
 
 \subsection*{Discovery}
-For the reasons of flexibility, and to reduce coupling, the OSLC Core Specification does not specify unequivocally which capabilities the server has to provide. Instead it offers a mechanism for incremental discovery of services and capabilities, the target server has implemented.
-\todo{This could also use some image/diagram (https://docs.oasis-open-projects.org/oslc-op/core/v3.0/os/images/CoreDiscoveryUML.png)}
-The server always has to specify the starting point of discovery, which is the Service Provider Catalog. The Service Provider Catalog is a resource containing a list of available Service Providers, which then contain all of the available Services. From there, the client is able to find the URIs for Creation Factories, Dialogs and Query services. For additional information about the Discovery mechanism can be found in the Discovery section of the OSLC Core Specification \cite{oslc_core_discovery}.
+\label{sec:oslc_discovery}
+For the reasons of flexibility and to reduce coupling, the OSLC Core Specification does not specify unequivocally which capabilities the server has to provide. Instead, it offers a mechanism for the incremental discovery of services and capabilities the target server has implemented. Figure \ref{fig:oslc_discovery} shows a diagram of the OSLC Discovery mechanism.
+
+\begin{figure}[hbt]
+  \centering
+  \includegraphics[width=.8 \linewidth]{figures/oslc-discovery.pdf}
+  \caption{OSLC Discovery diagram (source: \cite{oslc_core_discovery}, remade)}
+  \label{fig:oslc_discovery}
+\end{figure}
+
+The server always has to specify the starting point of discovery, which is the \emph{Service Provider Catalog}. The Service Provider Catalog is a resource containing a list of available \emph{Service Providers}, which then contains all of the available \emph{Services}. From there, the client is able to find the URIs for \emph{Creation Factories}, \emph{Dialogs}, and \emph{Query services}. Additional information about the Discovery mechanism can be found in the Discovery section of the OSLC Core Specification \cite{oslc_core_discovery}.
+
 
 \subsection*{Basic Capabilities}
-OSLC Core Specification defines basic CRUD (Create, Read, Update, Delete) operations for resources, however the decesion about which of these operations are required or optional for which resource is specified in each of the OSLC Domain Specifications. Read, Update and Delete operations are performed by their respective HTTP request method to the URI of the target resource. Create operation is performed by a POST operation to the Creation Factory URI for specific resource. 
+\label{sec:oslc_basic_capabilities}
+OSLC Core Specification defines basic CRUD (Create, Read, Update, Delete) operations for resources. However, the decision about which of these operations are required or optional for which resource is specified in each of the OSLC Domain Specifications. Read, Update, and Delete operations are performed by their respective HTTP request method to the URI of the target resource. Create operation is performed by a \texttt{POST} operation to the Creation Factory URI for a specific resource.
 
 \subsection*{Delegated UI}
-OSLC Core Specification introduces Delegated UI \cite{oslc_core_delegated_ui} for resource creation -- Creation Dialog, and resource selection -- Selection Dialog. Both of these dialogs are examples of linking of the data via HTML mentioned in \ref{sec:oslc_linking_data_via_html_user_interface}. Dialogs are returned as a combination of HTML iframe and JavaScript code. The decesion about which of these dialogs are required or optional is again left up to the OSLC Domain Specification.
+OSLC Core Specification introduces Delegated UI \cite{oslc_core_delegated_ui} for resource creation -- \emph{Creation Dialog}, and resource selection -- \emph{Selection Dialog}. Both of these dialogs are examples of linking of the data via HTML mentioned in \ref{sec:oslc_linking_data_via_html_user_interface}. Dialogs are returned as a combination of HTML \texttt{iframe} and JavaScript code. The decision about which of these dialogs are required or optional is again left up to the OSLC Domain Specification.
 
 \subsection*{Query Capability}
-As OSLC server manages large amount of resources, it has to provide a way for clients to search and filter these resourecs. OSLC Core Specification specifies a mechanism for this, called OSLC Query \cite{oslc_core_query}. OSLC Query allows clients to lookup a set of resourecs by performing a GET or POST requests on a oslc:queryBase URI. It offers two separate capabilities, a full-text search, identified by oslc.searchTerms parameter, and a query search for resources containing specifiec properties and values, identified by oslc.where parameter. Each query search must consist of at least one property, comparison operator and value. The result of the search is returned as a resource of type oslc:QueryResult, which contain a list of references to the resourecs found.
-\todo{Maybe some XML example here for query}
+As the OSLC server manages a large number of resources, it has to provide a way for clients to search and filter these resources. OSLC Core Specification specifies a mechanism for this, called OSLC Query \cite{oslc_core_query}. OSLC Query allows clients to look up a set of resources by performing a \texttt{GET} or \texttt{POST} request on an \texttt{oslc:queryBase} URI. It offers two separate capabilities, a full-text search, identified by the \texttt{oslc.searchTerms} parameter, and a query search for resources containing specific properties and values, identified by \texttt{oslc.where} parameter. Each query search must consist of at least one property, comparison operator, and value. The result of the search is returned as a resource of type \texttt{oslc:QueryResult}, which contains a list of references to the resources found (example of \texttt{oslc:QueryResult} can be found seen in Listing \ref{lst:oslc_query_result}).
+
+\begin{lstlisting}[
+  language=XML, label={lst:oslc_query_result}, float=hbt,
+  caption={OSLC Query Result example}
+]
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:oslc_data="http://open-services.net/ns/servicemanagement/1.0/"
+  xmlns:oslc="http://open-services.net/ns/core#"
+  xmlns:oslc_rm="http://open-services.net/ns/rm#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:foaf="http://xmlns.com/foaf/0.1/">
+  <oslc:ResponseInfo rdf:about="...">
+    <oslc:totalCount rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+  >2</oslc:totalCount>
+  </oslc:ResponseInfo>
+  <rdf:Description rdf:about=".../queryRequirement">
+    <rdfs:member>
+      <oslc_rm:Requirement rdf:about="...">
+        ...
+      </oslc_rm:Requirement>
+    </rdfs:member>
+    <rdfs:member>
+      <oslc_rm:Requirement rdf:about="...">
+        ...
+      </oslc_rm:Requirement>
+    </rdfs:member>
+  </rdf:Description>
+</rdf:RDF>
+\end{lstlisting}
 
 \subsection*{Authentication and Error Responses}
-OSLC Core Specification provides guidance on how to handle authentication and error resposes. Allowed authentication methods are Basic Authentication and OAuth. All error resonses should be returned as a resource of type oslc:Error \cite{oslc_core_error}, which contains a human-readable message and a machine-readable error code. This enables clients to handle errors in a generic way.
+OSLC Core Specification provides guidance on how to handle authentication and error responses. Allowed authentication methods are Basic Authentication and OAuth. The details of the authentication process are further explained in Chapter \ref{chapter:authentication}.
+
+All error responses should be returned as a resource of type \texttt{oslc:Error} \cite{oslc_core_error}, which contains a human-readable message and a machine-readable error code. This enables clients to handle errors in a generic way.
 
 \subsection{OSLC Requirement Management Specification}
-At the time of writing this thesis, the current version of OSLC Requirement Management Specification \cite{oslc_requirement_management_specification} is 2.1. The specification builds on top of the OSLC Core Specification and specifies, which of the capabilities are required or optional for conformance with the specification. The main goal is to provide an extensive, but not limiting, interface for requirement management system and support a wide range of integration scenarios. One of the main requirements for an OSLC RM Server is the ability to accept and return resources in RDF/XML, XML and JSON. It also introduces new resource types, in the namespace of http://open-services.net/ns/rm\# and with prefix oslc\_rm. These resource types are described in the following sections.
+\label{sec:oslc_rm_specification}
+At the time of writing this thesis, the current version of OSLC Requirement Management Specification \cite{oslc_requirement_management_specification} is 2.1. The specification builds on top of the OSLC Core Specification and specifies which of the capabilities are required or optional for conformance with the specification. The main goal is to provide an extensive, but not restrictive, interface for requirement management systems and support a wide range of integration scenarios. One of the main requirements for an OSLC RM Server is the ability to accept and return resources in RDF/XML, XML, and JSON. It also introduces new resource types in the namespace of \url{http://open-services.net/ns/rm\#} and with the prefix \texttt{oslc\_rm}. These resource types are described in the following sections.
 
 \subsection*{Requirement}
-oslc\_rm:Requirement \cite{oslc_rm_requirement} is a resource shape used for describing the statement of need. \todo{mabye I want to refer this to the section about requirement management requirement} Requirement Management Specification defines extensive set of properties and contstraints \cite{oslc_rm_requirement_constraints} for the requirement shape, but there are few that are especialy important in the context of this work. 
+\texttt{oslc\_rm:Requirement} \cite{oslc_rm_requirement} is a resource shape used for describing a single requirement described in Section \ref{sec:requirements}. Requirement Management Specification defines an extensive set of properties and constraints \cite{oslc_rm_requirement_constraints} for the requirement shape, but there are few that are especially important in the context of this work.
 
-Each individual requirement should have a title, usualy containing the name of the requirement, and a description, which consists of the actual statement of need. These two requisities realized by the properties dcterms:title and dcterms:description.
+Each individual requirement should have a title, usually containing the name of the requirement, and a description, which consists of the actual statement of need. These two requisites are realized by the properties \texttt{dcterms:title} and \texttt{dcterms:description}.
 
-Requirements should also be able to reference other requirements or requirement collections, which are related to them. This is done by the properties oslc\_rm:decomposedBy and oslc\_rm:decomposes, the difference being the direction of the relationship.
+Requirements should also be able to reference other requirements or requirement collections that are related to them. This is done by the properties \texttt{oslc\_rm:decomposedBy} and \texttt{oslc\_rm:decomposes}, the difference being the direction of the relationship.
 
 \subsection*{Requirement Collection}
-oslc\_rm:RequirementCollection \cite{oslc_rm_requirement_collection} is a resource shape used for describing a collection of requirements, which constitute some statement of need. Requirement Management Specification again defines the constraints and properties for this resource shape \cite{oslc_rm_requirement_collection_constraints}, but they are nearly the same as for oslc\_rm:Requirement resource shape.
+\texttt{oslc\_rm:RequirementCollection} \cite{oslc_rm_requirement_collection} is a resource shape used for describing a collection of requirements, which constitute some statement of need. Requirement Management Specification again defines the constraints and properties for this resource shape \cite{oslc_rm_requirement_collection_constraints}, but they are nearly the same as for \texttt{oslc\_rm:Requirement} resource shape.
 
 \section{Eclipse Lyo}
-Eclipse Lyo \cite{eclipse_lyo} is an open source project hosted by the Eclipse Foundation \cite{eclipse} and developed by the OSLC community. It provides a Java SDK, as well as other utilities, to enable easier adoption of the OSLC technologies and better developer experience. The following sections gives a concise summary of the key components of Eclipes Lyo.
+Eclipse Lyo \cite{eclipse_lyo} is an open-source project hosted by the Eclipse Foundation \cite{eclipse} and developed by the OSLC community. It provides a Java SDK, as well as other utilities, to enable easier adoption of the OSLC technologies and better developer experience. The following sections give a concise summary of the key components of Eclipse Lyo, which are used to implement the OSLC adaptor in this thesis.
 
 \subsection*{OSLC4J SDK}
-OSLC4J Software Developement Kit (available at Maven Repository \cite{maven_oslc4j}) is a set of Java libraries used for building OSLC compliant REST-based servers and clients. It includes support for common OSLC capabilities, resource shapes and service provider documents and marshaling and unmarshaling of resources to Java objects. 
+OSLC4J Software Development Kit (available at Maven Repository \cite{maven_oslc4j}) is a set of Java libraries used for building OSLC-compliant REST-based servers and clients. It includes support for common OSLC capabilities, resource shapes, service provider documents, and marshaling and unmarshaling\footnote{\textbf{Marshaling} is the process of transforming the representation of data from memory into the format used for transmission. It is used for passing the data of an Object to a remote server, with the \emph{CodeBase} attached, specifying where the implementation of the object can be found.} of resources to Java objects. 
 
 \subsection*{Lyo Designer}
-Lyo Designer \cite{lyo_designer} is Eclipse plugin used for graphical design of OSLC adaptors. It offers the capability to model the OSLC resources, their properties and constraints, as well as the OSLC services. For separation of concers, Lyo Designer provides three views for modeling different parts of the final adaptor:
+Lyo Designer \cite{lyo_designer} is an Eclipse plugin used for the graphical design of OSLC adaptors. It offers the capability to model the OSLC resources, their properties, and constraints, as well as the OSLC services. For separation of concerns, Lyo Designer provides three views for modeling different parts of the final adaptor:
 
 \begin{itemize}
-  \item Domain Specification View - for modeling the OSLC resources, their properties and relationships between them
-  \item Toolchain View - for modeling the relationships between separate adaptors and resources, they consume and produce
-  \item Adapter Interface View - for modeling the services and capabilities of a single adaptor
+  \item \textbf{Domain Specification View} -- for modeling the OSLC resources, their properties, and relationships between them
+  \item \textbf{Toolchain View} -- for modeling the relationships between separate adaptors and resources, they consume and produce
+  \item \textbf{Adapter Interface View} -- for modeling the services and capabilities of a single adaptor
 \end{itemize}
 
-Lyo Designer also contains an utility called Code Generator, which is capable of generating code skeletons, compliant with OSLC, from the graphical models of the adaptors designed in Lyo Designer. The generated code is based on the OSLC4J SDK and can be used as a starting point for the implementation of the adaptor. The generated code contains designated places, where the developer should add code, which provides the functionality for the adaptor. This allows the code to be regenarated, upon the changes to the model, without breaking or losing any of the underlying implementation and custom code.
+Lyo Designer also contains a utility called \textbf{Code Generator}, which is capable of generating code skeletons, compliant with OSLC, from the graphical models of the adaptors designed in Lyo Designer. The generated code is based on the OSLC4J SDK and can be used as a starting point for the implementation of the adaptor. Out of the box, the generated code contains the definitions of the OSLC resources, their properties and constraints, definitions of the OSLC services, and code for marshaling and unmarshaling of the resources. The program logic (how the resources should be handled after unmarshaling) and implementation of the services are left to be done by the developer. The generated code contains designated places where the developer should add code, which provides the functionality for the adaptor. This allows the code to be regenerated, upon the changes to the model, without breaking or losing any of the underlying implementation and custom code.
 
 %=========================================================================
 
 \chapter{Authentication}
-\todo{Gramar check}
-\todo{Style document}
-\todo{Basic Auth}
-\todo{OAuth2}
+\label{chapter:authentication}
+Authentication is the process of verifying the identity of a person or user. It is used to restrict the server resources or functionality to only authorized users or specific groups of users. Several different authentication methods exist, each with its own advantages and disadvantages. This chapter gives a brief overview of BASIC and OAuth authentication methods, which are used in this thesis to secure the OSLC adaptors as required by the OSLC specification.
 
+\section{Basic Access Authentication}
+BASIC (Basic Access Authentication) was first defined as a part of HTTP 1.0 specification \cite{http1.0_w3}, but the standard has been since superseded and redefined as part of its own RFC \cite{basic_auth_rfc}. As its name suggests, BASIC is the most fundamental method of verifying the identity of a client against a server. It utilizes the HTTP \texttt{Authorization} header and provides the server with the credentials of the client in the form of \texttt{Authorization: Basic <credentials>}. The credentials are provided as a string, encoded in base64 \cite{base64_rfc}, containing the username and password joined by a colon.
+
+The main advantage of using BASIC authentication is its ease of implementation. It is supported by most of the available frameworks and does not require any cryptographic operations. However, it is also the most vulnerable one, as the credentials are sent in plain text, which makes it susceptible to interception by a third-party and potential credentials theft. Most of these insecurities can be mitigated by using TLS to encrypt the communication between client and server, but it is still not a recommended method for authentication in production environments.
+
+\section{Open Authorization}
+OAuth (Open Authorization) is a standard for delegated authentication and authorization, which stemmed from the need to enable the end users to authenticate in third-party applications and services using their credentials from another service, which acts as the authorization server. Originally, this was done by sharing the credentials with the third-party application, which then used them to authenticate the user. This method was vulnerable to the same security issues as BASIC authentication, and on top of that, it also allowed the third-party application to access and read the user's credentials. OAuth was created to mitigate these problems and create a standardized way for services to offer authentication and authorization to third-party applications without the need to share the users' credentials between them. The standard was first introduced as OAuth 1.0 \cite{oauth1_rfc}, which used asymmetric cryptography to encrypt and verify the credentials, but was later superseded by OAuth 2.0 \cite{oauth2_rfc}, which is easier to implement, as it leaves the encryption and verification of the credentials origin to TLS protocol. The next section provides a brief overview of OAuth 2.0 and its authentication workflow.
+
+\subsection{OAuth 2.0}
+OAuth 2.0 is a standard published as a reaction to new use cases. It is not backward compatible with OAuth 1.0. The standard enforces that all of the communication between the client and the authorization server is done using HTTPS.
+
+Several different roles are defined by the standard:
+\begin{itemize}
+  \item \textbf{Resource owner} -- entity capable of granting access to a protected resource
+  \item \textbf{Resource server} -- server containing the resources, capable of authorization using the access tokens
+  \item \textbf{Client} -- third party application, which is requesting access to resources on the resource server on behalf of the resource owner
+  \item \textbf{Authorization server} -- issues access tokens to resource owner after successful authentication and authorization
+\end{itemize}
+
+\subsection*{Code Grants}
+\label{section:code_grants}
+The standard also defines four authorization grants, ways for a client to obtain the access token. For simplicity, only the most common one, Authorization Code Grant, is described, as it is the one used in this thesis.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.8 \linewidth]{figures/auth-sequence-auth-code.pdf}
+  \caption{OAuth 2.0 Authorization Code Grant flow diagram}
+  \label{fig:oauth2_auth_code_grant}
+\end{figure}
+
+\textbf{Authorization Code Grant} is a two-step process to obtain the access token. The user is first redirected to the authorization server with a request to obtain an authorization code. The authorization server authenticates the user and asks him for approval to grant the client specified scope of access to resources on the resource server. After the approval, the user is redirected back to the client with the authorization code. The client then uses the code together with client ID and client secret to make a request to the authorization server to obtain the access token. The authorization server then verifies the authorization code and issues the access token. The whole process is depicted in Figure \ref{fig:oauth2_auth_code_grant}.
+
+\subsection*{Proof Key for Code Exchange}
+PKCE (Proof Key for Code Exchange) \cite{pkce_rfc} builds on top of Authorization Code Grant to further secure the process. It adds a secret called \emph{Code Verifier}. Code Verifier is then to transformed into a value called \emph{Code Challenge}, which is sent together with the authorization code request. Code Verifier is then sent together with the authorization code as a part of the access token request. The authorization server issues a new access token only if the received Code Verifier matches the one used to generate the Code challenge. The modified flow is depicted in Figure \ref{fig:oauth2_pkce}. This removes the risk of the authorization code being intercepted and used to generate the access token, as the authorization server will not create the access token without the Code Verifier, which is not part of the intercepted response.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.8 \linewidth]{figures/auth-sequence-pkce.pdf}
+  \caption{OAuth 2.0 Proof Key for Code Exchange flow diagram}
+  \label{fig:oauth2_pkce}
+\end{figure}
+
+\subsection*{Access and Refresh Tokens}
+After successful authorization against the authorization server, the client is issued an \textbf{access token}. The client then uses this token to access the resources available on the resource server by sending it with each HTTP request in the Authorization header. Access tokens can be either an opaque string, called a \emph{bearer token}, or a \emph{sender-constrained token}. Sender-constrained tokens can be used only to authorize requests sent by the same client to whom the token was issued. This is usually achieved by asymmetric cryptography of the token. To comply with the standard, the token cannot convey user identity or any other information about the user.
+
+Together with the access token, the authorization server also issues a \textbf{refresh token}, which can be used to generate a new access token without user interaction with the authorization server. This allows the authorization server to issue access tokens with a shorter expiration time, reducing the impact of the token being intercepted and stolen.
+
+\subsection*{Scopes}
+Compared to OAuth 1.0, OAuth 2.0 also introduces the concept of \emph{OAuth Scopes}, allowing the authorization server to issue access tokens with various limitations on access to resources. The scopes are defined by the resource server. The requested scope is part of the authorization request to the authorization server and is bound to the access token generated as a result of the authorization. This can be used to limit the generated access token to read-only access, which is useful for third-party applications that do not need to modify the resources on the resource server.
+
+%=========================================================================
 
 \chapter{Adaptor Design}
-\todo{Gramar check}
-\todo{Style document}
-\todo{Návrh v lyu}
-\todo{Rozdělení na Jira a R4J adaptory}
-\todo{Identifikátory Requirement a RequirementCollection}
-\todo{Mapping of properties}
+\label{chapter:adaptor_design}
+This chapter details the process of designing the Jira and R4J adaptors, as well as the decisions made during the process and the reasoning behind them. The chapter is divided into several sections, each detailing different steps of the design process.
+
+\section{Architecture Overview}
+There are two possible ways how to add the OSLC capabilities to a third-party web application -- either by extending the application via a plugin or by creating a separate self-contained application that acts as a middle-man between the third-party application and the user. Both of these approaches can be used to create the adaptor for Jira and R4J, as Jira allows the creation of third-party plugins and exposes its data through the REST API. At the start of the design process, a decision was made to keep the adaptor as generic as possible, to allow the option to turn it into a generic adaptor for requirement management specification in the future. This would allow its use with other third-party requirement management applications by utilizing the strategy design pattern \cite{strategy_design_pattern} to switch the data-access layer of the adaptor. With this in mind, the second approach, to create a standalone web application, was chosen, as there is no way to create a plugin that would be compatible with every possible third-party application.
+
+After careful consideration of the capabilities and data exposed by both Jira and R4J, it was determined that the best option would be to split the adaptor into two separate adaptors, one for Jira and the second for R4J. This is in line with the decision to keep the adaptor as generic as possible. The Jira adaptor would be responsible for satisfying the requirements of the \emph{OSLC Core} and \emph{Requirement Management Specification}. The R4J adaptor would add some additional functionality provided by R4J while not putting any restrictions on what functionality has to be provided by any other third-party requirement management applications in order to be compatible with the generic adaptor. These adaptors can then be used together to provide the full functionality, or users can opt to use only the Jira adaptor if they do not need the additional functionality or do not have an active subscription to the R4J plugin. The Jira adaptor still retains compliance with the OSLC Core and Requirement Management Specification while used alone.
+
+\section{Tools Selection}
+One of the initial steps of the design process was the selection of the language, libraries, and tooling that would be used to implement the adaptors. At the time the design process started, there were only two real language options available for consideration, being \texttt{C\#} and Java.
+
+The \emph{OSLC4Net} \cite{oslc4net} library for \texttt{C\#}, developed by the OSLC team, was in an unusable state at the time, as it has been overlooked and not maintained for a long time. It has recently started getting some attention at the time of writing this thesis, so if the library is brought up to date and additional tooling is developed, it might become a viable option in the future.
+
+Because of the state of OSLC4Net, the only viable option left was to use Java with the well-maintained OSLC4J SDK, together with the Eclipse Lyo tooling for the development of OSLC applications. The code generator included in Eclipse Lyo generates the code skeletons for the adaptors as Eclipse Jetty servers \cite{jetty} equipped with Apache Maven \cite{maven} for dependency management and build automation.
+
+
+\section{Adaptors Modeling}
+\label{sec:adaptors_modeling}
+After tooling selection, the next step in the design process was to model the adaptors themself. The modeling was done using the Eclipse Lyo modeling tool, which also provides the ability to generate code skeletons from the created models. Most of the modeling process is based on the tutorials \cite{oslc_domain_workshop} \cite{oslc_toolchain_workshop} \cite{youtube_lyo_tutorial} and examples \cite{github_oslc_lyo-adaptor-sample-modelling} \cite{github_oslc_bugzilla} provided by the OSLC community, as well as adaptor models for Unite \cite{unite_gitlab}. The modeling of the adaptors can be separated into two steps, domain modeling -- modeling the resources accepted and exposed by the adaptor, and toolchain modeling -- modeling the functionality and capabilities of the adaptor, both of which are described in the following sections.
+
+\subsection{Domain Modeling}
+The domain models were created based on the OSLC Core and Requirement Management specifications, with the data exposed by Jira and R4J APIs taken into consideration. The requirements and restrictions placed on the \texttt{oslc} and \texttt{oslc\_rm} are defined in the Requirement Management specification using the \texttt{MUST}, \texttt{MUST NOT}, \texttt{SHOULD}, \texttt{SHOULD NOT} and \texttt{MAY} keywords. The main goal was to create models compliant with the standards while taking into account their extensibility in the future and without creating any limitations by coupling them with Jira or R4J-specific resources. This lead to the separation into \texttt{oslc}, \texttt{oslc\_rm}, \texttt{jira} and \texttt{jira\_r4j} models. The \texttt{oslc} and \texttt{oslc\_rm} models were modeled using the models provided by Lyo project \cite{lyo_domains} as a base.
+
+\subsection*{OSLC Core Domain}
+The OSLC Core domain model is specified by the OSLC Core specification described in \ref{sec:oslc_core_specification}. As every OSLC-compliant adaptor has to implement the OSLC Core specification, the domain model provides the base resources of the OSLC Core vocabulary as well as other basic namespaces used for the definition of other resources -- namely RDF \cite{rdf_namespace}, RDFS \cite{rdfs_namespace}, Dublin Core \cite{dcterms_namespace} and FOAF \cite{foaf_namespace}. The OSLC Core domain model can be seen in Figures \ref{fig:oslc_core_domain_model_diagram} and \ref{fig:oslc_core_model_diagram}.
+
+\begin{figure}[H]
+  \centering
+  \begin{sideways}
+    \includegraphics[width=1.45\linewidth]{figures/OSLC_Core_Domain.jpg}
+  \end{sideways}
+
+  \caption{OSLC Core Domain Model Diagram \emph{(Exported from Lyo modeling tool)}}
+  \label{fig:oslc_core_domain_model_diagram} 
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width= .9\linewidth]{figures/Core_Domain.jpg}
+  \caption{OSLC Core Model Diagram \emph{(Exported from Lyo modeling tool)}}
+  \label{fig:oslc_core_model_diagram}
+\end{figure}
+
+\subsection*{OSLC Requirement Management Domain}
+The OSLC Requirement Management domain model defines the \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection} resources based on the models from the Lyo project. Properties that are not required by the Requirement Management specification and are not needed in this thesis have been removed, and the representations have been extended by the properties defined in \texttt{jira} namespace. The graphical representation can be seen in Figure \ref{fig:oslc_rm_domain_model_diagram}.
+
+\subsection*{OSLC Jira and R4J Domains}
+The \texttt{jira} and \texttt{jira\_r4j} namespaces define properties and resources that represent resources and properties native to Jira and R4J. The \texttt{jira\_r4j:Folder} has been defined in a way where it references \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection}, instead of the other way around, to allow the use of the Jira adaptor independently of the R4J adaptor. The models can be seen in Figure \ref{fig:oslc_rm_domain_model_diagram}.
+
+\begin{figure}[H]
+  \centering
+  \begin{sideways}
+    \includegraphics[width=1.42\linewidth]{figures/Requirement_Management_Domain.jpg}
+  \end{sideways}
+  \caption{OSLC Requirement Management Domain Model Diagram \emph{(Exported from Lyo modeling tool)}}
+  \label{fig:oslc_rm_domain_model_diagram}
+\end{figure}
+
+\subsection{Toolchain Modeling}
+As discussed before, the adaptor has been split into R4J and Jira adaptors. The adaptor interfaces can be seen in Figure \ref{fig:adaptor_interfaces_diagram}. The Jira adaptor manages the \texttt{oslc\_rm} and \texttt{jira} resources and properties, while the R4J adaptor is dependent on these resources and produces \texttt{jira\_r4j} resources.
+
+Both adaptors have been modeled according to the OSLC Core Discovery principles discussed in Section \ref{sec:oslc_discovery} and thus contain \emph{Service Provider Catalogs}, \emph{Service Providers} and \emph{Services} for each managed resource. Eclipse Lyo also provides the option to add \emph{Authentication} to the adaptor models, which results in the generation of the authentication and authorization code skeletons for Basic and OAuth methods during the code generation process. This option has been added for both adaptors.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width= .8\linewidth]{figures/adaptors_interface.jpg}
+  \caption{Adaptor Interfaces Diagram (\texttt{P} -- \emph{produces}, \texttt{C} -- \emph{consumes})}
+  \label{fig:adaptor_interfaces_diagram}
+\end{figure}
+
+\subsection*{Jira Adaptor}
+The Jira adaptor provides the \texttt{oslc\_rm:Requirement}, \texttt{oslc\_rm:RequirementCollection}, \texttt{foaf:Person} and \texttt{jira:Project} resources.
+
+It exposes only limited functionality for the \texttt{foaf:Person} and \texttt{jira:Project} resources, allowing only read-only access to the data through the \texttt{GET} endpoint and \emph{Selection Dialog}, as these resources are not meant to be created or updated using the adaptor.
+
+In accordance with the Requirement Management specification, the Jira adaptor provides full \emph{CRUD} functionality (as described in section \ref{sec:oslc_basic_capabilities}) for the \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection} resources, as well as \emph{Query capability}, \emph{Creation Dialog} and \emph{Selection Dialog}.
+
+A graphical representation of the Jira adaptor functionality and capabilities can be seen in Figure \ref{fig:jira_adaptor_functionality_diagram}.
+
+\subsection*{R4J Adaptor}
+The R4J adaptor manages the \texttt{jira\_r4j:Folder} resource, which represents a folder from the R4J tree folder structure. To enable users to use the R4J folder structure to its full extent, the adaptor provides full \emph{CRUD} functionality for the resource. To further enable users and enhance the usability of the adaptor, the \emph{Query Capability}, \emph{Creation Dialog}, and \emph{Selection Dialog} have been added to the adaptor.
+
+A graphical overview of the R4J adaptor functionality and capabilities can be seen in Figure \ref{fig:r4j_adaptor_functionality_diagram}.
+
+\begin{figure}[H]
+  \centering
+  \begin{sideways}
+    \includegraphics[width=1.4\linewidth]{figures/JiraInterfaceDiagram.jpg} 
+  \end{sideways}
+  \caption{Jira Adaptor Functionality Diagram \emph{(Exported from Lyo modeling tool)}}
+  \label{fig:jira_adaptor_functionality_diagram}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{sideways}
+    \includegraphics[width=1.4\linewidth]{figures/R4JInterfaceDiagram.jpg}
+  \end{sideways}
+  \caption{R4J Adaptor Functionality Diagram \emph{(Exported from Lyo modeling tool)}}
+  \label{fig:r4j_adaptor_functionality_diagram}
+\end{figure}
+
+\section{Mapping OSLC resources to Jira and R4J}
+Three important aspects have to be considered when designing the mapping of OSLC resources to their Jira and R4J counterparts. This section details these aspects and the design decisions made as a result.
+
+\subsection*{Generic nature of the adaptor}
+The first is the generic nature of the adaptor for Requirement Management specification, taking into consideration the fact that requirement management applications, different from Jira, might not have exactly the same data structure and thus the mapping has to be flexible enough to allow for the use of the adaptor with other applications in the future. This had the biggest impact on the design of the unique identifier of the \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection} resources. Jira provides two ways to uniquely identify the issues:
+
+\begin{itemize}
+  \item \texttt{id} -- a unique immutable number assigned to each issue upon creation
+  \item \texttt{key} -- a unique immutable string identified assigned to each issue upon creation, consisting of a project key and a number, which identifies the issue within the project
+\end{itemize}
+
+Neither of these options is ideal, as the \texttt{id} would require all the other requirement management applications to identify resources strictly by a number and the \texttt{key} would require the existence of the concept of a project in every requirement management application, both of which limit the generic usability of the adaptor. Based on these observations, a new unique string-based identifier has been added and mapped to the \texttt{dcterms:identifier} property of the \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection} resources. As the identifier is string based, it leaves the decision of the format of the identifier up to the user or underlying application. To enable the users to query the resources by the Jira native identifiers as well, they have been mapped to the \texttt{jira:jiraId} and \texttt{oslc:shortTitle}, respectively.
+
+\subsection*{Infrastucture limitations}
+\label{sec:infrastructure_limitations}
+The second aspect that has been considered are the limitations that can be placed on the Jira instances by infrastructure teams. In bigger companies, this concerns Honeywell as well, the Jira is usually used by a variety of teams, each having different use cases. To ensure the needs of each of these teams are satisfied without introducing any issue schema-breaking changes, the extent of the Jira instance configuration is limited and managed by a separate infrastructure team. The adaptor must be configurable to allow for the use with Jira instances with different configurations while still providing the same functionality.
+
+The main configuration points of Jira, which are important in the context of this thesis, are:
+
+\begin{itemize}
+  \item \texttt{issue\_type} -- the type of the issue, which determines the fields available for the issue
+  \item \texttt{issue\_link} -- the type of the link between two issues
+  \item \texttt{field} -- the field representing a property of the issue
+\end{itemize}
+
+Ideally, two new \texttt{issue\_types} should be added to the Jira configuration to represent the \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:requirementCollection} resources, however, it is possible to use any two of the existing \texttt{issue\_types} native to the Jira base configuration as well. The same applies to the \texttt{oslc\_rm:decomposes} and \texttt{oslc\_rm:decomposedBy} properties, which are mapped to a singular \texttt{issue\_link}, with each representing a different direction of the link.
+
+The last problem point of the configuration is the newly added string-based identifier \texttt{dcterms:identifier} property. The adaptor allows two ways to store the identifier in the Jira issue:
+
+\begin{enumerate}
+  \item \texttt{labels} -- the identifier is stored in the \texttt{labels} field together with the values of the property \texttt{dcterms:subject}
+  \item \texttt{custom\_field} -- the identifier is stored in a custom \texttt{field}
+\end{enumerate}
+
+\subsection*{Limitations of the Jira and R4J}
+The last, but not least, aspect that impacted how the mapping of the resources was designed, is the limited modifiability of some of the Jira and R4J resources and how these resources are provided by the Jira and R4J APIs.
+
+There is no way to add a custom field to the representation of the Jira project, resulting in the inability to use anything except the numeric project \texttt{id} as the project's unique identifier. A similar issue was identified with the identifier for the \texttt{jira\_r4j:Folder} resource, which is identified uniquely by the numeric \texttt{id}, only in the context of the project it belongs to. To comply with the OSLC Core specification, each resource has to be uniquely identified within the context of the whole adaptor. As a solution to this problem, the \texttt{jira\_r4j:Folder} resource is uniquely identified by the combination of the folder \texttt{id} and the project \texttt{key} in the form of \texttt{<project\_key>-<folder\_id>}. This is still in line with the idea of the generic nature of the adaptor, as the project and folder identifiers are defined as part of the \texttt{jira} an \texttt{jira\_r4j} namespaces and are not part of the generic \texttt{oslc\_rm} domain model.
+
+%=========================================================================
 
 \chapter{Implementation}
-\todo{Gramar check}
-\todo{Style document}
-\todo{Authentizace Basic + OAuth, not sure if here nebo v Adaptor Design zmínit jak to generuje Lyo a jak to používáme/bylo změno}
-\todo{Popis toho jaké jdou dělat query}
-\todo{Konfigurační soubory pro Jiru a R4J}
-\todo{Možnost uložení identifikátorů v labels fieldu}
+\label{chapter:implementation}
+This chapter details the implementation of the adaptors, including the challenges and problems faced during the implementation and the solutions to these problems.
+
+\section{Code Architecture}
+Code Generator from the Lyo project was used to generate the code skeletons for the adaptors based on the models defined in Section \ref{sec:adaptors_modeling}. The code skeletons were generated as two separate Java jetty \cite{jetty} projects based on the Maven \cite{maven} framework. These generated projects contain the definitions of each service the adaptor was modeled to provide, definitions of the modeled resources, and base implementation of the BASIC and OAuth authentication.
+
+A third project was created to contain the shared code and functionality between both adaptors. This project contains \texttt{Helper} and \texttt{Builder} classes, which provide \texttt{static} functions to abstract away some of the data manipulation and condition checking. The \texttt{shared} project also implements \texttt{ConfigurationProvider} and \texttt{SessionProvider} as \emph{Singletons} \cite{singleton_design_pattern} and provide both adaptors with an easy way to access the configuration and session data.
+
+To unify the way both adaptors access and modify the resources provided by the Jira and R4J APIs, the \emph{Facade} \cite{facade_design_pattern} design pattern was used. A facade was created for each resource type, which provides the adaptors with a unified interface to access and modify the resources of the given type. All of these facades extend the \texttt{BaseFacade} implemented in the \texttt{shared} project, which enables the facades to access the Jira and R4J Clients.
+
+\section{Configuration and Build Scripts}
+To support different configurations needed because of the infrastructure limitations, as discussed in Section \ref{sec:infrastructure_limitations}, the adaptors have to be configurable using an external configuration file. The configuration file is a JSON file specifying the different configuration points of the adaptor, such as the \texttt{issueType} for the representation of resources, the \texttt{issueLinkType} that should be used for relations, the \texttt{Url} of the Jira instance, enabled authentication methods and much more.
+
+Build scripts for Linux-based systems were created to simplify the build and start-up process of the adaptors. These scripts are written in Bash and utilize the Maven console functionality to build and run the adaptors. The scripts first build the contents of the \texttt{shared} project and then both of the adaptors, as they are dependent on the \texttt{shared} project. During the start-up, the scripts validate the presence of configuration files as well as the response of the started adaptors. If the adaptors are not started successfully, the scripts terminate with an error message.
+
+\section{Jira API Java SDK}
+Atlassian provides developers with a Java SDK for the Jira API \cite{jira_java_sdk}. This SDK contains the implementation of several asynchronous Jira API clients, class representation for Jira resources, response parsers, and base support for authentication and authorization. To support all of the functionality required by the adaptors, some clients had to be extended, and some new clients had to be implemented utilizing the existing underlying infrastructure.
+
+The authorization of the requests sent by the clients is handled by the implementations of the \texttt{AuthenticationHandler} interface. The implementation of BASIC authentication is provided by the SDK. However, an implementation for token-based authorization had to be implemented to support OAuth2 authentication. The implemented solution is further described in the following section.
+
+\section{Authentication}
+The \emph{Code Generator} from the Lyo project generates the base implementation of the BASIC authentication and OAuth1.a\footnote{\textbf{OAuth1.a} \cite{oauth1a} is a revised specification of the OAuth1.0 addressing a session fixation attack} authorization. However, this implementation is not usable in the context of the Jira and R4J adaptors, as the generated code treats the adaptors as \emph{authentication authorities}. This means it expects the adaptors to validate the users' credentials and provide the users with authorization codes and access tokens. The authentication and authorization have to be handled by the Jira instance, which is the authentication authority in this case.
+
+It was decided to use the OAuth2 authentication instead of \emph{OAuth1.a} as it is a more modern and secure authentication method while being easier to implement and use. A decision was made to use the \emph{OAuth2 Authorization Code Grant}, summarized in Section \ref{section:code_grants}, with the requests for authorization codes and access tokens being handled by the Jira instance. This is still in line with the OSLC Core specification, as it does not require the adaptors to support or handle the authentication. To support the discoverability of the endpoints for the authorization and token, their URLs were added to the \texttt{ServiceProvider} resources of the adaptors.
+
+The authorization of the requests to the adaptors, either by BASIC credentials or OAuth2 access tokens, is handled by forwarding the contents of \texttt{Authorization} header from the request to the Jira and R4J clients.
+
+\section{Creation and Update Capability}
+This section details how the creation and update flows have been implemented for the \texttt{Requirement}, \texttt{RequirementCollection}, and \texttt{Folder} resources. As both \texttt{Requirement} and \texttt{RequirementCollection} resources are saved as Jira issues with different \texttt{issueType}, they share the underlying generic implementation for \texttt{Issue} creation and update.
+
+\subsection*{Issue Resource}
+The creation of the Jira issues is implemented as a sequence of validation and creation steps. The order of these steps is as follows:
+
+\begin{enumerate}
+  \item Validate that the issue contains all required properties for its creation
+  \item Validate that all issues linked by \texttt{decomposedBy} exist
+  \item Validate that all issues linked by \texttt{decomposes} exist
+  \item Validate that the specified \texttt{project} exists
+  \item Validate that the specified \texttt{issueType} exists in the context of the project (\texttt{issueType} to be used for \texttt{Requirement} and \texttt{RequirementCollection} resources is specified by the configuration)
+  \item Validate that no issue with the same identifier exists
+  \item Validate that the fields for storing \texttt{subject} and \texttt{identifier} properties exists for the specified \texttt{issueType} (the fields for \texttt{subject} and \texttt{identifier} are specified by the configuration)
+  \item Create issue with the specified properties
+  \item Update the created issue with the \texttt{decomposedBy} and \texttt{decomposes} links
+\end{enumerate}
+
+The update functionality is implemented in a similar way to the create functionality, the main difference being that the update validates if the issue with the specified identifier exists and if it is of the correct \texttt{issueType}. To correctly update the links between the issues, the existing links created by the adaptor are removed before the new links from the updated resource are created.
+
+\subsection*{Folder Resource}
+The creation of the R4J folder resources is implemented as a chain of validation and creation steps. The order of these steps is as follows:
+
+\begin{enumerate}
+  \item Validate that the folder contains all required properties for its creation
+  \item Validate that the specified \texttt{project} exists
+  \item Validate that the specified \texttt{parentFolder} exists
+  \item Validate that the \texttt{parentFolder} does not contain a folder with the same name as the one being created
+  \item Validate that all issues linked by \texttt{contains} exist while validating the \texttt{issueType} of the issues as well
+  \item Create folder
+  \item Update the created folder with the \texttt{contains} links
+\end{enumerate}
+
+The update is done in a similar way to the create functionality, except the update validates if the folder with the specified identifier exists. To assert that the folder contains only the issues specified in the update, all of the issues currently linked to the folder are removed, and then new links are created.
+
+\section{Query Capability}
+The skeletons and endpoints for the query capability were generated by the Code Generator. However, the generated implementation was missing \texttt{oslc.searchTerms} parameters, which are required by the Requirement Management Specification. The \texttt{oslc.searchTerms} parameter was added to each of the generated implementations, thus enabling a full-text search of the resources.
+
+As for the \texttt{oslc.where} parameter, there was no library for parsing the \texttt{oslc.where} query available at the time of writing this thesis. Therefore a simplified implementation of the \texttt{oslc.where} query parser was created, which supports the basic query capabilities for common use cases, as the full implementation of the query parser is well beyond the scope of this thesis because of the complexity of the \emph{OSLC Query Language}.
+
+The following sections describe how the parsed query was translated for the Jira and R4J APIs.
+
+\subsection*{Jira Resources}
+For querying the \texttt{oslc\_rm:Requirement} and \texttt{oslc\_rm:RequirementCollection} resources, which are saved as Jira issues, the JQL (Jira Query Language) \cite{jql} was used. The JQL is SQL-like query language, which can be passed as a parameter to the search issues endpoint of the Jira API in the \texttt{jql} parameter.
+
+To map the parsed query to the JQL, an \texttt{IssueTranslator} was implemented utilizing the \texttt{JiraQueryBuilder} mapping each property of the OSLC resources to its counterpart in the Jira issue. Example of the mapping can be seen in Figure \ref{fig:jql_visual}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\linewidth]{figures/jql-visual.pdf}
+  \caption{Visualisation of a simple \texttt{oslc.where} query mapping to JQL (\texttt{oslc.prefix} is omitted for brevity)}
+  \label{fig:jql_visual}
+\end{figure}
+
+\subsection*{R4J Resources}
+\label{sec:r4j_query}
+The R4J API does not support any query language resulting in the inability to retrieve the data corresponding to the requested \texttt{jira\_r4j:Folder} resources only. To overcome this limitation, a non-ideal but functional solution was implemented -- retrieve the whole folder tree structure and filter the results on the adaptor side. This solution is not ideal as it requires the adaptor to retrieve a potentially enormous amount of data, which can result in performance issues.
+
+To mitigate the performance issue, the adaptor could cache the retrieved folder tree structure and only retrieve it if the structure was modified since the last retrieval. The problematic part of this solution is how to determine if the structure was modified. The R4J API does not provide this metadata for the folder tree structure. A suitable solution might be to check if any issue from the project with the \texttt{modifed} timestamp greater than the timestamp of the cached tree structure exists, regardless if they belong to the tree structure. However, this would require investigation if the performance of this solution would be better than the performance of the non-cached approach. Either way, the extent of this solution is beyond the scope of this thesis.
+
+\section{Bugs and Limitations}
+During the implementation, several bugs, issues, and limitations were discovered. This section goes over them and describes how they were resolved or mitigated.
+
+\subsection*{R4J API Bug}
+\label{sec:r4j_api_bug}
+An issue was discovered during the implementation of the folder update functionality. The R4J API returns \texttt{500 -- Internal Server Error} when updating a folder with the \texttt{parentFolder} set to the \texttt{ROOT} of the directory structure, even though the folder is updated correctly. This issue was reported to the R4J API team, and a temporal workaround was implemented in the adaptor. The temporary solution ignores the \texttt{500 -- Internal Server Error}, validates if the folder was updated correctly, and if validation passes, the update is considered successful.
+
+\subsection*{Clients memory leak}
+During the testing of the adaptor, a memory leak was discovered in the clients. The leak was caused by the clients not closing the HTTP connections after the request was completed. It is unknown if this bug is in the implementation provided by the Jira API SDK or if it was caused by the extensions built on top of it. The created solution caches references to all the connections opened by the clients during the processing of a single request to the adaptor and closes them after the request is completed.
+
+\subsection*{Contributors}
+Both the definitions \texttt{Requirement} and \texttt{RequirementCollection} contain the \texttt{contributors} property. The Jira API exposes a \texttt{changelog} property in the issue resource, which contains the information about changes done to the issue and who performed them. However, there is a limitation in the Jira API, which does not allow the retrieved changelog to exceed 500 entries. This can result in the \texttt{contributors} property not containing all the contributors for issues with a large number of changes. Currently, there is no solution for this issue.
+
+\subsection*{Issue types}
+Some \texttt{issueTypes} require additional fields to be set when creating the issue (e.g., \texttt{Epic} requires the \texttt{Epic Name} field to be set). The adaptor has no way to verify if the custom required fields are set. Thus, the create operation can fail and result in a \texttt{500 -- Internal Server Error}.
+
+A problem arises when the \texttt{issueTypes} specified in the configuration file for both \texttt{Requirement} and \texttt{RequirementCollection} are the same. This results in the adaptor not being able to distinguish between the two resource types and thus returning the \texttt{Requirement} resources as \texttt{RequirementCollection} resources and vice versa.
+
+It is left up to the users of the adaptor to ensure a valid \texttt{issueTypes} are specified in the configuration file, which does not require any additional fields to be set.
+
+%=========================================================================
 
 \chapter{Evaluation and Testing}
-\todo{Gramar check}
-\todo{Style document}
-\todo{Testování v Postmanovi}
-\todo{Testování pomocí ReqIF souboru}
-\todo{Limitace + co dělat když nejde něco přidat do Jiry, permision needed for user to do CRUD operations}
-\todo{Pokud požiju R4J hledám pomocí folder a získávám jenom Bugs/Reqs které jsou  nalinkované v R4J, pokud využitu JIRA adaptor získávám všechny issues daného typu (v configuraci) -> JIRA adaptor potřebuje speciální issues types aby rozlišoval mezi req a jinými issues}
-\todo{req a reqCollection type name nesmí být stejné}
-\todo{BUGv R4J API: 500 returned při updatu folderu s parent=ROOT}
+\label{chapter:evaluation}
+This chapter contains the evaluation of the implemented adaptors and used technologies, as well as an overview of the testing of both adaptors.
+
+\section{Adaptors Testing}
+The created adaptors fully comply with the OSLC Core and Requirement Management specifications by providing all of the required resources, properties, and functionality. The Jira adaptor can be used alone to fully manage requirements in Jira. However, there is no way to differentiate between requirements and other issues as long as they have the same \texttt{issueType}. The R4J adaptor provides a solution for this by allowing the user to retrieve all of the requirements based on if they were added to the R4J folder tree structure.
+
+The Jira and R4J adaptors have been end-to-end tested using the \emph{Postman} \cite{postman} tool. The testing was done by creating a collection of requests, which tests the basic and query functionality of the adaptors. The collection is comprised of 361 HTTP requests and 446 tests. The collection can be exported as a JSON file and used by a continuous integration tool to validate that the changes to adaptors did not introduce any functionality breaks. An example of the flow of the test validating the problematic update functionality for folders with \texttt{parentFolder} set to \texttt{ROOT} discussed in Section \ref{sec:r4j_api_bug} can be seen in Figure \ref{fig:test_flow}. The full collection of tests can be found in the \texttt{test/postman} directory in the source code.
+
+To further validate the functionality of the Jira adaptor, a Python client for the adaptor has been created. This client provides a simple interface for importing and exporting requirements from Jira in the ReqIF format through the adaptor by utilizing the \texttt{rdflib} \cite{python_rdflib} and \texttt{reqif} \cite{python_reqif} python libraries. The importing and exporting have been successfully tested by an example ReqIF file provided by Honeywell, testing the functionality of the adaptor in a real-world use case.
+
+\section{OSLC Evaluation}
+The OSLC Core specification is well-written and easy to follow. However, the OSLC Requirement Management specification is not detailed enough, which significantly impacts its comprehensibility. The specification does not provide any examples of how the resources should look nor any diagrams explaining the relations between the resources. Compared to the OSLC Automation Management specification, which provides both examples and diagrams, the OSLC Requirement Management specification could use some improvements.
+
+The Eclipse Lyo tooling greatly reduces the complexity and time cost of creating an OSLC adaptor. However, the initial time investment in setting up the tooling is quite high, as well as the learning curve of the tooling. The documentation for the tooling is outdated and does not reflect the current state of the tooling. As a result, it is really hard to find any information about the tooling and how to use it. The learning curve of the tooling could be greatly reduced by providing a video or text-based tutorial detailing the process of creating an adaptor from start to finish.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{figures/test-flow.pdf}
+  \caption{Example of the test flow for the Folder Update (\emph{Red -- test assertions})}
+  \label{fig:test_flow}
+\end{figure}
+
+\section{Jira and R4J Evaluation}
+The creation of the OSLC adaptors for Jira and R4J has been greatly impacted by the quality of the Jira and R4J API. The Jira API is well-designed and well-documented, providing a solid foundation for the creation of the Jira adaptor. The R4J API, on the other hand, lacks documentation, is designed a bit insufficiently, and is missing some important features, such as a query capability on the folder endpoint.
+
+The development has also been greatly accelerated by the use of the Jira API SDK, which provides a great base for the creation of clients for the Jira API.
+
+%=========================================================================
 
 \chapter{Conclusion}
-\todo{Gramar check}
-\todo{Style document}
+\label{chapter:conclusion}
+The goal of this thesis was to provide unified access to requirements stored in Jira and R4J through the OSLC interface. For this purpose, the OSLC Core and Requirement Management specifications were first described in the context of Jira and R4J, and an overview of the tools that can be utilized to aid with the OSLC adoption was given. Afterward, a detailed description of the whole adaptor creation process was provided.
 
+Two adaptors have been designed and implemented as a part of this thesis -- the additional Jira adaptor, which fully satisfies the OSLC Core and Requirement Management specifications, and the R4J adaptor, which provides the folder functionality from R4J. The adaptors have been tested and evaluated by a collection of 361 HTTP requests using the Postman test suit, proving their functionality and usability. Moreover, a Python command line client has been created for the Jira adaptor, providing a simple interface for importing and exporting requirements from Jira in the ReqIF format.
+
+The generic implementation of the adaptors implementation allows for the work to be continued and built upon in the future. Some of the possible improvements for future work include:
+
+\begin{itemize}
+  \item \textbf{Folder query optimalization} -- the optimalization of the \texttt{folder} query by using caching as discussed in Section \ref{sec:r4j_query}
+  \item \textbf{Generic Requirement Management adaptor} -- the creation of a generic adaptor, which would be able to work with any Requirement Management tool
+  \item \textbf{Full OSLC Query support} -- the addition of the full OSLC Query support to the adaptors by creating a parser for the full extent of the OSLC Query language
+\end{itemize}
 
 %=========================================================================
 

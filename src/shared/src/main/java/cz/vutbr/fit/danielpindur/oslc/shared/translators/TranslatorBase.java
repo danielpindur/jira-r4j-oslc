@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2023 Daniel Pindur <pindurdan@gmail.com>, <xpindu01@stud.fit.vutbr.cz>
+ *
+ * This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
 package cz.vutbr.fit.danielpindur.oslc.shared.translators;
 
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
@@ -18,6 +28,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Base class for all translators. Contains common methods.
+ */
 public class TranslatorBase {
     protected final Map<String, String> propertiesMap = new HashMap<>();
     protected final Map<SimpleTerm.Type, String> originalTypeMap = new HashMap<>();
@@ -35,6 +48,13 @@ public class TranslatorBase {
         replaceTypeMap.put(SimpleTerm.Type.IN_TERM, " IN ");
     }
 
+    /**
+     * Translate list of identifiers to list of their representation in lables field
+     * 
+     * @param operands List of identifiers as string.
+     * 
+     * @return List of formatted labels identifiers as a string.
+     */
     protected String translateIdentifiersInLabel(final String operands) {
         var exploded = operands.split(",");
 
@@ -47,10 +67,24 @@ public class TranslatorBase {
         return String.join(",", exploded);
     }
 
+    /**
+     * Cleans uri string from < and > characters.
+     * 
+     * @param operands Uri string.
+     * 
+     * @return Cleaned uri string.
+     */
     protected String cleanUri(final String operands) {
         return operands.replace("<", "").replace(">", "");
     }
 
+    /**
+     * Translate list of resource uris to list of the resource identifiers
+     * 
+     * @param operands List of uris as string.
+     * 
+     * @return List of identifiers as a string.
+     */
     protected String translateUriToIds(final String operands) {
         var cleaned = cleanUri(operands);
         var exploded = cleaned.split(",");
@@ -64,6 +98,13 @@ public class TranslatorBase {
         return String.join(",", exploded);
     }
 
+    /**
+     * Translate list of resource uris to list of the issue keys
+     * 
+     * @param operands List of uris as string.
+     * 
+     * @return List of keys as a string.
+     */
     protected String translateIssueUrisToKeys(final String operands) {
         var cleaned = cleanUri(operands);
         var exploded = cleaned.split(",");
@@ -82,6 +123,13 @@ public class TranslatorBase {
         return String.join(",", keys);
     }
 
+    /**
+     * Replace all occurrences of '@' symbol in the list of emails with unicode representation.
+     * 
+     * @param operands List of emails as string.
+     * 
+     * @return List of emails with unicode representation of '@' symbol.
+     */
     protected String translateEmails(final String operands) {
         var exploded = operands.split(",");
 
@@ -94,6 +142,14 @@ public class TranslatorBase {
         return String.join(",", exploded);
     }
 
+    /**
+     * Parse the comparison operator from the search string.
+     * 
+     * @param search Search string.
+     * @param property Property name.
+     * 
+     * @return Comparison operator.
+     */
     protected String getComparisonOperatorFromSearch(final String search, final String property) {
         var initial = new LinkedList<Character>();
         initial.add('>');
@@ -104,6 +160,15 @@ public class TranslatorBase {
         return getComparisonOperatorFromSearch(search, property, initial);
     }
 
+    /**
+     * Parse the comparison operator from the search string.
+     * 
+     * @param search Search string.
+     * @param property Property name.
+     * @param initialAllow List of allowed operators.
+     * 
+     * @return Comparison operator.
+     */
     protected String getComparisonOperatorFromSearch(final String search, final String property, final List<Character> initialAllow) {
         var cleaned = search.replace(property, "");
         var cursor = 0;
@@ -154,6 +219,13 @@ public class TranslatorBase {
         return operator;
     }
 
+    /**
+     * Translate date time from ISO 8601 to JQL format.
+     * 
+     * @param operands Date time in ISO 8601 format.
+     * 
+     * @return Date time in JQL format.
+     */
     protected String translateDateTime(final String operands) {
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         LocalDateTime dateTime = LocalDateTime.parse(operands, inputFormatter);
@@ -164,6 +236,13 @@ public class TranslatorBase {
         return "\"" + localDateTime.format(outputFormatter) + "\"";
     }
 
+    /**
+     * Translate single term.
+     * 
+     * @param term Term to translate.
+     * 
+     * @return Translated representation of the term.
+     */
     public String translate(final SimpleTerm term) {
         throw new NotImplemented();
     }

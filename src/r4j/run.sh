@@ -1,3 +1,13 @@
+##########################
+# Copyright (C) 2023 Daniel Pindur <pindurdan@gmail.com>, <xpindu01@stud.fit.vutbr.cz>
+#
+# This program and the accompanying materials are made available under
+# the terms of the Eclipse Public License 2.0 which is available at
+# https://www.eclipse.org/legal/epl-2.0
+#
+# SPDX-License-Identifier: EPL-2.0
+##########################
+
 USRPATH="$PWD"                          
 ROOTDIR="$(dirname "$(realpath "$0")")" 
 R4J_CONFIG_FILE_PATH="$ROOTDIR/config/R4JAdaptor.properties"

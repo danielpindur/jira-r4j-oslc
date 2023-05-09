@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2023 Daniel Pindur <pindurdan@gmail.com>, <xpindu01@stud.fit.vutbr.cz>
+ *
+ * This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
 package cz.vutbr.fit.danielpindur.oslc.shared.builders;
 
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.ConfigurationProvider;
@@ -7,6 +17,9 @@ import cz.vutbr.fit.danielpindur.oslc.shared.services.clients.IssueRestClientExt
 import cz.vutbr.fit.danielpindur.oslc.shared.translators.TranslatorBase;
 import org.eclipse.lyo.core.query.SimpleTerm;
 
+/**
+ * Jira query builder.
+ */
 public class JiraQueryBuilder {
     private String query = "";
     private final Configuration configuration;
@@ -22,6 +35,11 @@ public class JiraQueryBuilder {
         this.translator = translator;
     }
 
+    /**
+     * Append term to query.
+     * 
+     * @param append Term to append.
+     */
     private void appendToQuery(final String append) {
         if (append == null || append.isEmpty()) return;
 
@@ -33,10 +51,22 @@ public class JiraQueryBuilder {
         }
     }
 
+    /**
+     * Build query.
+     * 
+     * @return Query.
+     */
     public String build() {
         return query;
     }
 
+    /**
+     * Append identifier to query.
+     * 
+     * @param identifier Identifier to append.
+     * 
+     * @return Jira query builder.
+     */
     public JiraQueryBuilder Identifier(final String identifier) {
         if (configuration.SaveIdentifierInLabelsField) {
             appendToQuery(configuration.LabelsFieldName + " = \"" + IssueHelper.GetFormattedLabelsIdentifier(identifier) + "\"");
@@ -47,6 +77,13 @@ public class JiraQueryBuilder {
         return this;
     }
 
+    /**
+     * Append project to query.
+     * 
+     * @param project Project to append.
+     * 
+     * @return Jira query builder.
+     */
     public JiraQueryBuilder Terms(final String terms) {
         if (terms != null) {
             appendToQuery("text ~ \"" + terms + "\"");
@@ -55,12 +92,26 @@ public class JiraQueryBuilder {
         return this;
     }
 
+    /**
+     * Append issue type to query.
+     * 
+     * @param issueTypeName Issue type to append.
+     * 
+     * @return Jira query builder.
+     */
     public JiraQueryBuilder IssueType(final String issueTypeName) {
         appendToQuery("issuetype = \"" + issueTypeName + "\"");
 
         return this;
     }
 
+    /**
+     * Append term to query.
+     * 
+     * @param term Term to append.
+     * 
+     * @return Jira query builder.
+     */
     public JiraQueryBuilder addTerm(final SimpleTerm term) {
         appendToQuery(translator.translate(term));
 

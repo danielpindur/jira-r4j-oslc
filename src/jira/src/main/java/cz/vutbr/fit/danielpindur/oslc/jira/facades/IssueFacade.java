@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2023 Daniel Pindur <pindurdan@gmail.com>, <xpindu01@stud.fit.vutbr.cz>
+ *
+ * This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
 package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
 import com.atlassian.jira.rest.client.api.IssueRestClient;
@@ -22,11 +32,22 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.util.*;
 
+/**
+ * Issue facade.
+ */
 public class IssueFacade extends BaseFacade {
     @Inject ResourcesFactory resourcesFactory;
 
     // TODO: verify all endpoints responds correctly with 401
     // TODO: validate return codes
+
+    /**
+     * Get issue by identifier.
+     * 
+     * @param identifier Issue identifier
+     * 
+     * @return Issue
+     */
     protected Issue getIssueByIdentifier(final String identifier) {
         var issue = getIssueClient().searchIssueByIdentifier(identifier);
 
@@ -34,6 +55,13 @@ public class IssueFacade extends BaseFacade {
         return issue != null ? getIssue(issue.getId()) : null;
     }
 
+    /**
+     * Get issue contributors from Issue.
+     * 
+     * @param issue Issue
+     * 
+     * @return Set of contributors
+     */
     private Set<String> GetContributors(final Issue issue) {
         var contributorUsernames = new HashSet<String>();
         var changelog = issue.getChangelog();
@@ -50,6 +78,13 @@ public class IssueFacade extends BaseFacade {
         return contributorUsernames;
     }
 
+    /**
+     * Get creator link from Issue.
+     * 
+     * @param issue Issue
+     * 
+     * @return Creator link
+     */
     protected Link GetCreatorLink(final Issue issue) {
         var creator = issue.getReporter();
         if (creator == null) {
@@ -59,6 +94,13 @@ public class IssueFacade extends BaseFacade {
         return resourcesFactory.constructLinkForPerson(creator.getName());
     }
 
+    /**
+     * Get contributors links from Issue.
+     * 
+     * @param issue Issue
+     * 
+     * @return Set of contributors links
+     */
     protected Set<Link> GetContributorsLinks(final Issue issue) {
         var contributors = GetContributors(issue);
         var contributorsLinks = new HashSet<Link>();
@@ -72,27 +114,62 @@ public class IssueFacade extends BaseFacade {
         return contributorsLinks;
     }
 
+    /**
+     * Get issue by id
+     * 
+     * @param id Issue id
+     * 
+     * @return Issue
+     */
     protected Issue getIssue(final String id) {
         var expandos = new LinkedList<IssueRestClient.Expandos>();
         expandos.add(IssueRestClient.Expandos.CHANGELOG);
         return getIssueClient().getIssue(id, expandos).claim();
     }
 
+    /**
+     * Get issue by id
+     * 
+     * @param id Issue id
+     * 
+     * @return Issue
+     */
     protected Issue getIssue(final Long id) {
         var stringId = Objects.requireNonNull(id).toString();
         return getIssue(stringId);
     }
 
+    /**
+     * Validate if link is decomposedBy link.
+     * 
+     * @param link Link
+     * 
+     * @return True if link is decomposedBy link, false otherwise
+     */
     private boolean IsDecomposedByLink(final IssueLink link) {
         return link.getIssueLinkType().getName().equalsIgnoreCase(configuration.IssueLinkTypeName)
                 && link.getIssueLinkType().getDirection().equals(IssueLinkType.Direction.INBOUND);
     }
 
+    /**
+     * Validate if link is decomposes link.
+     * 
+     * @param link Link
+     * 
+     * @return True if link is decomposes link, false otherwise
+     */
     private boolean IsDecomposesLink(final IssueLink link) {
         return link.getIssueLinkType().getName().equalsIgnoreCase(configuration.IssueLinkTypeName)
                 && link.getIssueLinkType().getDirection().equals(IssueLinkType.Direction.OUTBOUND);
     }
 
+    /**
+     * Construct link for decomposes link.
+     * 
+     * @param id Target issue id
+     * 
+     * @return Link
+     */
     private Link ConstructLinkForDecomposeLink(final String id) {
         var issue = getIssue(id);
 
@@ -107,6 +184,13 @@ public class IssueFacade extends BaseFacade {
         return null;
     }
 
+    /**
+     * Get decomposedBy links from Issue.
+     * 
+     * @param resource Issue
+     * 
+     * @return Set of decomposedBy links
+     */
     protected Set<Link> GetDecomposedBy(final Issue resource) {
         var issueLinks = resource.getIssueLinks();
         var decomposedBy = new HashSet<Link>();
@@ -125,6 +209,13 @@ public class IssueFacade extends BaseFacade {
         return decomposedBy;
     }
 
+    /**
+     * Get decomposes links from Issue.
+     * 
+     * @param resource Issue
+     * 
+     * @return Set of decomposes links
+     */
     protected Set<Link> GetDecomposes(final Issue resource) {
         var issueLinks = resource.getIssueLinks();
         var decomposes = new HashSet<Link>();
@@ -143,6 +234,11 @@ public class IssueFacade extends BaseFacade {
         return decomposes;
     }
 
+    /**
+     * Validate if links target issue exists.
+     * 
+     * @param links Links
+     */
     protected void ValidateLinks(final Set<Link> links) {
         if (links == null) return;
 
@@ -155,6 +251,13 @@ public class IssueFacade extends BaseFacade {
         }
     }
 
+    /**
+     * Create link between two issues.
+     * 
+     * @param identifierFrom Identifier of issue from
+     * @param identifierTo Identifier of issue to
+     * @param linkTypeName Link type name
+     */
     private void CreateLink(final String identifierFrom, final String identifierTo, final String linkTypeName) {
         var issueFrom = getIssueByIdentifier(identifierFrom);
         if (issueFrom == null) {
@@ -172,6 +275,18 @@ public class IssueFacade extends BaseFacade {
         getIssueClient().linkIssue(issueLink);
     }
 
+    /**
+     * Create issue.
+     * 
+     * @param description Issue description
+     * @param issueTypeName Issue type name
+     * @param projectId Project id
+     * @param title Issue title
+     * @param identifier Issue identifier
+     * @param subject Issue subject
+     * 
+     * @return Created issue
+     */
     protected BasicIssue createIssue(final String description, final String issueTypeName, final String projectId, final String title, final String identifier, final Set<String> subject) {
         com.atlassian.jira.rest.client.api.domain.Project project = null;
         try {
@@ -247,6 +362,13 @@ public class IssueFacade extends BaseFacade {
         }
     }
 
+    /**
+     * Delete issue.
+     * 
+     * @param identifier Issue identifier
+     * 
+     * @return True if issue was deleted, otherwise false
+     */
     protected boolean deleteIssue(final String identifier) {
         var issue = getIssueByIdentifier(identifier);
         if (issue == null) {
@@ -259,6 +381,14 @@ public class IssueFacade extends BaseFacade {
         return deletedIssue == null;
     }
 
+    /**
+     * Update issue.
+     * 
+     * @param identifier Issue identifier
+     * @param description Issue description
+     * @param title Issue title
+     * @param subject Issue subject
+     */
     protected void updateIssue(final String identifier, final String description, final String title, final Set<String> subject) {
         var issue = getIssueByIdentifier(identifier);
         if (issue == null) {
@@ -293,6 +423,11 @@ public class IssueFacade extends BaseFacade {
         getIssueClient().updateIssue(issue.getKey(), updatedIssue).claim();
     }
 
+    /**
+     * Remove all issue links created by adaptor from the specified issue.
+     * 
+     * @param identifier Issue identifier
+     */
     protected void RemoveAdaptorIssueLinks(final String identifier) {
         var issue = getIssueByIdentifier(identifier);
         var issueLinkIds = getIssueLinkRestClient().getAdaptorIssueLinkIdsForIssue(issue.getKey(), configuration.IssueLinkTypeName).claim();
@@ -302,18 +437,37 @@ public class IssueFacade extends BaseFacade {
         }
     }
 
+    /**
+     * Create decomposedBy links for the specified issue.
+     * 
+     * @param links Links to create
+     * @param identifier Issue identifier
+     */
     protected void CreateDecomposedByLinks(final Set<Link> links, final String identifier) {
         for (Link link : links) {
             CreateLink(UriHelper.GetIdFromUri(link.getValue()), identifier, configuration.IssueLinkTypeName);
         }
     }
 
+    /**
+     * Create decomposes links for the specified issue.
+     * 
+     * @param links Links to create
+     * @param identifier Issue identifier
+     */
     protected void CreateDecomposesLinks(final Set<Link> links, final String identifier) {
         for (Link link : links) {
             CreateLink(identifier, UriHelper.GetIdFromUri(link.getValue()), configuration.IssueLinkTypeName);
         }
     }
 
+    /**
+     * Get issue link type by name.
+     * 
+     * @param issueLinkTypeName Issue link type name
+     * 
+     * @return Issue link type
+     */
     protected IssuelinksType GetIssueLinksTypeByName(final String issueLinkTypeName) {
         var issueLinkTypes = getMetadataClient().getIssueLinkTypes().claim();
 
@@ -326,12 +480,25 @@ public class IssueFacade extends BaseFacade {
         return null;
     }
 
+    /**
+     * Validate if issue link type exists.
+     * 
+     * @param issueLinkTypeName Issue link type name
+     */
     protected void ValidateIssueLinkType(final String issueLinkTypeName) {
         if (GetIssueLinksTypeByName(issueLinkTypeName) == null) {
             throw new WebApplicationException("IssueLinkType with identifier (" + issueLinkTypeName +") not found!", Response.Status.CONFLICT);
         }
     }
 
+    /**
+     * Select issues by terms and issue type name.
+     * 
+     * @param terms Search terms
+     * @param issueTypeName Issue type name
+     * 
+     * @return Issues
+     */
     protected Iterable<Issue> selectIssues(final String terms, final String issueTypeName) {
         var searchString = new JiraQueryBuilder().Terms(terms).IssueType(issueTypeName).build();
 
@@ -345,6 +512,19 @@ public class IssueFacade extends BaseFacade {
         return search.getIssues();
     }
 
+    /** 
+     * Query issues.
+     * 
+     * @param issueTypeName Issue type name
+     * @param where Where clause
+     * @param terms Terms for full-text search.
+     * @param prefix Prefix of the used oslc properties.
+     * @param paging Enable paging.
+     * @param page Selected page.
+     * @param limit Amount of issues per page.
+     * 
+     * @return Issues
+     */
     protected Iterable<Issue> queryIssues(final String issueTypeName, final String where, final String terms, final String prefix, final boolean paging, final int page, final int limit) {
         Map<String, String> parsedPrefix = null;
         WhereClause parsedWhere = null;

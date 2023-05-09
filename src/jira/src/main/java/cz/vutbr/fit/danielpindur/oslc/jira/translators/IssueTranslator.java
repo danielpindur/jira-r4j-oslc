@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2023 Daniel Pindur <pindurdan@gmail.com>, <xpindu01@stud.fit.vutbr.cz>
+ *
+ * This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
 package cz.vutbr.fit.danielpindur.oslc.jira.translators;
 
 import cz.vutbr.fit.danielpindur.oslc.shared.helpers.IssueHelper;
@@ -7,6 +17,9 @@ import org.eclipse.lyo.core.query.SimpleTerm;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+/**
+ * Issue query translator to JQL.
+ */
 public class IssueTranslator extends TranslatorBase {
 
     public IssueTranslator(final String decomposedByLinkName, final String decomposesLinkName) {
@@ -23,6 +36,13 @@ public class IssueTranslator extends TranslatorBase {
         propertiesMap.put("dcterms:identifier", configuration.IdentifierFieldName);
     }
 
+    /**
+     * Translate issue keys to linkeIssues JQL query.
+     * 
+     * @param operands issue keys
+     * 
+     * @return JQL query
+     */
     private String issueKeysToLinkedIssuesTranslator(final String operands) {
         var query = "";
         var exploded = operands.split(",");

@@ -1,9 +1,22 @@
+/*
+ * Copyright (C) 2023 Daniel Pindur <pindurdan@gmail.com>, <xpindu01@stud.fit.vutbr.cz>
+ *
+ * This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
 package cz.vutbr.fit.danielpindur.oslc.shared.configuration;
 
 import cz.vutbr.fit.danielpindur.oslc.shared.configuration.models.Configuration;
 
 import java.io.FileNotFoundException;
 
+/**
+ * Singleton provider for the configuration.
+ */
 public final class ConfigurationProvider {
     private static ConfigurationProvider INSTANCE;
 
@@ -16,6 +29,9 @@ public final class ConfigurationProvider {
         Validate();
     }
 
+    /**
+     * Validates the configuration.
+     */
     private void Validate() {
         if (configuration == null) {
             throw new RuntimeException("Configuration is missing");
@@ -30,6 +46,9 @@ public final class ConfigurationProvider {
         }
     }
 
+    /**
+     * Get the singleton instance of the configuration provider.
+     */
     private static ConfigurationProvider getInstance() {
         if (INSTANCE == null) {
             try {
@@ -40,10 +59,16 @@ public final class ConfigurationProvider {
         return INSTANCE;
     }
 
+    /**
+     * Initialize the singleton instance of the configuration provider.
+     */
     public static void Initialize() throws FileNotFoundException {
         INSTANCE = new ConfigurationProvider();
     }
 
+    /**
+     * Get the configuration.
+     */
     public static Configuration GetConfiguration() {
         return getInstance().configuration;
     }

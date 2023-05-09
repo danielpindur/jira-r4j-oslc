@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2023 Daniel Pindur <pindurdan@gmail.com>, <xpindu01@stud.fit.vutbr.cz>
+ *
+ * This program and the accompanying materials are made available under
+ * the terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
+
 package cz.vutbr.fit.danielpindur.oslc.jira.facades;
 
 import com.atlassian.jira.rest.client.api.domain.Issue;
@@ -10,7 +20,17 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Facade for RequirementCollection resource
+ */
 public class RequirementCollectionFacade extends IssueFacade {
+    /**
+     * Maps API issue resource to OSLC RequirementCollection resource
+     * 
+     * @param resource API issue resource
+     * 
+     * @return OSLC RequirementCollection resource
+     */
     private RequirementCollection MapResourceToResult(final Issue resource) {
         var result = new RequirementCollection();
         var jiraIssueId = resource.getId().intValue();
@@ -41,6 +61,13 @@ public class RequirementCollectionFacade extends IssueFacade {
         return result;
     }
 
+    /**
+     * Gets RequirementCollection resource by identifier
+     * 
+     * @param id Identifier of RequirementCollection resource
+     * 
+     * @return RequirementCollection resource
+     */
     public RequirementCollection get(final String id) {
         var issue = getIssueByIdentifier(id);
 
@@ -51,6 +78,13 @@ public class RequirementCollectionFacade extends IssueFacade {
         return MapResourceToResult(issue);
     }
 
+    /**
+     * Creates RequirementCollection resource
+     * 
+     * @param requirementCollection RequirementCollection resource to create
+     * 
+     * @return Created RequirementCollection resource
+     */
     public RequirementCollection create(final RequirementCollection requirementCollection) {
         var identifier = requirementCollection.getIdentifier() != null
                 ? requirementCollection.getIdentifier()
@@ -74,10 +108,25 @@ public class RequirementCollectionFacade extends IssueFacade {
         return get(identifier);
     }
 
+    /**
+     * Deletes RequirementCollection resource
+     * 
+     * @param id Identifier of RequirementCollection resource
+     * 
+     * @return True if deleted, false otherwise
+     */
     public boolean delete(final String id) {
         return deleteIssue(id);
     }
 
+    /**
+     * Updates RequirementCollection resource
+     * 
+     * @param requirementCollection RequirementCollection resource to update
+     * @param identifier Identifier of RequirementCollection resource
+     * 
+     * @return Updated RequirementCollection resource
+     */
     public RequirementCollection update(final RequirementCollection requirementCollection, final String identifier) {
         ValidateLinks(requirementCollection.getDecomposedBy());
         ValidateLinks(requirementCollection.getDecomposes());
@@ -91,6 +140,9 @@ public class RequirementCollectionFacade extends IssueFacade {
         return get(identifier);
     }
 
+    /**
+     * Maps API issues to OSLC RequirementCollection resources
+     */
     private List<RequirementCollection> mapIssuesToRequirementCollections(Iterable<Issue> issues) {
         var requirementCollections = new LinkedList<RequirementCollection>();
 
@@ -106,11 +158,30 @@ public class RequirementCollectionFacade extends IssueFacade {
         return requirementCollections;
     }
 
+    /**
+     * Selects RequirementCollection resources by terms
+     * 
+     * @param terms Terms to search for
+     * 
+     * @return List of RequirementCollection resources
+     */
     public List<RequirementCollection> selectRequirementCollections(final String terms) {
         var issues = selectIssues(terms, configuration.RequirementCollectionIssueTypeName);
         return mapIssuesToRequirementCollections(issues);
     }
 
+    /**
+     * Queries RequirementCollection resources
+     * 
+     * @param where Where clause
+     * @param terms Terms for full-text search.
+     * @param prefix Prefix of the used oslc properties.
+     * @param paging Enable paging.
+     * @param page Selected page.
+     * @param limit Amount of issues per page.
+     * 
+     * @return List of RequirementCollection resources
+     */
     public List<RequirementCollection> queryRequirementCollections(final String where, final String terms, final String prefix, final boolean paging, final int page, final int limit) {
         var issues = queryIssues(configuration.RequirementCollectionIssueTypeName, where, terms, prefix, paging, page, limit);
         return mapIssuesToRequirementCollections(issues);
