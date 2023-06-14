@@ -1,6 +1,6 @@
 # Requierement Management OSLC Adaptors for Jira and R4J
 
-This work has been created as a part of my [Bachelor's thesis](https://www.vut.cz/studenti/zav-prace/detail/148230) at the Brno University of Technology.
+This work has been created as a part of my [Bachelor's thesis](https://www.vut.cz/en/students/final-thesis/detail/148230) at the Brno University of Technology.
 
 ## Summary
 This repository contains OSLC adaptors for Jira and Requirements Management for Jira (R4J) based on the Core and Requirement Management OSLC specifications. The adaptors have been created using the OSLC4J framework and Eclipse Lyo.  
