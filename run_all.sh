@@ -1,6 +1,8 @@
 #!/bin/bash
 ##########################
 # Copyright (C) 2023 Daniel Pindur <pindurdan@gmail.com>, <xpindu01@stud.fit.vutbr.cz>
+# 
+# Based on build scripts from Unite https://pajda.fit.vutbr.cz/verifit/unite
 #
 # This program and the accompanying materials are made available under
 # the terms of the Eclipse Public License 2.0 which is available at
