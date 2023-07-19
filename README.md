@@ -1,3 +1,5 @@
+❗❗❗ __The contents of this repository have been migrated to the [Verifit Gitlab](https://pajda.fit.vutbr.cz/verifit/oslc4jira) and are no longer maintained here. Please refer to the Gitlab repository for the latest version of the code.__ ❗❗❗
+
 # Requierement Management OSLC Adaptors for Jira and R4J
 
 This work has been created as a part of my [Bachelor's thesis](https://www.vut.cz/en/students/final-thesis/detail/148230) at the Brno University of Technology.
